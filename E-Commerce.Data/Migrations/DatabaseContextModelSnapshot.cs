@@ -74,14 +74,14 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 3, 15, 1, 38, 35, 542, DateTimeKind.Local).AddTicks(7242),
+                            CreateDate = new DateTime(2025, 6, 21, 20, 32, 59, 224, DateTimeKind.Local).AddTicks(290),
                             Email = "ozdalsalih9@gmail.com",
                             IsActive = true,
                             IsAdmin = true,
                             Name = "Admin",
                             Password = "002255",
                             Surname = "1",
-                            UserGuid = new Guid("7efa9fec-0118-46e0-b6f2-bd29e9078dc9")
+                            UserGuid = new Guid("f4e87935-694d-4506-becd-7b7a5a69ff1f")
                         });
                 });
 
@@ -159,7 +159,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2025, 6, 21, 20, 32, 59, 226, DateTimeKind.Local).AddTicks(4545),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Kadın",
@@ -169,12 +169,213 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2025, 6, 21, 20, 32, 59, 226, DateTimeKind.Local).AddTicks(5452),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Erkek",
                             OrderNo = 2,
                             ParentId = 0
+                        });
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.Color", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Colors");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Code = "#FF0000",
+                            IsActive = true,
+                            Name = "Kırmızı"
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Code = "#0000FF",
+                            IsActive = true,
+                            Name = "Mavi"
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Code = "#008000",
+                            IsActive = true,
+                            Name = "Yeşil"
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Code = "#FFFDD0",
+                            IsActive = true,
+                            Name = "Krem"
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Code = "#000000",
+                            IsActive = true,
+                            Name = "Siyah"
+                        },
+                        new
+                        {
+                            Id = 6,
+                            Code = "#FFFFFF",
+                            IsActive = true,
+                            Name = "Beyaz"
+                        },
+                        new
+                        {
+                            Id = 7,
+                            Code = "#808080",
+                            IsActive = true,
+                            Name = "Gri"
+                        },
+                        new
+                        {
+                            Id = 8,
+                            Code = "#000080",
+                            IsActive = true,
+                            Name = "Lacivert"
+                        },
+                        new
+                        {
+                            Id = 9,
+                            Code = "#FFFF00",
+                            IsActive = true,
+                            Name = "Sarı"
+                        },
+                        new
+                        {
+                            Id = 10,
+                            Code = "#FFA500",
+                            IsActive = true,
+                            Name = "Turuncu"
+                        },
+                        new
+                        {
+                            Id = 11,
+                            Code = "#800080",
+                            IsActive = true,
+                            Name = "Mor"
+                        },
+                        new
+                        {
+                            Id = 12,
+                            Code = "#FFC0CB",
+                            IsActive = true,
+                            Name = "Pembe"
+                        },
+                        new
+                        {
+                            Id = 13,
+                            Code = "#A52A2A",
+                            IsActive = true,
+                            Name = "Kahverengi"
+                        },
+                        new
+                        {
+                            Id = 14,
+                            Code = "#F5F5DC",
+                            IsActive = true,
+                            Name = "Bej"
+                        },
+                        new
+                        {
+                            Id = 15,
+                            Code = "#4B4B4B",
+                            IsActive = true,
+                            Name = "Füme"
+                        },
+                        new
+                        {
+                            Id = 16,
+                            Code = "#2F2F2F",
+                            IsActive = true,
+                            Name = "Antrasit"
+                        },
+                        new
+                        {
+                            Id = 17,
+                            Code = "#FFD700",
+                            IsActive = true,
+                            Name = "Altın"
+                        },
+                        new
+                        {
+                            Id = 18,
+                            Code = "#C0C0C0",
+                            IsActive = true,
+                            Name = "Gümüş"
+                        },
+                        new
+                        {
+                            Id = 19,
+                            Code = "#800000",
+                            IsActive = true,
+                            Name = "Bordo"
+                        },
+                        new
+                        {
+                            Id = 20,
+                            Code = "#40E0D0",
+                            IsActive = true,
+                            Name = "Turkuaz"
+                        },
+                        new
+                        {
+                            Id = 21,
+                            Code = "#98FF98",
+                            IsActive = true,
+                            Name = "Mint"
+                        },
+                        new
+                        {
+                            Id = 22,
+                            Code = "#FFDB58",
+                            IsActive = true,
+                            Name = "Hardal"
+                        },
+                        new
+                        {
+                            Id = 23,
+                            Code = "#722F37",
+                            IsActive = true,
+                            Name = "Şarap"
+                        },
+                        new
+                        {
+                            Id = 24,
+                            Code = "#006400",
+                            IsActive = true,
+                            Name = "Koyu Yeşil"
+                        },
+                        new
+                        {
+                            Id = 25,
+                            Code = "#ADD8E6",
+                            IsActive = true,
+                            Name = "Açık Mavi"
                         });
                 });
 
@@ -294,9 +495,6 @@ namespace E_Commerce.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
-                    b.Property<int>("Stock")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
@@ -304,6 +502,121 @@ namespace E_Commerce.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductColor", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ColorId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ColorId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductColors");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductColorImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImageUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductColorId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductColorId");
+
+                    b.ToTable("ProductColorImages");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductImage", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ImagePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductSize", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Stock")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SizeId");
+
+                    b.ToTable("ProductSizes");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.Size", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Slider", b =>
@@ -343,11 +656,72 @@ namespace E_Commerce.Data.Migrations
 
                     b.HasOne("E_Commerse.Core.Entities.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductColor", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.Color", "Color")
+                        .WithMany()
+                        .HasForeignKey("ColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Commerse.Core.Entities.Product", "Product")
+                        .WithMany("ProductColors")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Color");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductColorImage", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.ProductColor", "ProductColor")
+                        .WithMany("ProductColorImages")
+                        .HasForeignKey("ProductColorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ProductColor");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductImage", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.Product", "Product")
+                        .WithMany("ProductImages")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductSize", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.Product", "Product")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Commerse.Core.Entities.Size", "Size")
+                        .WithMany("ProductSizes")
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Size");
                 });
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Brand", b =>
@@ -358,6 +732,25 @@ namespace E_Commerce.Data.Migrations
             modelBuilder.Entity("E_Commerse.Core.Entities.Category", b =>
                 {
                     b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.Product", b =>
+                {
+                    b.Navigation("ProductColors");
+
+                    b.Navigation("ProductImages");
+
+                    b.Navigation("ProductSizes");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.ProductColor", b =>
+                {
+                    b.Navigation("ProductColorImages");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.Size", b =>
+                {
+                    b.Navigation("ProductSizes");
                 });
 #pragma warning restore 612, 618
         }

@@ -1,0 +1,103 @@
+﻿@model E_Commerse.Core.Entities.Product
+
+@{
+    ViewData["Title"] = "Ürün Sil";
+}
+
+<div class="card shadow">
+    <div class="card-header bg-danger text-white">
+        <h3 class="mb-0">Ürün Silme Onayı</h3>
+    </div>
+    <div class="card-body">
+        <div class="alert alert-warning">
+            <h5 class="alert-heading">Dikkat!</h5>
+            <p>Aşağıdaki ürünü ve tüm resimlerini silmek üzeresiniz. Bu işlem geri alınamaz!</p>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <h4>Ürün Bilgileri</h4>
+                <dl class="row">
+                    <dt class="col-sm-4">Ürün Adı:</dt>
+                    <dd class="col-sm-8">@Model.Name</dd>
+
+                    <dt class="col-sm-4">Açıklama:</dt>
+                    <dd class="col-sm-8">@Model.Description</dd>
+
+                    <dt class="col-sm-4">Fiyat:</dt>
+                    <dd class="col-sm-8">@Model.Price.ToString("C")</dd>
+
+                    <dt class="col-sm-4">Ürün Kodu:</dt>
+                    <dd class="col-sm-8">@Model.ProductCode</dd>
+                </dl>
+            </div>
+
+            <div class="col-md-6">
+                <h4>Resimler</h4>
+                <div class="row">
+                    <!-- Main Image -->
+                    <div class="col-6 mb-3">
+                        <div class="card">
+                            <img src="/img/Products/MainImage/@Model.Image" class="card-img-top" alt="Ana Resim">
+                            <div class="card-body p-2 text-center">
+                                <small class="text-muted">Ana Resim</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Additional Images -->
+                    @foreach (var image in Model.ProductImages)
+                    {
+                        <div class="col-6 mb-3">
+                            <div class="card">
+                                <img src="/img/Products/OtherImages/@image.ImagePath" class="card-img-top" alt="Ek Resim">
+                                <div class="card-body p-2 text-center">
+                                    <small class="text-muted">Ek Resim</small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Beden ve Stok Bilgileri -->
+        @if (Model.ProductSizes != null && Model.ProductSizes.Any())
+        {
+            <div class="mb-4">
+                <h4>Beden ve Stok Bilgileri</h4>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Beden</th>
+                                <th>Stok Adedi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.ProductSizes)
+                            {
+                                <tr>
+                                    <td>@item.Size.Name</td>
+                                    <td>@item.Stock</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="d-flex justify-content-between">
+                <a asp-action="Index" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Listeye Dön
+                </a>
+                <button type="submit" class="btn btn-danger">
+                    <i class="fas fa-trash-alt me-2"></i>Kalıcı Olarak Sil
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

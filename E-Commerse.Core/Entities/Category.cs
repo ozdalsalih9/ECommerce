@@ -14,6 +14,7 @@ namespace E_Commerse.Core.Entities
         public string Name { get; set; }
         [Display(Name = "Açıklama")]
         public string? Description { get; set; }
+        [Display(Name = "Resim")]
         public string? Image { get; set; }
         [Display(Name = "Aktiflik")]
         public bool IsActive { get; set; }
@@ -24,7 +25,7 @@ namespace E_Commerse.Core.Entities
         [Display(Name = "Sıra No")]
         public int OrderNo { get; set; }
         [Display(Name = "Oluşturulma Tarihi"), ScaffoldColumn(false)]
-        public DateTime CreateTime { get; set; }
+        public DateTime CreateTime { get; set; } = DateTime.Now;
         [Display(Name = "Ürünler")]
         public IList<Product>? Products { get; set; }
     }  

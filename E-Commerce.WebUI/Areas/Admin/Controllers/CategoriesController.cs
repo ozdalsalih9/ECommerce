@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using E_Commerce.Data;
+using E_Commerce.WebUI.Utils;
+using E_Commerse.Core.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using E_Commerce.Data;
-using E_Commerse.Core.Entities;
+using System.Drawing.Drawing2D;
 
 namespace E_Commerce.WebUI.Areas.Admin.Controllers
 {
@@ -47,22 +45,23 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
         // GET: Admin/Categories/Create
         public IActionResult Create()
         {
+            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View();
         }
 
         // POST: Admin/Categories/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,Description,Image,IsActive,IsTopMenu,ParentId,OrderNo")] Category category)
+        public async Task<IActionResult> Create( Category category, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(category);
+                category.Image = await FileHelper.FileLoaderAsync(Image, "/img/Categories/");
+                await _context.AddAsync(category);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
 
@@ -79,15 +78,15 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
             {
                 return NotFound();
             }
+            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
 
         // POST: Admin/Categories/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,Description,Image,IsActive,IsTopMenu,ParentId,OrderNo")] Category category)
+        public async Task<IActionResult> Edit(int id, Category category, IFormFile? Image, bool cbResmiSil = false)
         {
             if (id != category.Id)
             {
@@ -98,6 +97,14 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
             {
                 try
                 {
+                    if(cbResmiSil)
+                    {
+                        category.Image = String.Empty;
+                    }
+                    if(Image is not null)
+                    {
+                        category.Image = await FileHelper.FileLoaderAsync(Image, "/img/Categories/");
+                    }
                     _context.Update(category);
                     await _context.SaveChangesAsync();
                 }
@@ -114,6 +121,7 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewBag.Kategoriler = new SelectList(_context.Categories, "Id", "Name");
             return View(category);
         }
 
@@ -143,6 +151,10 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
             var category = await _context.Categories.FindAsync(id);
             if (category != null)
             {
+                if (!string.IsNullOrEmpty(category.Image))
+                {
+                    FileHelper.FileRemover(category.Image, "/img/Categories/");
+                }
                 _context.Categories.Remove(category);
             }
 

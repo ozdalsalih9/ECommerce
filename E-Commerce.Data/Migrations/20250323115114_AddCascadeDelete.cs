@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace E_Commerce.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class AddCascadeDelete : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -153,21 +153,22 @@ namespace E_Commerce.Data.Migrations
                         name: "FK_Products_Categories_CategoryId",
                         column: x => x.CategoryId,
                         principalTable: "Categories",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.InsertData(
                 table: "AppUsers",
                 columns: new[] { "Id", "CreateDate", "Email", "IsActive", "IsAdmin", "Name", "Password", "Phone", "Surname", "UserGuid" },
-                values: new object[] { 1, new DateTime(2025, 3, 15, 1, 38, 35, 542, DateTimeKind.Local).AddTicks(7242), "ozdalsalih9@gmail.com", true, true, "Admin", "002255", null, "1", new Guid("7efa9fec-0118-46e0-b6f2-bd29e9078dc9") });
+                values: new object[] { 1, new DateTime(2025, 3, 23, 14, 51, 13, 217, DateTimeKind.Local).AddTicks(4590), "ozdalsalih9@gmail.com", true, true, "Admin", "002255", null, "1", new Guid("ac2d7fd4-76c6-42c5-bf13-024eaee22135") });
 
             migrationBuilder.InsertData(
                 table: "Categories",
                 columns: new[] { "Id", "CreateTime", "Description", "Image", "IsActive", "IsTopMenu", "Name", "OrderNo", "ParentId" },
                 values: new object[,]
                 {
-                    { 1, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, true, true, "Kadın", 1, 0 },
-                    { 2, new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), null, null, true, true, "Erkek", 2, 0 }
+                    { 1, new DateTime(2025, 3, 23, 14, 51, 13, 219, DateTimeKind.Local).AddTicks(8256), null, null, true, true, "Kadın", 1, 0 },
+                    { 2, new DateTime(2025, 3, 23, 14, 51, 13, 219, DateTimeKind.Local).AddTicks(9069), null, null, true, true, "Erkek", 2, 0 }
                 });
 
             migrationBuilder.CreateIndex(

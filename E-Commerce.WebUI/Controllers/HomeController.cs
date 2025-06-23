@@ -1,24 +1,42 @@
 using System.Diagnostics;
+using E_Commerce.Data;
 using E_Commerce.WebUI.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace E_Commerce.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly DatabaseContext _context;
+        public HomeController(DatabaseContext context)
         {
-            _logger = logger;
+            _context = context;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            return View();
+            var model = new HomePageViewModel
+            {
+                Sliders = await _context.Sliders.ToListAsync(),
+                News = await _context.News.ToListAsync(),
+                Products = await _context.Products
+                    .Include(p => p.ProductSizes)
+                        .ThenInclude(ps => ps.Size) // Beden bilgilerini include ediyoruz
+                    .Include(p => p.Category)       // Kategori bilgisi
+                    .Include(p => p.Brand)          // Marka bilgisi
+                    .Where(p => p.IsActive && p.IsHome) // Sadece aktif ve anasayfa ürünleri
+                    .OrderBy(p => p.OrderNo)       // Sýralama
+                    .ToListAsync()
+            };
+            return View(model);
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        public IActionResult ContactUs()
         {
             return View();
         }

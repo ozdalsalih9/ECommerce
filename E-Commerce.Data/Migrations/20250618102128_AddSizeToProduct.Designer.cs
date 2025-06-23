@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace E_Commerce.Data.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20250314223836_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250618102128_AddSizeToProduct")]
+    partial class AddSizeToProduct
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -77,14 +77,14 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 3, 15, 1, 38, 35, 542, DateTimeKind.Local).AddTicks(7242),
+                            CreateDate = new DateTime(2025, 6, 18, 13, 21, 28, 120, DateTimeKind.Local).AddTicks(1954),
                             Email = "ozdalsalih9@gmail.com",
                             IsActive = true,
                             IsAdmin = true,
                             Name = "Admin",
                             Password = "002255",
                             Surname = "1",
-                            UserGuid = new Guid("7efa9fec-0118-46e0-b6f2-bd29e9078dc9")
+                            UserGuid = new Guid("5ff4d349-21c1-4477-88bb-c4f18271b281")
                         });
                 });
 
@@ -162,7 +162,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2025, 6, 18, 13, 21, 28, 122, DateTimeKind.Local).AddTicks(6092),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Kadın",
@@ -172,7 +172,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreateTime = new DateTime(1, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            CreateTime = new DateTime(2025, 6, 18, 13, 21, 28, 122, DateTimeKind.Local).AddTicks(6958),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Erkek",
@@ -297,6 +297,9 @@ namespace E_Commerce.Data.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<int?>("SizeId")
+                        .HasColumnType("int");
+
                     b.Property<int>("Stock")
                         .HasColumnType("int");
 
@@ -306,7 +309,32 @@ namespace E_Commerce.Data.Migrations
 
                     b.HasIndex("CategoryId");
 
+                    b.HasIndex("SizeId");
+
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.Size", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("OrderNo")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sizes");
                 });
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Slider", b =>
@@ -346,11 +374,18 @@ namespace E_Commerce.Data.Migrations
 
                     b.HasOne("E_Commerse.Core.Entities.Category", "Category")
                         .WithMany("Products")
-                        .HasForeignKey("CategoryId");
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("E_Commerse.Core.Entities.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeId");
 
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
+
+                    b.Navigation("Size");
                 });
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Brand", b =>
