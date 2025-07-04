@@ -68,5 +68,7 @@ namespace E_Commerse.Core.Entities
 
         [NotMapped]
         public List<int> SelectedColorIds { get; set; } = new List<int>();
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
+
     }
 }

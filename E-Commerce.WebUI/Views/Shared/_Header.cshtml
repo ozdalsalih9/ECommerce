@@ -1,28 +1,50 @@
-﻿<style>
+﻿@using Azure.Core
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authorization
+@using System.Security.Claims
+<style>
+    :root {
+        --primary-color: #5c3d74;
+        --primary-light: #8e44ad;
+        --primary-dark: #4a2f5c;
+        --accent-color: #d63384;
+        --text-color: #2c2c2c;
+        --light-bg: #f9f5fc;
+        --white: #ffffff;
+        --gray: #ebedee;
+    }
+
+    /* Navbar Genel Stili */
     .navbar {
-        font-family: 'Segoe UI', sans-serif;
-        background: linear-gradient(to right, #fdfbfb, #ebedee);
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background: var(--white);
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-        transition: background-color 0.3s ease-in-out;
+        transition: all 0.3s ease-in-out;
+        padding: 0.5rem 1rem;
     }
 
     .navbar-brand {
         font-size: 1.7rem;
-        font-weight: bold;
-        color: #5c3d74 !important;
-        transition: color 0.3s ease;
+        font-weight: 700;
+        color: var(--primary-color) !important;
+        transition: all 0.3s ease;
+        letter-spacing: 0.5px;
     }
 
         .navbar-brand:hover {
-            color: #8e44ad !important;
+            color: var(--primary-light) !important;
+            transform: translateY(-1px);
         }
 
+    /* Nav Link Stilleri */
     .nav-link {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
         font-weight: 500;
-        color: #333 !important;
-        transition: color 0.2s ease-in-out;
+        color: var(--text-color) !important;
+        padding: 0.5rem 1rem !important;
+        margin: 0 0.25rem;
         position: relative;
+        transition: all 0.3s ease;
     }
 
         .nav-link::after {
@@ -32,69 +54,262 @@
             left: 50%;
             width: 0;
             height: 2px;
-            background-color: #8e44ad;
-            transition: all 0.3s ease-in-out;
+            background: var(--primary-light);
+            transition: all 0.3s ease;
             transform: translateX(-50%);
         }
 
         .nav-link:hover {
-            color: #8e44ad !important;
+            color: var(--primary-light) !important;
         }
 
             .nav-link:hover::after {
                 width: 100%;
             }
 
-    .navbar-toggler {
-        border: none;
+    /* Buton Stilleri */
+    .btn-outline-primary {
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+        border-width: 2px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+        .btn-outline-primary:hover {
+            color: var(--white);
+            background-color: var(--primary-color);
+            box-shadow: 0 4px 12px rgba(92, 61, 116, 0.25);
+            transform: translateY(-1px);
+        }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            box-shadow: 0 6px 15px rgba(92, 61, 116, 0.3);
+            transform: translateY(-1px);
+        }
+
+    .search-box button i {
         transition: transform 0.3s ease;
     }
 
-        .navbar-toggler:hover {
-            transform: rotate(90deg);
+    .search-box button:hover i {
+        transform: scale(1.1);
+    }
+    /* Arama Kutusu */
+    .search-box {
+        display: flex;
+        align-items: center;
+        background: var(--light-bg);
+        border-radius: 30px;
+        padding: 0.4rem 1rem;
+        transition: all 0.3s ease;
+        border: 1px solid var(--gray);
+        width: 220px; /* Sabit genişlik */
+    }
+
+        .search-box:focus-within {
+            box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+            border-color: var(--primary-light);
         }
 
-    .navbar-collapse {
+        .search-box input {
+            border: none;
+            background: transparent;
+            outline: none;
+            padding: 0.3rem 0.5rem;
+            width: 100%; /* Tüm alanı kaplasın */
+            font-size: 0.9rem;
+        }
+
+        .search-box button {
+            background: transparent;
+            color: var(--primary-color);
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-left: 0.5rem;
+        }
+
+            .search-box button:hover {
+                color: var(--primary-dark);
+                transform: scale(1.1);
+            }
+
+    /* Responsive Ayarlar */
+    @@media (max-width: 992px) {
+        .search-box {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+    }
+
+    /* Dropdown Menü */
+    .dropdown-menu {
+        border: none;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        padding: 0.5rem 0;
+        margin-top: 0.5rem;
+    }
+
+    .dropdown-item {
+        padding: 0.5rem 1.5rem;
+        transition: all 0.2s ease;
+        color: var(--text-color);
+    }
+
+        .dropdown-item:hover {
+            background: var(--light-bg);
+            color: var(--primary-color);
+        }
+
+        .dropdown-item i {
+            width: 20px;
+            text-align: center;
+            margin-right: 0.75rem;
+            color: var(--primary-color);
+        }
+
+    /* Favori Butonu */
+    .fa-heart {
+        color: var(--accent-color);
         transition: all 0.3s ease;
     }
 
-    /* Categories özel stilleri */
-    .category-link {
-        font-size: 1.05rem;
-        font-weight: 500;
-        padding: 0.5rem 1rem;
-        color: #444 !important;
-        transition: all 0.3s ease-in-out;
+    #favoriteCountBadge {
+        background-color: var(--accent-color) !important;
+        font-size: 0.65rem !important;
+        padding: 0.35em 0.5em !important;
     }
 
-        .category-link:hover {
-            color: #8e44ad !important;
-            background-color: #f3f1f9;
-            border-radius: 6px;
+    /* Responsive Ayarlar */
+    @@media (max-width: 992px) {
+        .navbar-collapse {
+            padding: 1rem 0;
         }
+
+        .nav-link {
+            padding: 0.75rem 1rem !important;
+            margin: 0.25rem 0;
+        }
+
+        .search-box {
+            margin: 1rem 0;
+            width: 100%;
+        }
+    }
 </style>
 
 <header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Şile Bezim</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+    <nav class="navbar navbar-expand-lg navbar-light bg-white">
+        <div class="container">
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">
+                <i class="fas fa-tshirt me-2"></i>Selam Tekstil
+            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
-                    <li class="nav-item">
-                        <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Anasayfa</a>
-                    </li>
 
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Home" asp-action="Index">Anasayfa</a>
+                    </li>
                     @await Component.InvokeAsync("Categories")
-
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="ContactUs">İletişim</a>
+                        <a class="nav-link" asp-controller="Home" asp-action="ContactUs">İletişim</a>
                     </li>
+                </ul>
+
+                <form class="search-box me-3" method="get" asp-controller="Home" asp-action="Index">
+                    <input type="text" name="q" placeholder="Ürün ara..." value="@ViewData["SearchQuery"]">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+
+                <ul class="navbar-nav">
+                    @if (User.Identity?.IsAuthenticated ?? false)
+                    {
+                        <li class="nav-item me-2">
+                            <a class="nav-link position-relative" asp-controller="Favorite" asp-action="Index">
+                                <i class="fas fa-heart me-1"></i>
+                                <span id="favoriteCountBadge" class="position-absolute top-25 start-100 translate-middle badge rounded-pill" style="display:none;"></span>
+                            </a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i> @User.Identity.Name
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profilim</a></li>
+                                <li><a class="dropdown-item" asp-controller="Favorite" asp-action="Index"><i class="fas fa-heart me-2"></i>Favorilerim</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li>
+                                    <form method="post" asp-controller="Account" asp-action="SignOut">
+                                        <button type="submit" class="dropdown-item">
+                                            <i class="fas fa-sign-out-alt me-2"></i>Çıkış Yap
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item me-2">
+                            <a class="btn btn-outline-primary" asp-controller="Account" asp-action="SignIn">
+                                <i class="fas fa-sign-in-alt me-1"></i> Giriş Yap
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-primary" asp-controller="Account" asp-action="SignUp">
+                                <i class="fas fa-user-plus me-1"></i> Kayıt Ol
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>
     </nav>
 </header>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Favori sayısını yükle
+        if ('@User.Identity?.IsAuthenticated' === 'True' && document.getElementById('favoriteCountBadge')) {
+            fetch('/Favorite/GetFavoriteCount')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('favoriteCountBadge');
+                    if (data.count > 0) {
+                        badge.textContent = data.count;
+                        badge.style.display = 'flex';
+                    }
+                });
+        }
+
+        // Navbar scroll efekti
+        const navbar = document.querySelector('.navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.style.boxShadow = '0 2px 10px rgba(0,0,0,0.1)';
+                navbar.style.padding = '0.25rem 1rem';
+            } else {
+                navbar.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+                navbar.style.padding = '0.5rem 1rem';
+            }
+        });
+    });
+</script>

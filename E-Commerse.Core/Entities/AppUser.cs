@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace E_Commerse.Core.Entities
         [Display(Name = "Mail Adresi")]
         public string Email { get; set; }
         [Display(Name = "Şifre")]
+
         public string Password { get; set; }
         [Display(Name = "Telefon")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Telefon numarası sadece 10 rakamdan oluşmalıdır.")]
@@ -30,5 +32,7 @@ namespace E_Commerse.Core.Entities
         public DateTime CreateDate { get; set; } = DateTime.Now;
         [ScaffoldColumn(false)]
         public Guid? UserGuid { get; set; } = Guid.NewGuid();
+
+        public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
     }
 }

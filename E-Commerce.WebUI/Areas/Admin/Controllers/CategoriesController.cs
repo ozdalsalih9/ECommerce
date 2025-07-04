@@ -1,6 +1,7 @@
 ﻿using E_Commerce.Data;
 using E_Commerce.WebUI.Utils;
 using E_Commerse.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +10,7 @@ using System.Drawing.Drawing2D;
 namespace E_Commerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly DatabaseContext _context;

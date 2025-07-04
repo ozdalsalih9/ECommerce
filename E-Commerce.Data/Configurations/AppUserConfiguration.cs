@@ -22,8 +22,8 @@ namespace E_Commerce.Data.Configurations
                                           .HasColumnType("varchar(50)")
                                           .HasMaxLength(50);
             builder.Property(x => x.Password).IsRequired()
-                                             .HasColumnType("nvarchar(50)")
-                                             .HasMaxLength(50);
+                                             .HasColumnType("nvarchar(256)")
+                                             .HasMaxLength(256);
             builder.Property(x => x.Phone).HasColumnType("varchar(15)")
                                           .HasMaxLength(15);
 

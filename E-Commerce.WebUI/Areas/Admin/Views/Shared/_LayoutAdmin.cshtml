@@ -19,6 +19,8 @@
                 <div class="container-fluid px-4">
                     <h1 class="mt-4">@ViewData["Title"] - Admin</h1>
                     @RenderBody()
+                    <form id="admin-logout-form" method="post" asp-area="Admin" asp-controller="Account" asp-action="Logout" style="display:none;"></form>
+
                 </div>
             </main>
         </div>

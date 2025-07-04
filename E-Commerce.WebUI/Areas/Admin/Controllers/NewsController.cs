@@ -3,10 +3,12 @@ using Microsoft.EntityFrameworkCore;
 using E_Commerce.Data;
 using E_Commerse.Core.Entities;
 using E_Commerce.WebUI.Utils;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Commerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class NewsController : Controller
     {
         private readonly DatabaseContext _context;

@@ -2,6 +2,8 @@
 using E_Commerce.Data;
 using E_Commerse.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 
 namespace E_Commerce.WebUI.Controllers
 {
@@ -43,7 +45,9 @@ namespace E_Commerce.WebUI.Controllers
                 .Include(p => p.ProductSizes)
                     .ThenInclude(ps => ps.Size)
                 .Include(p => p.ProductColors)
-                    .ThenInclude(pc => pc.Color)  // Burayı ekledim
+                    .ThenInclude(pc => pc.Color)
+                .Include(p => p.ProductColors)
+                    .ThenInclude(pc => pc.ProductColorImages) // Renk resimleri dahil
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
@@ -54,10 +58,20 @@ namespace E_Commerce.WebUI.Controllers
                 .Take(4)
                 .ToListAsync();
 
+            if (User.Identity.IsAuthenticated)
+            {
+                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                ViewBag.IsFavorite = await _context.Favorites
+                    .AnyAsync(f => f.AppUserId == userId && f.ProductId == id);
+            }
+
             ViewBag.RelatedProducts = relatedProducts;
+
 
             return View(product);
         }
+
+
 
 
         // GET: Product/Category/5 (Products by Category)

@@ -1,0 +1,31 @@
+﻿using E_Commerce.Data;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+
+namespace E_Commerce.WebUI.Controllers
+{
+    public class CategoriesController : Controller
+    {
+        private readonly DatabaseContext _context;
+        public CategoriesController(DatabaseContext context)
+        {
+            _context = context;
+        }
+        public async Task<IActionResult> IndexAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var category = await _context.Categories.Include(c => c.Products)
+                .FirstOrDefaultAsync(m => m.Id == id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+
+            return View(category);
+        }
+    }
+}

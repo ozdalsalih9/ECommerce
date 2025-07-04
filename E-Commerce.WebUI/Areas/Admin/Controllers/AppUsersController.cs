@@ -7,10 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using E_Commerce.Data;
 using E_Commerse.Core.Entities;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Commerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
+
     public class AppUsersController : Controller
     {
         private readonly DatabaseContext _context;

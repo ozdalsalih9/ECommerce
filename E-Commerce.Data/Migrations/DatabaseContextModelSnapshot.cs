@@ -17,7 +17,7 @@ namespace E_Commerce.Data.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.2")
+                .HasAnnotation("ProductVersion", "8.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -51,8 +51,8 @@ namespace E_Commerce.Data.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("Phone")
                         .HasMaxLength(15)
@@ -74,14 +74,27 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 6, 21, 20, 32, 59, 224, DateTimeKind.Local).AddTicks(290),
+                            CreateDate = new DateTime(2025, 7, 1, 19, 50, 55, 145, DateTimeKind.Local).AddTicks(8859),
                             Email = "ozdalsalih9@gmail.com",
                             IsActive = true,
                             IsAdmin = true,
                             Name = "Admin",
                             Password = "002255",
                             Surname = "1",
-                            UserGuid = new Guid("f4e87935-694d-4506-becd-7b7a5a69ff1f")
+                            UserGuid = new Guid("58b09b78-d059-4e05-baa6-662cf54f66fa")
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CreateDate = new DateTime(2025, 7, 1, 19, 50, 55, 146, DateTimeKind.Local).AddTicks(8322),
+                            Email = "admin@admin.com",
+                            IsActive = true,
+                            IsAdmin = true,
+                            Name = "Admin",
+                            Password = "AQAAAAEAACcQAAAAEPhLrFcyyYp7mJoZJjCnWnK5z6V8y96v9xv91w+uUuYmndT+Lv8IqydcZcO4Tr9H5A==",
+                            Phone = "0000000000",
+                            Surname = "User",
+                            UserGuid = new Guid("64129de7-6f2d-4f5f-99f1-cf688880cb8e")
                         });
                 });
 
@@ -159,7 +172,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateTime = new DateTime(2025, 6, 21, 20, 32, 59, 226, DateTimeKind.Local).AddTicks(4545),
+                            CreateTime = new DateTime(2025, 7, 1, 19, 50, 55, 146, DateTimeKind.Local).AddTicks(1237),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Kadın",
@@ -169,7 +182,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreateTime = new DateTime(2025, 6, 21, 20, 32, 59, 226, DateTimeKind.Local).AddTicks(5452),
+                            CreateTime = new DateTime(2025, 7, 1, 19, 50, 55, 146, DateTimeKind.Local).AddTicks(1243),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Erkek",
@@ -419,6 +432,33 @@ namespace E_Commerce.Data.Migrations
                     b.ToTable("Contacts");
                 });
 
+            modelBuilder.Entity("E_Commerse.Core.Entities.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("AddedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("AppUserId", "ProductId")
+                        .IsUnique();
+
+                    b.ToTable("Favorites");
+                });
+
             modelBuilder.Entity("E_Commerse.Core.Entities.News", b =>
                 {
                     b.Property<int>("Id")
@@ -648,6 +688,25 @@ namespace E_Commerce.Data.Migrations
                     b.ToTable("Sliders");
                 });
 
+            modelBuilder.Entity("E_Commerse.Core.Entities.Favorite", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.AppUser", "AppUser")
+                        .WithMany("Favorites")
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Commerse.Core.Entities.Product", "Product")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("E_Commerse.Core.Entities.Product", b =>
                 {
                     b.HasOne("E_Commerse.Core.Entities.Brand", "Brand")
@@ -724,6 +783,11 @@ namespace E_Commerce.Data.Migrations
                     b.Navigation("Size");
                 });
 
+            modelBuilder.Entity("E_Commerse.Core.Entities.AppUser", b =>
+                {
+                    b.Navigation("Favorites");
+                });
+
             modelBuilder.Entity("E_Commerse.Core.Entities.Brand", b =>
                 {
                     b.Navigation("Products");
@@ -736,6 +800,8 @@ namespace E_Commerce.Data.Migrations
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Product", b =>
                 {
+                    b.Navigation("Favorites");
+
                     b.Navigation("ProductColors");
 
                     b.Navigation("ProductImages");

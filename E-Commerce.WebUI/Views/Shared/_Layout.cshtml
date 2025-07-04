@@ -3,23 +3,261 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Şile Bezim</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/E_Commerce.WebUI.styles.css" asp-append-version="true" />
-</head>
-<body>
-    <partial name="_Header"/>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
+    <title>@ViewData["Title"] - Selam Tekstil</title>
 
- <partial name="_Footer"/>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
+    <!-- Favicon -->
+    <link rel="icon" href="~/favicon.ico" type="image/x-icon">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+
+    <style>
+        :root {
+            --primary-color: #5c3d74;
+            --primary-light: #8e44ad;
+            --primary-dark: #4a2f5c;
+            --accent-color: #d63384;
+            --light-bg: #f9f5fc;
+            --white: #ffffff;
+            --text-color: #333333;
+            --border-radius: 8px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            color: var(--text-color);
+            background-color: #f8f9fa;
+            line-height: 1.6;
+        }
+
+        /* Container Adjustments */
+        .container {
+            max-width: 1200px;
+            padding-left: 2rem;
+            padding-right: 2rem;
+        }
+
+        /* Navbar Styling */
+        .navbar {
+            transition: all 0.3s ease;
+            background-color: var(--white);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 0.75rem 0;
+        }
+
+            .navbar.scrolled {
+                background-color: rgba(255, 255, 255, 0.98) !important;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+                padding: 0.5rem 0 !important;
+            }
+
+            .navbar.hidden {
+                transform: translateY(-100%);
+            }
+
+        /* Main Content Area */
+        main {
+            padding: 2rem 0;
+            margin-top: 0px;
+            margin-bottom: 3px;/* boşluk olmasın */
+        }
+
+        /* Slider Styling */
+        .slider-container {
+            max-width: 1200px;
+            margin: 0 auto 2rem auto;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .slider-image {
+            height: 450px;
+            object-fit: cover;
+            width: 100%;
+        }
+
+        /* Section Styling */
+        .section {
+            margin-bottom: 3rem;
+            padding: 0 1rem;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 0.75rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+            .section-title:after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 60px;
+                height: 3px;
+                background: var(--primary-light);
+            }
+
+        /* Back to Top Button */
+        #backToTop {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-color);
+            border: none;
+        }
+
+            #backToTop:hover {
+                background-color: var(--primary-dark);
+                transform: translateY(-3px);
+            }
+
+        /* Responsive Adjustments */
+        @@media (max-width: 992px) {
+            .container
+
+        {
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+
+        .slider-image {
+            height: 350px;
+        }
+
+        .navbar {
+            padding: 0.5rem 0;
+        }
+
+        }
+
+        @@media (max-width: 768px) {
+            .container
+
+        {
+            padding-left: 1rem;
+            padding-right: 1rem;
+        }
+
+        .slider-image {
+            height: 300px;
+        }
+
+        main {
+            margin-top: 66px;
+            padding: 1.5rem 0;
+        }
+
+        }
+    </style>
+
+    @await RenderSectionAsync("Head", required: false)
+</head>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Header -->
+    <partial name="_Header" />
+
+    <!-- Main Content -->
+    <main class="flex-grow-1">
+        <div class="container">
+            @RenderBody()
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <partial name="_Footer" />
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="btn btn-primary rounded-circle shadow" title="Yukarı Çık">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- JavaScript Libraries -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Custom Scripts -->
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script>
+
+            toastr.options = {
+            "closeButton": true,
+            "progressBar": true,
+            "positionClass": "toast-bottom-right",
+            "timeOut": "3000"
+        };
+        // Navbar Scroll Behavior
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbar = document.querySelector('.navbar');
+            let lastScroll = 0;
+
+            window.addEventListener('scroll', function() {
+                const currentScroll = window.pageYOffset;
+
+                // Navbar show/hide logic
+                if (currentScroll <= 100) {
+                    navbar.classList.remove('hidden');
+                    navbar.classList.remove('scrolled');
+                } else if (currentScroll > lastScroll && currentScroll > 100) {
+                    // Scroll down
+                    navbar.classList.add('hidden');
+                } else {
+                    // Scroll up
+                    navbar.classList.remove('hidden');
+                    navbar.classList.add('scrolled');
+                }
+
+                lastScroll = currentScroll;
+            });
+
+            // Back to Top Button
+            const backToTopButton = document.getElementById('backToTop');
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    backToTopButton.style.opacity = '1';
+                    backToTopButton.style.visibility = 'visible';
+                } else {
+                    backToTopButton.style.opacity = '0';
+                    backToTopButton.style.visibility = 'hidden';
+                }
+            });
+
+            backToTopButton.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

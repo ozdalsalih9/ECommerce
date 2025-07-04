@@ -1,0 +1,17 @@
+﻿@model Category
+@using Microsoft.EntityFrameworkCore
+
+@{
+    ViewData["Title"] = Model.Name;
+}
+
+<div>
+    <hr />
+    <h2 class="text-center">@Model.Name Ürünleri</h2>
+    <div class="row">
+        @foreach (var item in Model.Products)
+        {
+            <partial name="_ProductView" model="item" />
+        }
+    </div>
+</div>

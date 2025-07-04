@@ -9,10 +9,12 @@ using E_Commerce.Data;
 using E_Commerse.Core.Entities;
 using E_Commerce.WebUI.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 
 namespace E_Commerce.WebUI.Areas.Admin.Controllers
 {
     [Area("Admin")]
+    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         private readonly DatabaseContext _context;
@@ -46,35 +48,34 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(
-            Product product,
-            List<IFormFile> Images,
-            string[] sizeNames,
-            int[] stocks,
-            List<int> selectedColorIds,
-            Dictionary<int, List<IFormFile>> colorImages)
+    Product product,
+    List<IFormFile> Images,
+    string[] sizeNames,
+    int[] stocks,
+    List<int> selectedColorIds)
         {
             if (ModelState.IsValid)
             {
                 try
                 {
-                    // Save product to get ID first
+                    // 1. Ürünü kaydet
                     _context.Add(product);
-                    await _context.SaveChangesAsync();
+                    await _context.SaveChangesAsync(); // product.Id oluşur
 
-                    // Process main image
+                    // 2. Ana resim
                     if (product.ImageFile != null)
                     {
                         product.Image = await FileHelper.FileLoaderAsync(product.ImageFile);
+                        _context.Update(product); // güncelleme yapılmalı
+                        await _context.SaveChangesAsync();
                     }
 
-                    // Process additional images
+                    // 3. Ek resimler
                     if (Images != null && Images.Count > 0)
                     {
-                        product.ProductImages = new List<ProductImage>();
-                        var imagePaths = await FileHelper.MultipleFileLoaderAsync(Images);
-                        foreach (var imagePath in imagePaths)
+                        foreach (var imagePath in await FileHelper.MultipleFileLoaderAsync(Images))
                         {
-                            product.ProductImages.Add(new ProductImage
+                            _context.ProductImages.Add(new ProductImage
                             {
                                 ProductId = product.Id,
                                 ImagePath = imagePath
@@ -82,38 +83,38 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                         }
                     }
 
+                    // 4. Beden ve stok işle
                     ProcessSizes(product, sizeNames, stocks);
 
-                    // Process colors with validation for color IDs
+                    // 5. Renk ve renk resimleri
                     if (selectedColorIds != null && selectedColorIds.Count > 0)
                     {
-                        product.ProductColors = new List<ProductColor>();
-                        foreach (var colorId in selectedColorIds.Where(id => id > 0 && id <= 25))
+                        foreach (int colorId in selectedColorIds)
                         {
                             var productColor = new ProductColor
                             {
                                 ProductId = product.Id,
-                                ColorId = colorId,
-                                ProductColorImages = new List<ProductColorImage>()
+                                ColorId = colorId
                             };
 
-                            if (colorImages != null && colorImages.ContainsKey(colorId) && colorImages[colorId] != null)
-                            {
-                                var savedPaths = await FileHelper.SaveColorImagesAsync(
-                                    colorImages[colorId],
-                                    product.Id,
-                                    colorId);
+                            _context.ProductColors.Add(productColor);
+                            await _context.SaveChangesAsync(); // ID oluşsun
 
-                                foreach (var path in savedPaths)
+                            // colorImages[3] gibi adla gelenleri yakala
+                            var colorFiles = Request.Form.Files
+                                .Where(f => f.Name == $"colorImages[{colorId}]")
+                                .ToList();
+
+                            var savedPaths = await FileHelper.SaveColorImagesAsync(colorFiles, product.Id, colorId);
+
+                            foreach (var path in savedPaths)
+                            {
+                                _context.ProductColorImages.Add(new ProductColorImage
                                 {
-                                    productColor.ProductColorImages.Add(new ProductColorImage
-                                    {
-                                        ProductColorId = productColor.Id,
-                                        ImageUrl = path
-                                    });
-                                }
+                                    ProductColorId = productColor.Id,
+                                    ImageUrl = path
+                                });
                             }
-                            product.ProductColors.Add(productColor);
                         }
                     }
 
@@ -122,13 +123,14 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", $"Error creating product: {ex.Message}");
+                    ModelState.AddModelError("", $"Ürün oluşturulurken hata: {ex.Message}");
                 }
             }
 
             await PopulateDropdowns(product);
             return View(product);
         }
+
 
         // GET: Admin/Products/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -151,23 +153,28 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
 
             return View(product);
         }
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(
-            int id,
-            Product product,
-            IFormFile ImageFile,
-            bool cbResmiSil = false,
-            List<IFormFile> Images = null,
-            int[] sizeIds = null,
-            int[] stocks = null,
-            List<int> selectedColorIds = null,
-            Dictionary<int, List<IFormFile>> colorImages = null)
+     int id,
+     Product product,
+     IFormFile ImageFile,
+     bool cbResmiSil = false,
+     List<IFormFile> Images = null,
+     int[] sizeIds = null,
+     int[] stocks = null,
+     List<int> selectedColorIds = null)
         {
-            if (id != product.Id) return NotFound();
+            if (id != product.Id)
+                return NotFound();
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+            {
+                await PopulateDropdowns(product);
+                return View(product);
+            }
+
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
@@ -178,95 +185,110 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                             .ThenInclude(pc => pc.ProductColorImages)
                         .FirstOrDefaultAsync(p => p.Id == id);
 
-                    if (existingProduct == null) return NotFound();
+                    if (existingProduct == null)
+                        return NotFound();
 
-                    await ProcessMainImage(existingProduct, product, ImageFile, cbResmiSil);
+                    // 1. Ana resmi güncelle (sadece yeni resim yüklendiyse veya silme seçeneği işaretlendiyse)
+                    if (ImageFile != null || cbResmiSil)
+                    {
+                        await ProcessMainImage(existingProduct, product, ImageFile, cbResmiSil);
+                    }
 
+                    // 2. Ek resimleri ekle (zorunlu değil)
                     if (Images != null && Images.Count > 0)
                     {
-                        var imagePaths = await FileHelper.MultipleFileLoaderAsync(Images);
-                        foreach (var imagePath in imagePaths)
+                        var paths = await FileHelper.MultipleFileLoaderAsync(Images);
+                        foreach (var path in paths)
                         {
                             existingProduct.ProductImages.Add(new ProductImage
                             {
                                 ProductId = existingProduct.Id,
-                                ImagePath = imagePath
+                                ImagePath = path
                             });
                         }
                     }
 
+                    // 3. Beden bilgilerini güncelle
                     _context.ProductSizes.RemoveRange(existingProduct.ProductSizes);
                     if (sizeIds != null && stocks != null && sizeIds.Length == stocks.Length)
                     {
                         for (int i = 0; i < sizeIds.Length; i++)
                         {
-                            if (sizeIds[i] > 0)
-                            {
-                                existingProduct.ProductSizes.Add(new ProductSize
-                                {
-                                    ProductId = existingProduct.Id,
-                                    SizeId = sizeIds[i],
-                                    Stock = stocks[i]
-                                });
-                            }
-                        }
-                    }
-
-                    // Process colors
-                    foreach (var productColor in existingProduct.ProductColors.ToList())
-                    {
-                        foreach (var image in productColor.ProductColorImages.ToList())
-                        {
-                            FileHelper.FileRemover(image.ImageUrl, $"/img/Products/ColorImages/P-{existingProduct.Id}/C-{productColor.ColorId}/");
-                            _context.ProductColorImages.Remove(image);
-                        }
-                        _context.ProductColors.Remove(productColor);
-                    }
-
-                    if (selectedColorIds != null && selectedColorIds.Count > 0)
-                    {
-                        existingProduct.ProductColors = new List<ProductColor>();
-                        foreach (var colorId in selectedColorIds)
-                        {
-                            var productColor = new ProductColor
+                            existingProduct.ProductSizes.Add(new ProductSize
                             {
                                 ProductId = existingProduct.Id,
-                                ColorId = colorId,
-                                ProductColorImages = new List<ProductColorImage>()
-                            };
-
-                            if (colorImages != null && colorImages.ContainsKey(colorId) && colorImages[colorId] != null)
-                            {
-                                var savedPaths = await FileHelper.SaveColorImagesAsync(
-                                    colorImages[colorId],
-                                    existingProduct.Id,
-                                    colorId);
-
-                                foreach (var path in savedPaths)
-                                {
-                                    productColor.ProductColorImages.Add(new ProductColorImage
-                                    {
-                                        ProductColorId = productColor.Id,
-                                        ImageUrl = path
-                                    });
-                                }
-                            }
-                            existingProduct.ProductColors.Add(productColor);
+                                SizeId = sizeIds[i],
+                                Stock = stocks[i]
+                            });
                         }
                     }
 
+                    // 4. Renkleri ve renk resimlerini güncelle
+                    await UpdateProductColors(existingProduct, selectedColorIds);
+
+                    // 5. Diğer alanları güncelle
                     UpdateProductProperties(existingProduct, product);
+
                     await _context.SaveChangesAsync();
+                    await transaction.CommitAsync();
+
+                    TempData["SuccessMessage"] = "Ürün başarıyla güncellendi.";
                     return RedirectToAction(nameof(Index));
                 }
                 catch (Exception ex)
                 {
-                    ModelState.AddModelError("", "Error: " + ex.Message);
+                    await transaction.RollbackAsync();
+                    ModelState.AddModelError("", $"Ürün güncellenirken bir hata oluştu: {ex.Message}");
+                    await PopulateDropdowns(product);
+                    return View(product);
                 }
             }
+        }
+        private async Task UpdateProductColors(Product existingProduct, List<int> selectedColorIds)
+        {
+            // Önce mevcut renkleri ve resimleri temizle
+            foreach (var productColor in existingProduct.ProductColors.ToList())
+            {
+                foreach (var image in productColor.ProductColorImages.ToList())
+                {
+                    FileHelper.FileRemover(image.ImageUrl, $"/img/Products/ColorImages/P-{existingProduct.Id}/C-{productColor.ColorId}/");
+                    _context.ProductColorImages.Remove(image);
+                }
+                FileHelper.RemoveColorFolder(existingProduct.Id, productColor.ColorId);
+                _context.ProductColors.Remove(productColor);
+            }
 
-            await PopulateDropdowns(product);
-            return View(product);
+            // Yeni renkleri ekle
+            if (selectedColorIds != null && selectedColorIds.Count > 0)
+            {
+                var formFiles = Request.Form.Files;
+                existingProduct.ProductColors = new List<ProductColor>();
+
+                foreach (var colorId in selectedColorIds)
+                {
+                    var productColor = new ProductColor
+                    {
+                        ProductId = existingProduct.Id,
+                        ColorId = colorId,
+                        ProductColorImages = new List<ProductColorImage>()
+                    };
+
+                    var colorFiles = formFiles.Where(f => f.Name == $"colorImages[{colorId}]").ToList();
+                    if (colorFiles.Any())
+                    {
+                        var savedPaths = await FileHelper.SaveColorImagesAsync(colorFiles, existingProduct.Id, colorId);
+                        foreach (var path in savedPaths)
+                        {
+                            productColor.ProductColorImages.Add(new ProductColorImage
+                            {
+                                ImageUrl = path
+                            });
+                        }
+                    }
+
+                    existingProduct.ProductColors.Add(productColor);
+                }
+            }
         }
 
         // GET: Admin/Products/Delete/5
@@ -348,6 +370,7 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
             ViewData["BrandId"] = new SelectList(_context.Brands, "Id", "Name", product?.BrandId);
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", product?.CategoryId);
             ViewData["Sizes"] = new SelectList(_context.Sizes, "Id", "Name");
+            ViewData["Colors"] = new SelectList(await _context.Colors.ToListAsync(), "Id", "Name");
 
             var colors = await _context.Colors
                 .Select(c => new { value = c.Id, text = c.Name })
@@ -384,27 +407,77 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                 }
             }
         }
-
         private async Task ProcessMainImage(Product existingProduct, Product newProduct, IFormFile imageFile, bool deleteImage)
         {
             if (deleteImage)
             {
+                // Resmi sil
                 if (!string.IsNullOrEmpty(existingProduct.Image))
                 {
-                    FileHelper.FileRemover(existingProduct.Image);
-                    existingProduct.Image = string.Empty;
+                    FileHelper.FileRemover(existingProduct.Image, "/img/Products/MainImage/");
+                    existingProduct.Image = null;
                 }
             }
-            else if (imageFile != null)
+            else if (imageFile != null && imageFile.Length > 0)
             {
+                // Yeni resim yükle
                 if (!string.IsNullOrEmpty(existingProduct.Image))
                 {
-                    FileHelper.FileRemover(existingProduct.Image);
+                    FileHelper.FileRemover(existingProduct.Image, "/img/Products/MainImage/");
                 }
-                existingProduct.Image = await FileHelper.FileLoaderAsync(imageFile);
+
+                var imagePath = await FileHelper.FileLoaderAsync(imageFile);
+                existingProduct.Image = imagePath;
+            }
+            // Hiçbir şey yapılmazsa mevcut resim korunur
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteProductImage([FromBody] int id)
+        {
+            var image = await _context.ProductImages.FindAsync(id);
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                FileHelper.FileRemover(image.ImagePath, "/img/Products/OtherImages/");
+                _context.ProductImages.Remove(image);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Resim silinirken hata oluştu: {ex.Message}");
             }
         }
 
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteColorImage(int id)
+        {
+            var image = await _context.ProductColorImages.FindAsync(id);
+            if (image == null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                // Resmi fiziksel olarak sil
+                FileHelper.FileRemover(image.ImageUrl);
+
+                _context.ProductColorImages.Remove(image);
+                await _context.SaveChangesAsync();
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Resim silinirken hata oluştu: {ex.Message}");
+            }
+        }
         private void UpdateProductProperties(Product existingProduct, Product newProduct)
         {
             existingProduct.Name = newProduct.Name;

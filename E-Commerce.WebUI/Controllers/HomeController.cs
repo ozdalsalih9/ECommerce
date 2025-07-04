@@ -14,23 +14,39 @@ namespace E_Commerce.WebUI.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? q)
         {
+            var productsQuery = _context.Products
+                .Include(p => p.ProductSizes)
+                    .ThenInclude(ps => ps.Size)
+                .Include(p => p.Category)
+                .Include(p => p.Brand)
+                .Where(p => p.IsActive && p.IsHome);
+
+            if (!string.IsNullOrWhiteSpace(q))
+            {
+                productsQuery = productsQuery
+                    .Where(p => p.Name.Contains(q) || p.Description.Contains(q));
+            }
+
+            ViewData["SearchQuery"] = q; // Arama terimini view'a gönderiyoruz
+
             var model = new HomePageViewModel
             {
                 Sliders = await _context.Sliders.ToListAsync(),
-                News = await _context.News.ToListAsync(),
-                Products = await _context.Products
-                    .Include(p => p.ProductSizes)
-                        .ThenInclude(ps => ps.Size) // Beden bilgilerini include ediyoruz
-                    .Include(p => p.Category)       // Kategori bilgisi
-                    .Include(p => p.Brand)          // Marka bilgisi
-                    .Where(p => p.IsActive && p.IsHome) // Sadece aktif ve anasayfa ürünleri
-                    .OrderBy(p => p.OrderNo)       // Sýralama
+                News = await _context.News
+    .Where(n => n.IsActive)
+    .OrderByDescending(n => n.CreateTime)
+    .ToListAsync(),
+                Products = await productsQuery
+                    .OrderBy(p => p.OrderNo)
                     .ToListAsync()
             };
+
             return View(model);
         }
+
+
 
         public IActionResult Privacy()
         {

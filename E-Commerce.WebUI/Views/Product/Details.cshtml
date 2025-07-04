@@ -13,6 +13,34 @@
         --hover-bg: #f1e8f9;
     }
 
+    .favorite-section {
+        padding: 0.5rem 0;
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        margin: 1rem 0;
+    }
+
+    #favoriteToggle {
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+    }
+
+        #favoriteToggle i {
+            transition: transform 0.3s ease;
+        }
+
+        #favoriteToggle:hover i {
+            transform: scale(1.2);
+        }
+
+        #favoriteToggle.btn-danger {
+            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
+        }
+
+    #favoriteStatusMessage {
+        display: none;
+    }
     .product-detail-container {
         max-width: 1200px;
         margin: 2rem auto;
@@ -288,6 +316,8 @@
             height: 60px;
         }
     }
+
+
 </style>
 
 <div class="product-detail-container">
@@ -351,9 +381,29 @@
                 </div>
             }
 
-            <button class="btn add-to-cart">
-                <i class="fas fa-shopping-cart"></i> SEPETE EKLE
-            </button>
+            <!-- Product-info bölümüne ekleyin (price div'inin altına uygun) -->
+            <div class="favorite-section mt-3 mb-3">
+                @if (User.Identity.IsAuthenticated)
+                {
+                    <button id="favoriteToggle"
+                            class="btn @(ViewBag.IsFavorite ? "btn-danger" : "btn-outline-danger")"
+                            data-product-id="@Model.Id">
+                        <i class="fas @(ViewBag.IsFavorite ? "fa-heart" : "fa-heart-o")"></i>
+                        @(ViewBag.IsFavorite ? "Favorilerden Çıkar" : "Favorilere Ekle")
+                    </button>
+                    <span id="favoriteStatusMessage" class="ms-2 small text-muted"></span>
+                }
+                else
+                {
+                    <a asp-action="SignIn" asp-controller="Account" class="btn btn-outline-secondary">
+                        <i class="fas fa-heart-o"></i> Favorilere eklemek için giriş yapın
+                    </a>
+                }
+            </div>
+
+
+
+
 
             <div class="product-description">
                 <h3 class="section-title">ÜRÜN AÇIKLAMASI</h3>
@@ -387,13 +437,188 @@
         </div>
     }
 </div>
-
+<div id="imageModal" style="
+    display:none;
+    position: fixed;
+    z-index: 1050;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.8);
+    text-align: center;
+">
+    <span id="modalClose" style="
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: white;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;">&times;</span>
+    <img id="modalImg" src="" style="
+        margin-top: 50px;
+        max-width: 90%;
+        max-height: 80vh;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(255,255,255,0.5);
+    " />
+</div>
 @section Scripts {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
 
     <script>
+         $(document).ready(function() {
+            // Favori butonu click event
+            $('#favoriteToggle').click(function() {
+                const productId = $(this).data('product-id');
+                const favoriteId = $(this).data('favorite-id');
+                const isCurrentlyFavorite = $(this).hasClass('btn-danger');
+
+                const url = isCurrentlyFavorite ?
+                    '/Favorite/Remove' : '/Favorite/Add';
+                const data = isCurrentlyFavorite ?
+                    { productId: productId } : { productId: productId };
+
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        if (response.success) {
+                            // Buton görünümünü güncelle
+                            const button = $('#favoriteToggle');
+                            button.toggleClass('btn-danger btn-outline-danger');
+
+                            // Favori ID'sini güncelle (ekleme durumunda)
+                            if (response.favoriteId) {
+                                button.data('favorite-id', response.favoriteId);
+                            }
+
+                            // İkon ve metni güncelle
+                            const iconClass = isCurrentlyFavorite ? 'fa-heart-o' : 'fa-heart';
+                            const text = isCurrentlyFavorite ? 'Favorilere Ekle' : 'Favorilerden Çıkar';
+                            button.html(`<i class="fas ${iconClass}"></i> ${text}`);
+
+                            // Bildirim göster
+                            toastr.success(response.message);
+
+                            // Favori sayısını güncelle
+                            fetchFavoriteCount();
+                        } else {
+                            toastr.error(response.message);
+                        }
+                    },
+                    error: function() {
+                        toastr.error('İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+                    }
+                });
+            });
+
+            // Favori sayısını güncelle
+            function fetchFavoriteCount() {
+                fetch('/Favorite/GetFavoriteCount')
+                    .then(response => response.json())
+                    .then(data => {
+                        const badge = document.getElementById('favoriteCountBadge');
+                        if (data.count > 0) {
+                            badge.textContent = data.count;
+                            badge.style.display = 'flex';
+                        } else {
+                            badge.style.display = 'none';
+                        }
+                    });
+            }
+
+            // Sayfa yüklendiğinde favori durumunu kontrol et
+            if ('@User.Identity.IsAuthenticated' === 'True') {
+                fetchFavoriteCount();
+            }
+        });
+        function changeMainImage(thumbnailElement, imageUrl) {
+            document.getElementById('mainImage').src = imageUrl;
+            document.querySelectorAll('.thumbnail').forEach(thumb => {
+                thumb.classList.remove('active');
+            });
+            thumbnailElement.classList.add('active');
+        }
+
+        function selectColor(element) {
+            // Renk seçiminde aktif sınıfı değiştir
+            document.querySelectorAll('.color-circle').forEach(c => c.style.borderColor = 'transparent');
+            element.style.borderColor = '#000'; // aktif rengi siyah yap
+
+            const colorId = element.getAttribute('data-color-id');
+            const colorImagesContainer = document.getElementById('colorImagesContainer');
+            colorImagesContainer.innerHTML = ''; // önce temizle
+
+            // Model’den ürün renklerine göre resimleri alıyoruz:
+            // Sayfada Model.ProductColors olduğu için JS’de göremiyoruz, Razor ile JSON gönderelim:
+        }
+
+        $(document).ready(function () {
+            // JSON olarak renk resimlerini alalım
+                    const productColors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductColors.Select(pc => new
+            {
+                ColorId = pc.ColorId,
+                Images = pc.ProductColorImages.Select(img => $"/img/Products/ColorImages/P-{Model.Id}/C-{pc.ColorId}/" + img.ImageUrl).ToList()
+            })));
+
+
+            window.selectColor = function(element) {
+                document.querySelectorAll('.color-circle').forEach(c => c.style.borderColor = 'transparent');
+                element.style.borderColor = '#000';
+
+                const colorId = element.getAttribute('data-color-id');
+                const colorImagesContainer = document.getElementById('colorImagesContainer');
+                colorImagesContainer.innerHTML = '';
+
+                const selectedColor = productColors.find(c => c.ColorId == colorId);
+
+                if (selectedColor && selectedColor.Images.length > 0) {
+                    selectedColor.Images.forEach(imgUrl => {
+                        const img = document.createElement('img');
+                        img.src = imgUrl;
+                        img.alt = 'Renk resmi';
+                        img.style.width = '80px';
+                        img.style.height = '80px';
+                        img.style.objectFit = 'cover';
+                        img.style.marginRight = '10px';
+                        img.style.cursor = 'pointer';
+                        img.style.border = '1px solid #ddd';
+                        img.style.borderRadius = '4px';
+
+                        img.addEventListener('click', function () {
+                            openModal(imgUrl);
+                        });
+
+                        colorImagesContainer.appendChild(img);
+                    });
+                }
+                else {
+                    colorImagesContainer.innerHTML = '<p>Bu renge ait resim bulunmamaktadır.</p>';
+                }
+            };
+
+            // Modal açma fonksiyonu
+            window.openModal = function(imgUrl) {
+                const modal = document.getElementById('imageModal');
+                const modalImg = document.getElementById('modalImg');
+                modal.style.display = 'block';
+                modalImg.src = imgUrl;
+            };
+
+            // Modal kapatma
+            document.getElementById('modalClose').onclick = function() {
+                document.getElementById('imageModal').style.display = 'none';
+            };
+
+            // Diğer mevcut kodlar (slick, stock vb.)
+            // ... (mevcut jQuery kodların kalabilir)
+        });
+
         function changeMainImage(thumbnailElement, imageUrl) {
             document.getElementById('mainImage').src = imageUrl;
             document.querySelectorAll('.thumbnail').forEach(thumb => {

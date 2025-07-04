@@ -2,7 +2,16 @@
 @{
     ViewData["Title"] = "Ürün Düzenle";
 }
+<style>
+    .color-images {
+        border-left: 3px solid #0d6efd;
+        padding-left: 10px;
+    }
 
+    .delete-color-image {
+        transform: translate(50%, -50%);
+    }
+</style>
 <hr />
 <div class="row">
     <div class="col-md-8">
@@ -24,6 +33,7 @@
                         <textarea asp-for="Description" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
+                    <!-- Ana Ürün Resmi Bölümü -->
                     <div class="form-group mb-3">
                         <label class="control-label fw-bold">Ana Ürün Resmi</label>
                         <input name="ImageFile" class="form-control" type="file" accept="image/*" />
@@ -38,7 +48,7 @@
                                 </div>
                             </div>
                         }
-                        <small class="text-muted">JPEG, PNG formatında, max 5MB</small>
+                        <small class="text-muted">JPEG, PNG formatında, max 5MB (Zorunlu değil)</small>
                     </div>
                 </div>
 
@@ -101,7 +111,7 @@
                     <div class="form-group mb-3">
                         <label class="control-label fw-bold">Yeni Resimler Ekle</label>
                         <input name="Images" class="form-control" type="file" multiple accept="image/*" />
-                        <small class="text-muted">Birden fazla resim seçebilirsiniz, max 5MB each</small>
+                        <small class="text-muted">Birden fazla resim seçebilirsiniz, max 5MB each (Zorunlu değil)</small>
                     </div>
 
                     @if (Model.ProductImages != null && Model.ProductImages.Any())
@@ -116,6 +126,7 @@
                                             <button type="button" class="btn btn-sm btn-danger delete-image" data-id="@image.Id">
                                                 <i class="fas fa-trash"></i> Sil
                                             </button>
+
                                         </div>
                                     </div>
                                 </div>
@@ -128,7 +139,59 @@
                     }
                 </div>
             </div>
-
+            <!-- Renk Yönetimi -->
+            <div class="card mb-3">
+                <div class="card-header bg-primary text-white">
+                    <h5>Renk Seçenekleri</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-group mb-3">
+                        <label class="control-label fw-bold">Ürün Renkleri</label>
+                        <div class="row">
+                            @foreach (var color in ViewBag.Colors as SelectList)
+                            {
+                                <div class="col-md-3 mb-3">
+                                    <div class="form-check">
+                                        <input class="form-check-input color-checkbox" type="checkbox"
+                                               name="selectedColorIds" value="@color.Value"
+                                               id="color-@color.Value"
+                                        @(Model.ProductColors?.Any(pc => pc.ColorId == int.Parse(color.Value)) == true ? "checked" : "") />
+                                        <label class="form-check-label" for="color-@color.Value">
+                                            @color.Text
+                                        </label>
+                                    </div>
+                                    @if (Model.ProductColors?.Any(pc => pc.ColorId == int.Parse(color.Value)) == true)
+                                    {
+                                        <div class="color-images mt-2" data-color-id="@color.Value">
+                                            @foreach (var image in Model.ProductColors.First(pc => pc.ColorId == int.Parse(color.Value)).ProductColorImages)
+                                            {
+                                                <div class="position-relative d-inline-block me-2 mb-2">
+                                                    <img src="@image.ImageUrl" height="60" class="img-thumbnail" />
+                                                    <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 p-0 px-1 delete-color-image"
+                                                            data-id="@image.Id" title="Resmi Sil">
+                                                        <i class="fas fa-times"></i>
+                                                    </button>
+                                                </div>
+                                            }
+                                            <div class="mt-2">
+                                                <input type="file" name="colorImages[@color.Value]" class="form-control form-control-sm" multiple accept="image/*" />
+                                                <small class="text-muted">Bu renk için yeni resimler ekleyin</small>
+                                            </div>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="color-images mt-2 d-none" data-color-id="@color.Value">
+                                            <input type="file" name="colorImages[@color.Value]" class="form-control form-control-sm" multiple accept="image/*" />
+                                            <small class="text-muted">Bu renk için resimler ekleyin</small>
+                                        </div>
+                                    }
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Beden ve Stok Yönetimi -->
             <div class="card mb-3">
                 <div class="card-header bg-primary text-white">
@@ -228,6 +291,29 @@
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
     <script>
+                $(document).on('change', '.color-checkbox', function() {
+            var colorId = $(this).val();
+            var colorImagesDiv = $(`.color-images[data-color-id="${colorId}"]`);
+
+            if ($(this).is(':checked')) {
+                colorImagesDiv.removeClass('d-none');
+            } else {
+                colorImagesDiv.addClass('d-none');
+                colorImagesDiv.find('input[type="file"]').val('');
+            }
+        });
+
+        // Renk resmi silme
+        $(document).on('click', '.delete-color-image', function(e) {
+            e.preventDefault();
+            var imageId = $(this).data('id');
+
+            if (confirm('Bu resmi silmek istediğinize emin misiniz?')) {
+                $.post('@Url.Action("DeleteColorImage", "Products")', { id: imageId }, function() {
+                    location.reload(); // Sayfayı yenile
+                });
+            }
+        });
         $(document).ready(function() {
             // Yeni beden-stok satırı ekle
             $('#addSizeStock').click(function() {
@@ -257,27 +343,61 @@
                 }
             });
 
-            // Resim boyutu kontrolü
-            $('form').submit(function() {
-                const mainImage = $('input[name="ImageFile"]')[0].files[0];
-                const extraImages = $('input[name="Images"]')[0].files;
-                const maxSize = 5 * 1024 * 1024; // 5MB
+                   $('form').submit(function() {
+            const mainImage = $('input[name="ImageFile"]')[0].files[0];
+            const extraImages = $('input[name="Images"]')[0].files;
+            const maxSize = 5 * 1024 * 1024; // 5MB
 
-                if (mainImage && mainImage.size > maxSize) {
-                    alert('Ana resim 5MB boyutunu aşamaz!');
-                    return false;
-                }
+            // Ana resim yüklendiyse boyut kontrolü yap
+            if (mainImage && mainImage.size > maxSize) {
+                alert('Ana resim 5MB boyutunu aşamaz!');
+                return false;
+            }
 
-                if (extraImages) {
-                    for (let i = 0; i < extraImages.length; i++) {
-                        if (extraImages[i].size > maxSize) {
-                            alert('Ek resimlerden biri 5MB boyutunu aşıyor!');
-                            return false;
-                        }
+            // Ek resimler yüklendiyse boyut kontrolü yap
+            if (extraImages) {
+                for (let i = 0; i < extraImages.length; i++) {
+                    if (extraImages[i].size > maxSize) {
+                        alert('Ek resimlerden biri 5MB boyutunu aşıyor!');
+                        return false;
                     }
                 }
-                return true;
+            }
+            return true;
+        });
+        });
+                document.addEventListener('DOMContentLoaded', function () {
+            const deleteButtons = document.querySelectorAll('.delete-image');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function () {
+                    const imageId = this.getAttribute('data-id');
+
+                    if (confirm("Bu resmi silmek istediğinize emin misiniz?")) {
+                        fetch('@Url.Action("DeleteProductImage", "Products", new { area = "Admin" })', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: JSON.stringify(imageId)
+                        })
+                        .then(response => {
+                            if (response.ok) {
+                                // Silinen resim kartını DOM'dan kaldır
+                                this.closest('.col-md-3').remove();
+                            } else {
+                                alert('Resim silinirken hata oluştu.');
+                            }
+                        })
+                        .catch(() => alert('Sunucuya ulaşılamıyor.'));
+                    }
+                });
             });
+        });
+                // Eğer client-side validasyon yapılıyorsa
+        $.validator.setDefaults({
+            ignore: ":hidden:not(input[type=file]), [disabled]"
         });
     </script>
 }
