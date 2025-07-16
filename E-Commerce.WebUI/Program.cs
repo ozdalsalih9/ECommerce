@@ -1,4 +1,6 @@
 using E_Commerce.Data;
+using E_Commerce.Service.Abstract;
+using E_Commerce.Service.Concrete;
 using E_Commerce.WebUI.Utils;
 using E_Commerse.Core.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -28,6 +30,8 @@ internal class Program
         builder.Services.AddControllersWithViews()
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();
+
+        builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 
         // Authentication ve Authorization yapýlandýrmasý
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)

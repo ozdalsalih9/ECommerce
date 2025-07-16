@@ -1,5 +1,5 @@
 using System.Diagnostics;
-using E_Commerce.Data;
+using E_Commerce.Service.Abstract;
 using E_Commerce.WebUI.Models;
 using E_Commerce.WebUI.ViewModels;
 using E_Commerse.Core.Entities;
@@ -10,45 +10,31 @@ namespace E_Commerce.WebUI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly DatabaseContext _context;
-        public HomeController(DatabaseContext context)
+        private readonly IService<Product> _productService;
+        private readonly IService<Slider> _sliderService;
+        private readonly IService<News> _newsService;
+        private readonly IService<Contact> _contactService;
+
+        public HomeController(
+            IService<Product> productService,
+            IService<Slider> sliderService,
+            IService<News> newsService,
+            IService<Contact> contactService)
         {
-            _context = context;
+            _productService = productService;
+            _sliderService = sliderService;
+            _newsService = newsService;
+            _contactService = contactService;
         }
 
         public async Task<IActionResult> Index(string? q)
         {
-            var productsQuery = _context.Products
+            var productsQuery = _productService.GetQueryable()
                 .Include(p => p.ProductSizes)
                     .ThenInclude(ps => ps.Size)
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
                 .Where(p => p.IsActive && p.IsHome);
-
-            var popularProducts = await _context.Products
-    .Include(p => p.ProductSizes).ThenInclude(ps => ps.Size)
-    .Include(p => p.Brand)
-    .Include(p => p.Category)
-    .Include(p => p.Favorites)
-    .Where(p => p.IsActive && p.Favorites.Any())
-    .OrderByDescending(p => p.Favorites.Count)
-    .Take(8)
-    .ToListAsync();
-
-
-            ViewData["SearchQuery"] = q; // Arama terimini view'a gönderiyoruz
-
-            var model = new HomePageViewModel
-            {
-                Sliders = await _context.Sliders.ToListAsync(),
-                News = await _context.News
-         .Where(n => n.IsActive)
-         .OrderByDescending(n => n.CreateTime)
-         .ToListAsync(),
-                Products = await productsQuery.OrderBy(p => p.OrderNo).ToListAsync(),
-                PopularProducts = popularProducts
-            };
-
 
             if (!string.IsNullOrWhiteSpace(q))
             {
@@ -56,15 +42,42 @@ namespace E_Commerce.WebUI.Controllers
                     .Where(p => p.Name.Contains(q) || p.Description.Contains(q));
             }
 
+            var products = await productsQuery.OrderBy(p => p.OrderNo).ToListAsync();
+
+            var popularProducts = await _productService.GetQueryable()
+                .Include(p => p.ProductSizes).ThenInclude(ps => ps.Size)
+                .Include(p => p.Brand)
+                .Include(p => p.Category)
+                .Include(p => p.Favorites)
+                .Where(p => p.IsActive && p.Favorites.Any())
+                .OrderByDescending(p => p.Favorites.Count)
+                .Take(8)
+                .ToListAsync();
+
+            var sliders = await _sliderService.GetAllAsync();
+            var news = await _newsService.GetQueryable()
+                .Where(n => n.IsActive)
+                .OrderByDescending(n => n.CreateTime)
+                .ToListAsync();
+
+            ViewData["SearchQuery"] = q;
+
+            var model = new HomePageViewModel
+            {
+                Sliders = sliders,
+                News = news,
+                Products = products,
+                PopularProducts = popularProducts
+            };
+
             return View(model);
         }
-
-
 
         public IActionResult Privacy()
         {
             return View();
         }
+
         public IActionResult ContactUs()
         {
             return View();
@@ -106,8 +119,8 @@ namespace E_Commerce.WebUI.Controllers
                 Message = model.Message
             };
 
-            _context.Contacts.Add(contact);
-            await _context.SaveChangesAsync();
+            await _contactService.AddAsync(contact);
+            await _contactService.saveChangesAsync();
 
             return Json(new
             {
@@ -115,8 +128,5 @@ namespace E_Commerce.WebUI.Controllers
                 message = "Mesajýnýz baþarýyla gönderildi. En kýsa sürede dönüþ yapýlacaktýr."
             });
         }
-
-
-
     }
 }
