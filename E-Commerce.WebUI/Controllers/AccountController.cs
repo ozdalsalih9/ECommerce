@@ -114,14 +114,55 @@ namespace E_Commerce.WebUI.Controllers
                 return View();
             }
 
-            // PasswordHasher ile doğrula
-            var verifyResult = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
-            if (verifyResult != PasswordVerificationResult.Success)
+            // ➕ LoginAttempt kontrolü
+            var attempt = await _context.LoginAttempts.FirstOrDefaultAsync(a => a.AppUserId == user.Id);
+
+            if (attempt != null && attempt.LockedUntil.HasValue && attempt.LockedUntil > DateTime.Now)
             {
-                ModelState.AddModelError("", "Geçersiz giriş bilgileri veya e-posta doğrulanmamış.");
+                var kalan = attempt.LockedUntil.Value - DateTime.Now;
+                ModelState.AddModelError("", $"Hesabınız kilitlendi. Lütfen {kalan.Minutes} dakika {kalan.Seconds} saniye sonra tekrar deneyin.");
                 return View();
             }
 
+            // ✅ Şifre doğrulama (hashli)
+            var verifyResult = _passwordHasher.VerifyHashedPassword(user, user.Password, password);
+            bool success = verifyResult == PasswordVerificationResult.Success;
+
+            if (!success)
+            {
+                if (attempt == null)
+                {
+                    attempt = new LoginAttempt
+                    {
+                        AppUserId = user.Id,
+                        FailedCount = 1
+                    };
+                    _context.LoginAttempts.Add(attempt);
+                }
+                else
+                {
+                    attempt.FailedCount++;
+
+                    if (attempt.FailedCount >= 5)
+                    {
+                        attempt.LockedUntil = DateTime.Now.AddMinutes(5);
+                        ModelState.AddModelError("", "5 kez başarısız giriş yaptınız. Hesabınız 5 dakika kilitlendi.");
+                    }
+                }
+
+                await _context.SaveChangesAsync();
+                ModelState.AddModelError("", "Geçersiz giriş bilgileri.");
+                return View();
+            }
+
+            // Başarılı giriş: LoginAttempt temizle
+            if (attempt != null)
+            {
+                _context.LoginAttempts.Remove(attempt);
+                await _context.SaveChangesAsync();
+            }
+
+            // Giriş için Claims oluştur
             var claims = new List<Claim>
     {
         new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
@@ -131,7 +172,6 @@ namespace E_Commerce.WebUI.Controllers
     };
 
             var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-
             var authProperties = new AuthenticationProperties
             {
                 IsPersistent = true,
@@ -144,9 +184,7 @@ namespace E_Commerce.WebUI.Controllers
                 authProperties);
 
             if (user.IsAdmin)
-            {
                 return RedirectToAction("Index", "Main", new { area = "Admin" });
-            }
 
             return RedirectToAction("Index", "Home");
         }

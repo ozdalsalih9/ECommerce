@@ -1,0 +1,75 @@
+﻿.section-title {
+    color: var(--primary-color);
+    font-weight: 700;
+    font-size: 1.5rem;
+    margin: 3rem 0 2rem;
+    text-align: center;
+    letter-spacing: 1.2px;
+    position: relative;
+}
+
+    .section-title::after {
+        content: '';
+        display: block;
+        width: 80px;
+        height: 3px;
+        background-color: var(--primary-light);
+        margin: 12px auto 0;
+        border-radius: 6px;
+    }
+
+.campaign-strip {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.95rem;
+    padding: 10px 0;
+    border-radius: 10px;
+    margin: 2rem 0 2rem 0; /* üst ve alt boşluk */
+    box-shadow: 0 6px 18px rgba(92, 61, 116, 0.15);
+    position: relative;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+
+.campaign-marquee {
+    position: relative;
+    overflow: hidden;
+}
+
+.campaign-content {
+    display: inline-block;
+    padding-left: 100%;
+    animation: scroll-left 25s linear infinite;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0%);
+    }
+
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.campaign-item {
+    display: inline-block;
+    margin-right: 50px;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+}
+
+.campaign-desc {
+    font-style: italic;
+    font-weight: 400;
+    color: #d6cbe8;
+}
+
+.products-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    justify-content: center;
+}

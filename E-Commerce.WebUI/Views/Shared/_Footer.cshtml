@@ -1,5 +1,98 @@
-﻿<footer class="border-top footer text-muted">
+﻿@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+
+<footer class="site-footer">
     <div class="container">
-        &copy; 2025 - E_Commerce.WebUI - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        <!-- Üst Kısım - İletişim Bilgileri -->
+        <div class="footer-top">
+            <div class="footer-info">
+                <h5 class="footer-title">Selam Tekstil</h5>
+                <address>
+                    <p><i class="fas fa-map-marker-alt"></i> Şile, Türkiye</p>
+                    <p><i class="fas fa-phone"></i> <a href="tel:+905551234567">+90 555 123 45 67</a></p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:info@ornek.com">info@selamtekstil.com</a></p>
+                </address>
+
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                </div>
+            </div>
+
+            <div class="footer-links">
+                <h5 class="footer-title">Hızlı Linkler</h5>
+                <ul>
+                    <li><a href="/"><i class="fas fa-chevron-right"></i> Anasayfa</a></li>
+                    <li><a href="/About"><i class="fas fa-chevron-right"></i> Hakkımızda</a></li>
+                    <li><a href="/Services"><i class="fas fa-chevron-right"></i> Hizmetlerimiz</a></li>
+                    <li><a href="/Products"><i class="fas fa-chevron-right"></i> Ürünler</a></li>
+                    <li><a href="/Contact"><i class="fas fa-chevron-right"></i> İletişim</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter">
+                <h5 class="footer-title">Bültenimize Kaydolun</h5>
+                <p>Yeniliklerden haberdar olmak için e-posta listemize katılın.</p>
+                <form class="newsletter-form">
+                    <input type="email" placeholder="E-posta adresiniz" required>
+                    <button type="submit"><i class="fas fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Alt Kısım - İletişim Formu -->
+        <div class="footer-contact">
+            <h5 class="contact-title">Bizimle İletişime Geçin</h5>
+            <form id="footerContactForm" method="post" asp-controller="Home" asp-action="ContactUs" novalidate>
+                @Html.AntiForgeryToken()
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Name">Adınız</label>
+                        <input type="text" id="Name" name="Name" class="form-control" placeholder="Adınız" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Surname">Soyadınız</label>
+                        <input type="text" id="Surname" name="Surname" class="form-control" placeholder="Soyadınız" required />
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="Email">E-Posta</label>
+                        <input type="email" id="Email" name="Email" class="form-control" placeholder="E-Posta" required />
+                    </div>
+
+                    <div class="form-group">
+                        <label for="Phone">Telefon</label>
+                        <input type="tel" id="Phone" name="Phone" class="form-control"
+                               placeholder="5__ ___ __ __" pattern="\d{10}"
+                               title="10 haneli telefon numarası giriniz (örn: 5551234567)" required />
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="Message">Mesajınız</label>
+                    <textarea id="Message" name="Message" class="form-control" placeholder="Mesajınız" rows="4" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-send">Mesaj Gönder <i class="fas fa-paper-plane"></i></button>
+            </form>
+
+            <div id="footerContactMsg" class="contact-message mt-3"></div>
+        </div>
+
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <div class="copyright">
+                &copy; @DateTime.Now.Year Selam Tekstil. Tüm Hakları Saklıdır.
+            </div>
+            <div class="legal-links">
+                <a href="Home/Privacy">Gizlilik Politikası</a>
+                <a href="/Sitemap">Site Haritası</a>
+            </div>
+        </div>
     </div>
 </footer>

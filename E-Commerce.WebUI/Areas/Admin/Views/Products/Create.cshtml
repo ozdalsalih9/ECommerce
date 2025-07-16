@@ -46,7 +46,7 @@
                             <div class="form-group">
                                 <label asp-for="Price" class="control-label fw-bold"></label>
                                 <div class="input-group">
-                                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" required />
+                                    <input asp-for="Price" class="form-control" type="number" step="0.01" min="0" />
                                     <span class="input-group-text">₺</span>
                                 </div>
                                 <span asp-validation-for="Price" class="text-danger"></span>
@@ -111,7 +111,7 @@
                     <div class="form-group mb-3">
                         <label asp-for="SelectedColorIds" class="control-label fw-bold">Renkler</label>
                         <select asp-for="SelectedColorIds" class="form-select select2" multiple="multiple"
-                                asp-items="ViewBag.Colors" required>
+                                asp-items="ViewBag.Colors">
                         </select>
                         <span class="text-danger field-validation-valid"
                               data-valmsg-for="SelectedColorIds" data-valmsg-replace="true"></span>
@@ -130,10 +130,10 @@
                     <div id="sizeStockContainer">
                         <div class="size-stock-row row mb-2">
                             <div class="col-md-5">
-                                <input type="text" name="sizeNames" class="form-control" placeholder="Beden (Örn: S, M, XL)" required />
+                                <input type="text" name="sizeNames" class="form-control" placeholder="Beden (Örn: S, M, XL)" />
                             </div>
                             <div class="col-md-5">
-                                <input type="number" name="stocks" class="form-control" placeholder="Stok Adedi" min="0" required />
+                                <input type="number" name="stocks" class="form-control" placeholder="Stok Adedi" min="0" />
                             </div>
                             <div class="col-md-2">
                                 <button type="button" class="btn btn-danger remove-size-stock" disabled>
@@ -228,59 +228,54 @@
                 }
             });
 
-            // Form gönderilmeden önce validasyon
-            $('#productForm').submit(function(e) {
-                // Renk seçimi kontrolü
-                const selectedColors = $('.select2').val();
-                if (!selectedColors || selectedColors.length === 0) {
-                    alert('En az bir renk seçmelisiniz!');
-                    e.preventDefault();
-                    return false;
+                   // Form gönderilmeden önce validasyon
+        $('#productForm').submit(function(e) {
+            // Renk seçimi kontrolü kaldırıldı
+
+            // Resim boyutu kontrolü
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            let isValid = true;
+
+            // Ana resim kontrolü
+            const mainImage = $('#ImageFile')[0].files[0];
+            if (mainImage && mainImage.size > maxSize) {
+                alert('Ana resim 5MB boyutunu aşamaz!');
+                isValid = false;
+            }
+
+            // Ek resimler kontrolü
+            const extraImages = $('#ImageFiles')[0].files;
+            if (extraImages) {
+                for (let i = 0; i < extraImages.length; i++) {
+                    if (extraImages[i].size > maxSize) {
+                        alert('Ek resimlerden biri 5MB boyutunu aşıyor!');
+                        isValid = false;
+                        break;
+                    }
                 }
+            }
 
-                // Resim boyutu kontrolü
-                const maxSize = 5 * 1024 * 1024; // 5MB
-                let isValid = true;
-
-                // Ana resim kontrolü
-                const mainImage = $('#ImageFile')[0].files[0];
-                if (mainImage && mainImage.size > maxSize) {
-                    alert('Ana resim 5MB boyutunu aşamaz!');
-                    isValid = false;
-                }
-
-                // Ek resimler kontrolü
-                const extraImages = $('#ImageFiles')[0].files;
-                if (extraImages) {
-                    for (let i = 0; i < extraImages.length; i++) {
-                        if (extraImages[i].size > maxSize) {
-                            alert('Ek resimlerden biri 5MB boyutunu aşıyor!');
+            // Renk resimleri kontrolü
+            $('input[type="file"][name^="colorImages"]').each(function() {
+                const files = this.files;
+                if (files && files.length > 0) {
+                    for (let i = 0; i < files.length; i++) {
+                        if (files[i].size > maxSize) {
+                            alert('Renk resimlerinden biri 5MB boyutunu aşıyor!');
                             isValid = false;
-                            break;
+                            return false; // break the each loop
                         }
                     }
                 }
-
-                // Renk resimleri kontrolü
-                $('input[type="file"][name^="colorImages"]').each(function() {
-                    const files = this.files;
-                    if (files && files.length > 0) {
-                        for (let i = 0; i < files.length; i++) {
-                            if (files[i].size > maxSize) {
-                                alert('Renk resimlerinden biri 5MB boyutunu aşıyor!');
-                                isValid = false;
-                                return false; // break the each loop
-                            }
-                        }
-                    }
-                });
-
-                if (!isValid) {
-                    e.preventDefault();
-                }
-
-                return isValid;
             });
+
+            if (!isValid) {
+                e.preventDefault();
+            }
+
+            return isValid;
+        });
+
 
             // Renk resim alanlarını güncelle
             function updateColorImageFields() {

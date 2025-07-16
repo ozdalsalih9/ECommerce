@@ -1,0 +1,172 @@
+﻿
+/* Ana Renkler */
+:root {
+    --primary: #6a0dad;
+    --primary-light: #9b59b6;
+    --primary-dark: #4b0082;
+    --accent: #ff6b6b;
+    --light: #ffffff;
+    --gray-light: #f8f9fa;
+    --gray: #6c757d;
+    --border: #e9ecef;
+}
+
+/* Ürün Kartı */
+.product-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    background: linear-gradient(145deg, var(--light), var(--gray-light));
+    border: 1px solid var(--border);
+    overflow: hidden;
+}
+
+    .product-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 15px 30px rgba(106, 13, 173, 0.15);
+        border-color: var(--primary-light);
+    }
+
+/* Ürün Görseli */
+.product-image-container {
+    position: relative;
+    overflow: hidden;
+    padding-top: 100%; /* Kare görünüm için */
+}
+
+.product-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image {
+    transform: scale(1.08);
+}
+
+/* "Yeni" Etiketi */
+.new-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 10;
+    font-size: 0.75rem;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    animation: pulse 2s infinite;
+}
+
+@@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Ürün Başlığı */
+.product-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--primary-dark);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    height: 3rem;
+}
+
+/* Fiyat */
+.product-price {
+    font-size: 1.2rem;
+}
+
+/* Bedenler */
+.size-badge {
+    background-color: var(--gray-light);
+    color: var(--primary);
+    border: 1px solid var(--primary-light);
+    font-size: 0.75rem;
+    padding: 0.4em 0.6em;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+    .size-badge:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+/* Butonlar */
+.add-to-cart {
+    background: linear-gradient(45deg, var(--primary), var(--primary-light));
+    color: white;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(106, 13, 173, 0.2);
+}
+
+    .add-to-cart:hover {
+        background: linear-gradient(45deg, var(--primary-dark), var(--primary));
+        transform: translateY(-2px);
+        box-shadow: 0 6px 16px rgba(106, 13, 173, 0.3);
+    }
+
+.btn-outline-purple {
+    color: var(--primary);
+    background: transparent;
+    border: 1px solid var(--primary);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+    .btn-outline-purple:hover {
+        background-color: var(--primary);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+/* Favori Butonu */
+.favorite-btn {
+    transition: all 0.3s ease;
+    z-index: 5;
+}
+
+    .favorite-btn:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+
+        .favorite-btn:hover i {
+            color: white;
+        }
+
+/* Unique Gölgeler */
+.product-card::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(155, 89, 182, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    pointer-events: none;
+}
+
+.product-card:hover::before {
+    opacity: 1;
+}
+
+

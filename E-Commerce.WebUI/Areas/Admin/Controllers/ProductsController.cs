@@ -54,6 +54,9 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
     int[] stocks,
     List<int> selectedColorIds)
         {
+            ModelState.Remove("SelectedColorIds");
+            ModelState.Remove("sizeNames");
+            ModelState.Remove("stocks");
             if (ModelState.IsValid)
             {
                 try
@@ -126,6 +129,11 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                     ModelState.AddModelError("", $"Ürün oluşturulurken hata: {ex.Message}");
                 }
             }
+            if (!ModelState.IsValid)
+            {
+                var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                // breakpoint koyup errors listesini kontrol et
+            }
 
             await PopulateDropdowns(product);
             return View(product);
@@ -165,6 +173,11 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
      int[] stocks = null,
      List<int> selectedColorIds = null)
         {
+            ModelState.Remove("SelectedColorIds");
+            ModelState.Remove("sizeIds");
+            ModelState.Remove("stocks");
+            ModelState.Remove("ImageFile");
+            ModelState.Remove("Images");
             if (id != product.Id)
                 return NotFound();
 
@@ -382,31 +395,34 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
 
         private void ProcessSizes(Product product, string[] sizeNames, int[] stocks)
         {
-            if (sizeNames != null && stocks != null && sizeNames.Length == stocks.Length)
+            if (sizeNames == null || stocks == null || sizeNames.Length == 0 || stocks.Length == 0)
+                return;
+
+            product.ProductSizes = new List<ProductSize>();
+
+            for (int i = 0; i < sizeNames.Length; i++)
             {
-                product.ProductSizes = new List<ProductSize>();
-                for (int i = 0; i < sizeNames.Length; i++)
+                if (!string.IsNullOrWhiteSpace(sizeNames[i]))
                 {
-                    if (!string.IsNullOrWhiteSpace(sizeNames[i]))
+                    var trimmedSizeName = sizeNames[i].Trim();
+                    var size = _context.Sizes.FirstOrDefault(s => s.Name.ToLower() == trimmedSizeName.ToLower())
+                        ?? new Size { Name = trimmedSizeName };
+
+                    if (size.Id == 0)
                     {
-                        var size = _context.Sizes.FirstOrDefault(s => s.Name.ToLower() == sizeNames[i].ToLower())
-                            ?? new Size { Name = sizeNames[i].Trim() };
-
-                        if (size.Id == 0)
-                        {
-                            _context.Sizes.Add(size);
-                            _context.SaveChanges();
-                        }
-
-                        product.ProductSizes.Add(new ProductSize
-                        {
-                            SizeId = size.Id,
-                            Stock = stocks[i]
-                        });
+                        _context.Sizes.Add(size);
+                        _context.SaveChanges(); // id oluşması için
                     }
+
+                    product.ProductSizes.Add(new ProductSize
+                    {
+                        SizeId = size.Id,
+                        Stock = (i < stocks.Length ? stocks[i] : 0)
+                    });
                 }
             }
         }
+
         private async Task ProcessMainImage(Product existingProduct, Product newProduct, IFormFile imageFile, bool deleteImage)
         {
             if (deleteImage)

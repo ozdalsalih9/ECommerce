@@ -23,6 +23,8 @@ namespace E_Commerce.Data
         public DbSet<Color> Colors { get; set; }
         public DbSet<ProductColorImage> ProductColorImages { get; set; }
         public DbSet<Favorite> Favorites { get; set; }
+        public DbSet<LoginAttempt> LoginAttempts { get; set; }
+
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

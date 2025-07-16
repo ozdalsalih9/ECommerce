@@ -1,18 +1,28 @@
 ﻿@model E_Commerse.Core.Entities.Product
-
 <div class="col-lg-3 col-md-6 col-sm-6 mb-4">
     <div class="card product-card border-0 shadow-sm rounded-4 h-100 position-relative overflow-hidden">
         <!-- "Yeni" etiketi -->
         @if (Model.CreateTime > DateTime.Now.AddDays(-7))
         {
-            <span class="badge new-badge bg-warning text-dark px-3 py-2 rounded-pill">Yeni</span>
+            <span class="badge new-badge bg-gradient-to-r from-yellow-400 to-orange-500 text-dark px-3 py-2 rounded-pill">
+                <i class="fas fa-star me-1"></i> Yeni
+            </span>
         }
 
         <!-- Ürün görseli -->
-        <a asp-action="Details" asp-controller="Product" asp-route-id="@Model.Id">
-            <img src="/img/Products/MainImage/@Model.Image" class="card-img-top rounded-4 product-image"
-                 alt="@Model.Name">
-        </a>
+        <div class="product-image-container">
+            <a asp-action="Details" asp-controller="Product" asp-route-id="@Model.Id">
+                <img src="/img/Products/MainImage/@Model.Image"
+                     class="card-img-top rounded-4 product-image"
+                     alt="@Model.Name"
+                     loading="lazy">
+            </a>
+            <!-- Favori ikonu -->
+            <button class="btn favorite-btn position-absolute top-3 end-3 bg-white rounded-circle shadow-sm p-2"
+                    title="Favorilere Ekle">
+                <i class="far fa-heart text-purple"></i>
+            </button>
+        </div>
 
         <div class="card-body text-center d-flex flex-column">
             <!-- Ürün adı -->
@@ -21,114 +31,45 @@
                 <h6 class="fw-semibold product-title mb-2">@Model.Name</h6>
             </a>
 
+           
+
             <!-- Açıklama -->
-            <p class="text-muted small mb-2 flex-grow-1">
-                @(Model.Description.Length > 50 ? Model.Description.Substring(0, 50) + "..." : Model.Description)
+            <p class="text-muted small mb-3 flex-grow-1">
+                @(Model.Description.Length > 60 ? Model.Description.Substring(0, 60) + "..." : Model.Description)
             </p>
 
             <!-- Bedenler -->
             @if (Model.ProductSizes != null && Model.ProductSizes.Any())
             {
-                <div class="mb-2 d-flex justify-content-center flex-wrap gap-1">
-                    @foreach (var size in Model.ProductSizes.Take(3))
+                <div class="mb-3 d-flex justify-content-center flex-wrap gap-1">
+                    @foreach (var size in Model.ProductSizes.Where(s => s.Stock > 0).Take(4))
                     {
                         <span class="badge size-badge">
                             @size.Size.Name
-                            @if (size.Stock < 10)
+                            @if (size.Stock < 5)
                             {
                                 <span class="text-danger">(@size.Stock)</span>
                             }
                         </span>
                     }
-                    @if (Model.ProductSizes.Count > 3)
+                    @if (Model.ProductSizes.Count(s => s.Stock > 0) > 4)
                     {
-                        <span class="badge size-badge">+@(@Model.ProductSizes.Count - 3)</span>
+                        <span class="badge size-badge">+@(Model.ProductSizes.Count(s => s.Stock > 0) - 4)</span>
                     }
                 </div>
             }
 
-            <!-- Fiyat -->
-            <h5 class="text-purple fw-bold my-2">@Model.Price.ToString("C")</h5>
-
             <!-- Sepete Ekle -->
-            <button class="btn add-to-cart w-100 fw-bold py-2 mt-auto"
-                    data-product-id="@Model.Id">
-                <i class="fas fa-shopping-cart me-2"></i> Sepete Ekle
-            </button>
+            <div class="d-grid gap-2 mt-auto">
+
+                <button class="btn btn-outline-purple w-100 py-2"
+                        onclick="window.location.href='/Product/Details/@Model.Id'">
+                    <i class="fas fa-eye me-2"></i> İncele
+                </button>
+            </div>
         </div>
     </div>
 </div>
 
-<style>
-    .product-card {
-        transition: all 0.3s ease;
-        background-color: #fff;
-    }
 
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 10px 24px rgba(142, 68, 173, 0.15);
-        }
 
-    .product-image {
-        aspect-ratio: 1 / 1;
-        object-fit: cover;
-        transition: transform 0.3s ease;
-    }
-
-    .product-card:hover .product-image {
-        transform: scale(1.05);
-    }
-
-    .new-badge {
-        position: absolute;
-        top: 0.75rem;
-        left: 0.75rem;
-        z-index: 10;
-        font-size: 0.75rem;
-    }
-
-    .product-title {
-        font-size: 1rem;
-        color: #5c3d74;
-    }
-
-    .text-purple {
-        color: #8e44ad !important;
-    }
-
-    .size-badge {
-        background-color: #f3eaf9;
-        color: #5c3d74;
-        border: 1px solid #ddd;
-        font-size: 0.75rem;
-        padding: 0.4em 0.6em;
-        border-radius: 12px;
-    }
-
-    .add-to-cart {
-        background-color: #8e44ad;
-        color: #fff;
-        border-radius: 10px;
-        transition: all 0.3s ease;
-    }
-
-        .add-to-cart:hover {
-            background-color: #732d91;
-            box-shadow: 0 4px 15px rgba(142, 68, 173, 0.3);
-        }
-</style>
-
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            $('.add-to-cart').click(function (e) {
-                e.preventDefault();
-                const productId = $(this).data('product-id');
-                toastr.success('Ürün sepete eklendi!');
-                // Sepet API'si entegre edilecekse buraya yaz
-                console.log('Ürün ID:', productId);
-            });
-        });
-    </script>
-}

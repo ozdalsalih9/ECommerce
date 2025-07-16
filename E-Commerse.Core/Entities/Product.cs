@@ -27,7 +27,7 @@ namespace E_Commerse.Core.Entities
         public List<IFormFile>? ImageFiles { get; set; }
 
         [Display(Name = "Fiyat")]
-        public decimal Price { get; set; }
+        public decimal? Price { get; set; }
 
         [Display(Name = "Ürün Kodu")]
         public string? ProductCode { get; set; }
@@ -67,7 +67,8 @@ namespace E_Commerse.Core.Entities
         public int TotalStock => ProductSizes?.Sum(ps => ps.Stock) ?? 0;
 
         [NotMapped]
-        public List<int> SelectedColorIds { get; set; } = new List<int>();
+        public List<int>? SelectedColorIds { get; set; } = new();
+
         public ICollection<Favorite> Favorites { get; set; } = new List<Favorite>();
 
     }

@@ -1,123 +1,69 @@
-﻿<style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f9f5fc;
-    }
+﻿@{
+    Layout = "_LayoutAuth"; // Özel bir layout oluşturmanızı öneririm
+    ViewData["Title"] = "Giriş Yap";
+}
 
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="/img/logo.png.png"  alt="Logo" class="auth-logo">
 
-    main {
-        flex: 1 0 auto; /* Ana içerik alanı esnek ve büyüyebilir */
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 40px 15px;
-    }
+        </div>
 
-    .signin-container {
-        width: 100%;
-        max-width: 420px;
-        padding: 30px 25px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(142, 68, 173, 0.2);
-        box-sizing: border-box;
-    }
-
-        .signin-container h2 {
-            color: #5c3d74;
-            margin-bottom: 25px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-    label {
-        font-weight: 600;
-        color: #5c3d74;
-    }
-
-    input.form-control {
-        border: 1.5px solid #8e44ad;
-        border-radius: 8px;
-        transition: border-color 0.3s ease;
-    }
-
-        input.form-control:focus {
-            border-color: #c39bd3;
-            box-shadow: 0 0 8px #c39bd3;
-            outline: none;
-        }
-
-    button.btn-primary {
-        background-color: #8e44ad;
-        border-color: #8e44ad;
-        font-weight: 600;
-        border-radius: 8px;
-        width: 100%;
-        padding: 10px;
-        transition: background-color 0.3s ease;
-    }
-
-        button.btn-primary:hover {
-            background-color: #a569bd;
-            border-color: #a569bd;
-        }
-
-    .forgot-link {
-        display: block;
-        margin-top: 15px;
-        text-align: center;
-        color: #5c3d74;
-        font-weight: 500;
-        text-decoration: none;
-        transition: color 0.3s ease;
-    }
-
-        .forgot-link:hover {
-            color: #8e44ad;
-            text-decoration: underline;
-        }
-
-    .text-danger {
-        font-weight: 600;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-</style>
-
-<main>
-
-    <div class="signin-container">
-        <h2>@ViewData["Title"]Giriş Yap</h2>
         @if (TempData["Message"] != null)
         {
-            <div class="alert alert-success shadow-sm text-center fw-semibold" role="alert">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
                 @TempData["Message"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         }
 
-        <form asp-action="SignIn" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <form asp-action="SignIn" method="post" class="auth-form">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-            <div class="mb-3">
-                <label for="email">E-posta</label>
-                <input name="email" type="email" class="form-control" id="email" placeholder="Email adresinizi girin" required />
+            <div class="form-group">
+                <label for="email" class="form-label">E-posta Adresi</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input name="email" type="email" class="form-control" id="email" placeholder="ornek@email.com" required>
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label for="password">Şifre</label>
-                <input name="password" type="password" class="form-control" id="password" placeholder="Şifrenizi girin" required />
+            <div class="form-group">
+                <label for="password" class="form-label">Şifre</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input name="password" type="password" class="form-control" id="password" placeholder="••••••••" required>
+                    <button class="btn btn-outline-secondary toggle-password" type="button">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
             </div>
 
-            <button type="submit" class="btn btn-primary">Giriş Yap</button>
+            <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="rememberMe">
+                <label class="form-check-label" for="rememberMe">Beni Hatırla</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary auth-btn">
+                <i class="fas fa-sign-in-alt me-2"></i> Giriş Yap
+            </button>
+
+            <div class="auth-links">
+                <a asp-action="ForgotPassword" class="auth-link">Şifremi Unuttum</a>
+                <span class="auth-separator">|</span>
+                <a asp-action="SignUp" class="auth-link">Hesap Oluştur</a>
+            </div>
         </form>
 
-        <a asp-action="ForgotPassword" class="forgot-link">Şifremi Unuttum</a>
+       
     </div>
-</main>
+
+    <div class="auth-background">
+        <div class="auth-overlay"></div>
+        <div class="auth-content">
+            <h2>Hoş Geldiniz</h2>
+
+        </div>
+    </div>
+</div>

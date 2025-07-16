@@ -1,0 +1,61 @@
+﻿@model E_Commerse.Core.Entities.Contact
+
+@{
+    ViewData["Title"] = "İletişim Formu Detayları";
+}
+
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h4>İletişim Formu Detayları</h4>
+    </div>
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Name)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Name)
+            </dd>
+            
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Surname)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Surname)
+            </dd>
+            
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Email)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Email)
+            </dd>
+            
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Phone)
+            </dt>
+            <dd class="col-sm-9">
+                @Html.DisplayFor(model => model.Phone)
+            </dd>
+            
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.CreateDate)
+            </dt>
+            <dd class="col-sm-9">
+                @Model.CreateDate.ToString("dd.MM.yyyy HH:mm")
+            </dd>
+            
+            <dt class="col-sm-3">
+                @Html.DisplayNameFor(model => model.Message)
+            </dt>
+            <dd class="col-sm-9">
+                <div class="border p-3 bg-light rounded">
+                    @Html.DisplayFor(model => model.Message)
+                </div>
+            </dd>
+        </dl>
+    </div>
+    <div class="card-footer">
+        <a asp-action="Index" class="btn btn-secondary"><i class="fas fa-arrow-left"></i> Listeye Dön</a>
+    </div>
+</div>

@@ -8,7 +8,7 @@ namespace E_Commerse.Core.Entities
         public int Id { get; set; }
 
         [Display(Name = "Beden Adı")]
-        public string Name { get; set; }
+        public string? Name { get; set; }
 
         [Display(Name = "Açıklama")]
         public string? Description { get; set; }

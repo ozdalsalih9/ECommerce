@@ -1,324 +1,9 @@
 ﻿@model E_Commerse.Core.Entities.Product
+
 @{
     ViewData["Title"] = Model.Name;
 }
 
-<style>
-    :root {
-        --primary-color: #5c3d74;
-        --secondary-color: #8e44ad;
-        --accent-color: #c0392b;
-        --light-gray: #f9f5fc;
-        --dark-gray: #2c2c2c;
-        --hover-bg: #f1e8f9;
-    }
-
-    .favorite-section {
-        padding: 0.5rem 0;
-        border-top: 1px solid #eee;
-        border-bottom: 1px solid #eee;
-        margin: 1rem 0;
-    }
-
-    #favoriteToggle {
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-    }
-
-        #favoriteToggle i {
-            transition: transform 0.3s ease;
-        }
-
-        #favoriteToggle:hover i {
-            transform: scale(1.2);
-        }
-
-        #favoriteToggle.btn-danger {
-            box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
-        }
-
-    #favoriteStatusMessage {
-        display: none;
-    }
-    .product-detail-container {
-        max-width: 1200px;
-        margin: 2rem auto;
-        padding: 0 1rem;
-    }
-
-    .product-content {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 3rem;
-        margin-bottom: 4rem;
-    }
-
-    .product-gallery {
-        position: relative;
-        border-radius: 12px;
-        overflow: hidden;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-    }
-
-    .main-image-container {
-        height: 500px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: var(--light-gray);
-        position: relative;
-    }
-
-    .main-image {
-        max-height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-        transition: opacity 0.3s ease;
-    }
-
-    .thumbnail-slider {
-        display: flex;
-        padding: 1rem 0;
-        position: relative;
-    }
-
-    .thumbnail {
-        width: 80px;
-        height: 80px;
-        object-fit: cover;
-        border: 2px solid transparent;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-right: 10px;
-    }
-
-        .thumbnail:hover,
-        .thumbnail.active {
-            border-color: var(--secondary-color);
-            transform: scale(1.05);
-        }
-
-    .product-info {
-        padding: 1.5rem;
-    }
-
-    .product-title {
-        font-size: 2rem;
-        margin-bottom: 1rem;
-        color: var(--primary-color);
-        font-weight: 600;
-    }
-
-    .price {
-        font-size: 1.8rem;
-        font-weight: bold;
-        color: var(--secondary-color);
-        margin: 1.5rem 0;
-    }
-
-    .product-meta {
-        color: #666;
-        margin-bottom: 1.5rem;
-        font-size: 0.95rem;
-    }
-
-    .size-selection {
-        margin: 2rem 0;
-    }
-
-    .stock-message {
-        margin-top: 0.5rem;
-        font-size: 0.9rem;
-        min-height: 1.5rem;
-    }
-
-    .add-to-cart {
-        padding: 14px 28px;
-        font-size: 1.1rem;
-        font-weight: bold;
-        margin: 2rem 0;
-        width: 100%;
-        background: var(--secondary-color);
-        border: none;
-        color: white;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 4px 10px rgba(142, 68, 173, 0.2);
-    }
-
-        .add-to-cart:hover {
-            background: #732d91;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(142, 68, 173, 0.3);
-        }
-
-        .add-to-cart i {
-            margin-right: 10px;
-        }
-
-    .product-description {
-        margin-top: 2rem;
-        padding-top: 2rem;
-        border-top: 1px solid #eee;
-    }
-
-    .section-title {
-        font-size: 1.5rem;
-        margin-bottom: 1.5rem;
-        color: var(--primary-color);
-        font-weight: 600;
-        position: relative;
-        padding-bottom: 0.5rem;
-    }
-
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 60px;
-            height: 3px;
-            background: var(--secondary-color);
-        }
-
-    .related-products {
-        margin-top: 4rem;
-        padding-top: 3rem;
-        border-top: 1px solid #eee;
-    }
-
-    .related-products-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 2rem;
-        margin-top: 2rem;
-    }
-
-    .product-card {
-        border-radius: 12px;
-        overflow: hidden;
-        transition: all 0.3s ease;
-        background: white;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border: 1px solid #eee;
-    }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-        }
-
-    .product-card-img {
-        height: 200px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 1rem;
-        background: var(--light-gray);
-    }
-
-    .product-card img {
-        max-height: 100%;
-        max-width: 100%;
-        object-fit: contain;
-    }
-
-    .product-card-body {
-        padding: 1.5rem;
-    }
-
-    .product-card-title {
-        font-size: 1.1rem;
-        margin-bottom: 0.5rem;
-        color: var(--primary-color);
-        font-weight: 500;
-    }
-
-    .product-card-price {
-        font-size: 1.2rem;
-        font-weight: bold;
-        color: var(--secondary-color);
-        margin: 0.5rem 0;
-    }
-
-    .product-card-link {
-        display: inline-block;
-        width: 100%;
-        padding: 8px 0;
-        text-align: center;
-        background: var(--light-gray);
-        color: var(--primary-color);
-        border-radius: 6px;
-        transition: all 0.3s ease;
-        font-weight: 500;
-    }
-
-        .product-card-link:hover {
-            background: var(--secondary-color);
-            color: white;
-            text-decoration: none;
-        }
-
-    .slick-prev, .slick-next {
-        background: var(--light-gray);
-        border-radius: 50%;
-        color: var(--secondary-color);
-        border: 1px solid #ccc;
-        width: 32px;
-        height: 32px;
-        display: flex !important;
-        align-items: center;
-        justify-content: center;
-    }
-
-        .slick-prev:hover, .slick-next:hover {
-            background: var(--secondary-color);
-            color: white;
-        }
-
-    /* Responsive Styles */
-    @@media (max-width: 992px) {
-        .product-content {
-            grid-template-columns: 1fr;
-        }
-
-        .main-image-container {
-            height: 400px;
-        }
-    }
-
-    @@media (max-width: 768px) {
-        .product-title {
-            font-size: 1.7rem;
-        }
-
-        .price {
-            font-size: 1.5rem;
-        }
-
-        .related-products-grid {
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-        }
-    }
-
-    @@media (max-width: 576px) {
-        .main-image-container {
-            height: 300px;
-        }
-
-        .thumbnail {
-            width: 60px;
-            height: 60px;
-        }
-    }
-
-
-</style>
 
 <div class="product-detail-container">
     <div class="product-content">
@@ -326,12 +11,10 @@
             <div class="main-image-container">
                 <img src="/img/Products/MainImage/@Model.Image" alt="@Model.Name" class="main-image" id="mainImage" />
             </div>
-
             <div class="thumbnail-slider" id="thumbnailSlider">
                 <img src="/img/Products/MainImage/@Model.Image" alt="@Model.Name"
                      class="thumbnail active"
                      onclick="changeMainImage(this, '/img/Products/MainImage/@Model.Image')" />
-
                 @foreach (var image in Model.ProductImages)
                 {
                     <img src="/img/Products/OtherImages/@image.ImagePath" alt="@Model.Name"
@@ -340,12 +23,9 @@
                 }
             </div>
         </div>
-
         <div class="product-info">
             <h1 class="product-title">@Model.Name</h1>
-            <div class="price">@Model.Price.ToString("C")</div>
             <div class="product-meta">Ürün Kodu: @Model.ProductCode</div>
-
             <div class="size-selection">
                 <label class="fw-bold mb-2 d-block">Beden Seçiniz:</label>
                 <select id="sizeSelect" class="form-select">
@@ -374,20 +54,19 @@
                             </div>
                         }
                     </div>
-
                     <div id="colorImagesContainer" style="display:flex; gap:10px; flex-wrap: wrap;">
                         <!-- Seçilen renk resimleri buraya gelecek -->
                     </div>
                 </div>
             }
-
             <!-- Product-info bölümüne ekleyin (price div'inin altına uygun) -->
             <div class="favorite-section mt-3 mb-3">
                 @if (User.Identity.IsAuthenticated)
                 {
                     <button id="favoriteToggle"
                             class="btn @(ViewBag.IsFavorite ? "btn-danger" : "btn-outline-danger")"
-                            data-product-id="@Model.Id">
+                            data-product-id="@Model.Id"
+                            data-favorite-id="@(ViewBag.FavoriteId ?? 0)">
                         <i class="fas @(ViewBag.IsFavorite ? "fa-heart" : "fa-heart-o")"></i>
                         @(ViewBag.IsFavorite ? "Favorilerden Çıkar" : "Favorilere Ekle")
                     </button>
@@ -402,17 +81,12 @@
             </div>
 
 
-
-
-
             <div class="product-description">
                 <h3 class="section-title">ÜRÜN AÇIKLAMASI</h3>
                 <p class="text-muted">@Model.Description</p>
             </div>
         </div>
     </div>
-
- 
 
 
     @if (ViewBag.RelatedProducts != null && ViewBag.RelatedProducts.Count > 0)
@@ -463,219 +137,3 @@
         box-shadow: 0 0 15px rgba(255,255,255,0.5);
     " />
 </div>
-@section Scripts {
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
-
-    <script>
-         $(document).ready(function() {
-            // Favori butonu click event
-            $('#favoriteToggle').click(function() {
-                const productId = $(this).data('product-id');
-                const favoriteId = $(this).data('favorite-id');
-                const isCurrentlyFavorite = $(this).hasClass('btn-danger');
-
-                const url = isCurrentlyFavorite ?
-                    '/Favorite/Remove' : '/Favorite/Add';
-                const data = isCurrentlyFavorite ?
-                    { productId: productId } : { productId: productId };
-
-                $.ajax({
-                    url: url,
-                    type: 'POST',
-                    data: data,
-                    success: function(response) {
-                        if (response.success) {
-                            // Buton görünümünü güncelle
-                            const button = $('#favoriteToggle');
-                            button.toggleClass('btn-danger btn-outline-danger');
-
-                            // Favori ID'sini güncelle (ekleme durumunda)
-                            if (response.favoriteId) {
-                                button.data('favorite-id', response.favoriteId);
-                            }
-
-                            // İkon ve metni güncelle
-                            const iconClass = isCurrentlyFavorite ? 'fa-heart-o' : 'fa-heart';
-                            const text = isCurrentlyFavorite ? 'Favorilere Ekle' : 'Favorilerden Çıkar';
-                            button.html(`<i class="fas ${iconClass}"></i> ${text}`);
-
-                            // Bildirim göster
-                            toastr.success(response.message);
-
-                            // Favori sayısını güncelle
-                            fetchFavoriteCount();
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function() {
-                        toastr.error('İşlem sırasında bir hata oluştu. Lütfen tekrar deneyin.');
-                    }
-                });
-            });
-
-            // Favori sayısını güncelle
-            function fetchFavoriteCount() {
-                fetch('/Favorite/GetFavoriteCount')
-                    .then(response => response.json())
-                    .then(data => {
-                        const badge = document.getElementById('favoriteCountBadge');
-                        if (data.count > 0) {
-                            badge.textContent = data.count;
-                            badge.style.display = 'flex';
-                        } else {
-                            badge.style.display = 'none';
-                        }
-                    });
-            }
-
-            // Sayfa yüklendiğinde favori durumunu kontrol et
-            if ('@User.Identity.IsAuthenticated' === 'True') {
-                fetchFavoriteCount();
-            }
-        });
-        function changeMainImage(thumbnailElement, imageUrl) {
-            document.getElementById('mainImage').src = imageUrl;
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            thumbnailElement.classList.add('active');
-        }
-
-        function selectColor(element) {
-            // Renk seçiminde aktif sınıfı değiştir
-            document.querySelectorAll('.color-circle').forEach(c => c.style.borderColor = 'transparent');
-            element.style.borderColor = '#000'; // aktif rengi siyah yap
-
-            const colorId = element.getAttribute('data-color-id');
-            const colorImagesContainer = document.getElementById('colorImagesContainer');
-            colorImagesContainer.innerHTML = ''; // önce temizle
-
-            // Model’den ürün renklerine göre resimleri alıyoruz:
-            // Sayfada Model.ProductColors olduğu için JS’de göremiyoruz, Razor ile JSON gönderelim:
-        }
-
-        $(document).ready(function () {
-            // JSON olarak renk resimlerini alalım
-                    const productColors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.ProductColors.Select(pc => new
-            {
-                ColorId = pc.ColorId,
-                Images = pc.ProductColorImages.Select(img => $"/img/Products/ColorImages/P-{Model.Id}/C-{pc.ColorId}/" + img.ImageUrl).ToList()
-            })));
-
-
-            window.selectColor = function(element) {
-                document.querySelectorAll('.color-circle').forEach(c => c.style.borderColor = 'transparent');
-                element.style.borderColor = '#000';
-
-                const colorId = element.getAttribute('data-color-id');
-                const colorImagesContainer = document.getElementById('colorImagesContainer');
-                colorImagesContainer.innerHTML = '';
-
-                const selectedColor = productColors.find(c => c.ColorId == colorId);
-
-                if (selectedColor && selectedColor.Images.length > 0) {
-                    selectedColor.Images.forEach(imgUrl => {
-                        const img = document.createElement('img');
-                        img.src = imgUrl;
-                        img.alt = 'Renk resmi';
-                        img.style.width = '80px';
-                        img.style.height = '80px';
-                        img.style.objectFit = 'cover';
-                        img.style.marginRight = '10px';
-                        img.style.cursor = 'pointer';
-                        img.style.border = '1px solid #ddd';
-                        img.style.borderRadius = '4px';
-
-                        img.addEventListener('click', function () {
-                            openModal(imgUrl);
-                        });
-
-                        colorImagesContainer.appendChild(img);
-                    });
-                }
-                else {
-                    colorImagesContainer.innerHTML = '<p>Bu renge ait resim bulunmamaktadır.</p>';
-                }
-            };
-
-            // Modal açma fonksiyonu
-            window.openModal = function(imgUrl) {
-                const modal = document.getElementById('imageModal');
-                const modalImg = document.getElementById('modalImg');
-                modal.style.display = 'block';
-                modalImg.src = imgUrl;
-            };
-
-            // Modal kapatma
-            document.getElementById('modalClose').onclick = function() {
-                document.getElementById('imageModal').style.display = 'none';
-            };
-
-            // Diğer mevcut kodlar (slick, stock vb.)
-            // ... (mevcut jQuery kodların kalabilir)
-        });
-
-        function changeMainImage(thumbnailElement, imageUrl) {
-            document.getElementById('mainImage').src = imageUrl;
-            document.querySelectorAll('.thumbnail').forEach(thumb => {
-                thumb.classList.remove('active');
-            });
-            thumbnailElement.classList.add('active');
-        }
-
-        $(document).ready(function () {
-            $('#sizeSelect').change(function () {
-                const selectedOption = $(this).find('option:selected');
-                const stock = selectedOption.data('stock');
-                const sizeName = selectedOption.text().split('(')[0].trim();
-
-                if (selectedOption.val()) {
-                    if (stock > 0) {
-                        const stockText = stock < 10 ? `Son ${stock} adet!` : `${stock} adet stokta`;
-                        $('#stockMessage').html(`${sizeName} beden: <span class="text-success">${stockText}</span>`);
-                    } else {
-                        $('#stockMessage').html(`${sizeName} beden: <span class="text-danger">Stokta yok</span>`);
-                    }
-                } else {
-                    $('#stockMessage').html('');
-                }
-            });
-
-            $('#thumbnailSlider').slick({
-                dots: false,
-                arrows: true,
-                infinite: false,
-                speed: 300,
-                slidesToShow: 5,
-                slidesToScroll: 1,
-                prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
-                nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>',
-                responsive: [
-                    { breakpoint: 992, settings: { slidesToShow: 4 } },
-                    { breakpoint: 768, settings: { slidesToShow: 3 } },
-                    { breakpoint: 576, settings: { slidesToShow: 2 } }
-                ]
-            });
-
-            let currentIndex = 0;
-            const thumbnails = $('.thumbnail');
-
-            function rotateMainImage() {
-                currentIndex = (currentIndex + 1) % thumbnails.length;
-                const thumbnail = thumbnails[currentIndex];
-                const imageUrl = $(thumbnail).attr('src');
-                changeMainImage(thumbnail, imageUrl);
-            }
-
-            if (thumbnails.length > 1) {
-                setInterval(rotateMainImage, 5000);
-            }
-        });
-    </script>
-
-
-}

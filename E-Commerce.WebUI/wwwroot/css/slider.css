@@ -1,0 +1,68 @@
+﻿.custom-carousel .carousel-item {
+    height: 480px;
+    position: relative;
+}
+
+    .custom-carousel .carousel-item img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+        filter: brightness(60%); /* Daha koyu zemin, yazılar daha belirgin */
+    }
+
+.custom-carousel .carousel-caption {
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 12px;
+    padding: 1.2rem 1.5rem;
+    max-width: 700px;
+    margin: auto;
+    animation: fadeInUp 1s ease;
+}
+
+    .custom-carousel .carousel-caption h5 {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 0.5rem;
+    }
+
+    .custom-carousel .carousel-caption p {
+        font-size: 0.95rem;
+        color: #dddddd;
+        margin-bottom: 0;
+    }
+
+@@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    filter: invert(100%);
+}
+
+@@media (max-width: 768px) {
+    .custom-carousel .carousel-item {
+        height: 300px;
+    }
+
+    .custom-carousel .carousel-caption {
+        padding: 1rem;
+    }
+
+        .custom-carousel .carousel-caption h5 {
+            font-size: 1.1rem;
+        }
+
+        .custom-carousel .carousel-caption p {
+            font-size: 0.8rem;
+        }
+}

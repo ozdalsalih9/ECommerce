@@ -74,19 +74,19 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 7, 1, 19, 50, 55, 145, DateTimeKind.Local).AddTicks(8859),
+                            CreateDate = new DateTime(2025, 7, 9, 16, 26, 36, 749, DateTimeKind.Local).AddTicks(9308),
                             Email = "ozdalsalih9@gmail.com",
                             IsActive = true,
                             IsAdmin = true,
                             Name = "Admin",
                             Password = "002255",
                             Surname = "1",
-                            UserGuid = new Guid("58b09b78-d059-4e05-baa6-662cf54f66fa")
+                            UserGuid = new Guid("de25e90b-e219-4fe1-9735-71167179e72e")
                         },
                         new
                         {
                             Id = 9,
-                            CreateDate = new DateTime(2025, 7, 1, 19, 50, 55, 146, DateTimeKind.Local).AddTicks(8322),
+                            CreateDate = new DateTime(2025, 7, 9, 16, 26, 36, 750, DateTimeKind.Local).AddTicks(9285),
                             Email = "admin@admin.com",
                             IsActive = true,
                             IsAdmin = true,
@@ -94,7 +94,7 @@ namespace E_Commerce.Data.Migrations
                             Password = "AQAAAAEAACcQAAAAEPhLrFcyyYp7mJoZJjCnWnK5z6V8y96v9xv91w+uUuYmndT+Lv8IqydcZcO4Tr9H5A==",
                             Phone = "0000000000",
                             Surname = "User",
-                            UserGuid = new Guid("64129de7-6f2d-4f5f-99f1-cf688880cb8e")
+                            UserGuid = new Guid("1c15fea5-02eb-480b-8b77-4b95a83b5b59")
                         });
                 });
 
@@ -172,7 +172,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateTime = new DateTime(2025, 7, 1, 19, 50, 55, 146, DateTimeKind.Local).AddTicks(1237),
+                            CreateTime = new DateTime(2025, 7, 9, 16, 26, 36, 750, DateTimeKind.Local).AddTicks(1722),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Kadın",
@@ -182,7 +182,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreateTime = new DateTime(2025, 7, 1, 19, 50, 55, 146, DateTimeKind.Local).AddTicks(1243),
+                            CreateTime = new DateTime(2025, 7, 9, 16, 26, 36, 750, DateTimeKind.Local).AddTicks(1742),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Erkek",
@@ -200,14 +200,12 @@ namespace E_Commerce.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Code")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsActive")
                         .HasColumnType("bit");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
@@ -459,6 +457,30 @@ namespace E_Commerce.Data.Migrations
                     b.ToTable("Favorites");
                 });
 
+            modelBuilder.Entity("E_Commerse.Core.Entities.LoginAttempt", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("FailedCount")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("LockedUntil")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.ToTable("LoginAttempts");
+                });
+
             modelBuilder.Entity("E_Commerse.Core.Entities.News", b =>
                 {
                     b.Property<int>("Id")
@@ -528,7 +550,7 @@ namespace E_Commerce.Data.Migrations
                     b.Property<int>("OrderNo")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("ProductCode")
@@ -597,7 +619,6 @@ namespace E_Commerce.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ImagePath")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProductId")
@@ -648,7 +669,6 @@ namespace E_Commerce.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderNo")
@@ -705,6 +725,17 @@ namespace E_Commerce.Data.Migrations
                     b.Navigation("AppUser");
 
                     b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.LoginAttempt", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
                 });
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Product", b =>

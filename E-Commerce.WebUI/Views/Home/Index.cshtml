@@ -2,51 +2,10 @@
 @{
     ViewData["Title"] = "Anasayfa";
 }
-<style>
-    .campaign-strip {
-        background-color: #5c3d74;
-        color: white;
-        font-size: 1rem;
-        font-weight: 500;
-        overflow: hidden;
-        white-space: nowrap;
-        padding: 8px 0;
-        margin-bottom: 0; /* aradaki boşluğu kaldırmak için */
-    }
 
-    .campaign-marquee {
-        overflow: hidden;
-        position: relative;
-    }
 
-    .campaign-content {
-        display: inline-block;
-        padding-left: 100%;
-        animation: scroll-left 25s linear infinite;
-    }
 
-    @@keyframes scroll-left {
-        0% {
-            transform: translateX(0%);
-        }
-
-        100% {
-            transform: translateX(-100%);
-        }
-    }
-
-    .campaign-item {
-        display: inline-block;
-        margin-right: 50px;
-    }
-
-    .campaign-desc {
-        font-size: 0.9rem;
-        font-style: italic;
-        color: #e0e0e0;
-    }
-</style>
-
+<!-- Kampanya Şeridi -->
 @if (Model.News != null && Model.News.Any())
 {
     <div class="campaign-strip">
@@ -58,30 +17,39 @@
                         <strong>@news.Name</strong>
                         @if (!string.IsNullOrWhiteSpace(news.Description))
                         {
-                            <span class="campaign-desc"> (@news.Description)</span>
+                            <span class="campaign-desc">(@news.Description)</span>
                         }
-                        &nbsp;&nbsp;&nbsp;&nbsp;
                     </span>
                 }
             </div>
         </div>
     </div>
-
-
 }
 
+<!-- Slider -->
+<partial name="_Slider" model="Model.Sliders" />
 
-
-
-<partial name="_Slider" model="Model.Sliders"/>
-
-<div>
-    <hr />
-     <h2 class="text-center">Dikkatini Çekebilecek Ürünler!</h2>
-     <div class="row">
-         @foreach (var item in Model.Products)
+<section class="container">
+    <!-- Dikkatini Çekebilecek Ürünler -->
+    <h2 class="section-title">Dikkatini Çekebilecek Ürünler</h2>
+    <div class="row">
+        @foreach (var item in Model.Products)
         {
             <partial name="_ProductView" model="item" />
         }
-     </div>
-</div>
+    </div>
+
+    <!-- En Çok Favoriye Eklenen Ürünler -->
+    @if (Model.PopularProducts != null && Model.PopularProducts.Any())
+    {
+        <section class="mt-5">
+            <h2 class="section-title">En Çok Favoriye Eklenenler</h2>
+            <div class="products-row">
+                @foreach (var item in Model.PopularProducts)
+                {
+                    <partial name="_ProductView" model="item" />
+                }
+            </div>
+        </section>
+    }
+</section>

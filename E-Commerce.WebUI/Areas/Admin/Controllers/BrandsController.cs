@@ -60,7 +60,8 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
         {
             if (ModelState.IsValid)
             {
-                brand.Logo = await FileHelper.FileLoaderAsync(Logo);
+                brand.Logo = await FileHelper.FileLoaderAsync(Logo, "/img/Brands");
+
                 _context.Add(brand);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
@@ -105,7 +106,11 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
                     }
                     if(Logo is not null)
                     {
-                        brand.Logo = await FileHelper.FileLoaderAsync(Logo); 
+                        if (Logo is not null)
+                        {
+                            brand.Logo = await FileHelper.FileLoaderAsync(Logo, "/img/Brands");
+                        }
+
                     }
                     _context.Update(brand);
                     await _context.SaveChangesAsync();
@@ -145,23 +150,37 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
         }
 
         // POST: Admin/Brands/Delete/5
+        // POST: Admin/Brands/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var brand = await _context.Brands.FindAsync(id);
-            if (brand != null)
+            var brand = await _context.Brands
+                .Include(b => b.Products)
+                .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (brand == null)
+                return NotFound();
+
+            // Eğer markaya bağlı ürün varsa silme
+            bool hasProducts = await _context.Products.AnyAsync(p => p.BrandId == id);
+            if (hasProducts)
             {
-                if(!string.IsNullOrEmpty(brand.Logo))
-                {
-                    FileHelper.FileRemover(brand.Logo);
-                }
-                _context.Brands.Remove(brand);
+                TempData["Error"] = "Bu markaya bağlı ürün(ler) var. Önce bu ürünleri silmelisiniz.";
+                return RedirectToAction(nameof(Index));
             }
 
+            // Logoyu da sil
+            if (!string.IsNullOrEmpty(brand.Logo))
+                FileHelper.FileRemover(brand.Logo, "/img/Brands");
+
+            _context.Brands.Remove(brand);
             await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Marka başarıyla silindi.";
             return RedirectToAction(nameof(Index));
         }
+
 
         private bool BrandExists(int id)
         {

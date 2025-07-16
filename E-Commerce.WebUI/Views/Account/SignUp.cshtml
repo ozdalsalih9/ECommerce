@@ -1,132 +1,126 @@
 ﻿@model E_Commerce.WebUI.ViewModels.SignUpViewModel
+@{
+    Layout = "_LayoutAuth";
+    ViewData["Title"] = "Kayıt Ol";
+}
 
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <img src="/img/logo.png.png" alt="Logo" class="auth-logo">
+            <h1 class="auth-title">Yeni Hesap Oluştur</h1>
+            <p class="auth-subtitle">Hizmetlerimizden yararlanmak için kayıt olun</p>
+        </div>
 
+        <form asp-action="SignUp" method="post" class="auth-form">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
-<style>
-    html, body {
-        height: 100%;
-        margin: 0;
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: #f9f5fc;
-    }
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Name" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input asp-for="Name" class="form-control" placeholder="Adınız">
+                    </div>
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
 
-    body {
-        display: flex;
-        flex-direction: column;
-        min-height: 100vh;
-    }
-
-    main {
-        flex: 1 0 auto;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 40px 15px;
-    }
-
-    .signup-container {
-        width: 100%;
-        max-width: 420px;
-        padding: 30px 25px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 4px 15px rgba(142, 68, 173, 0.2);
-        box-sizing: border-box;
-    }
-
-        .signup-container h2 {
-            color: #5c3d74;
-            margin-bottom: 25px;
-            font-weight: 700;
-            text-align: center;
-        }
-
-    label {
-        font-weight: 600;
-        color: #5c3d74;
-    }
-
-    input.form-control {
-        border: 1.5px solid #8e44ad;
-        border-radius: 8px;
-        transition: border-color 0.3s ease;
-    }
-
-        input.form-control:focus {
-            border-color: #c39bd3;
-            box-shadow: 0 0 8px #c39bd3;
-            outline: none;
-        }
-
-    button.btn-primary {
-        background-color: #8e44ad;
-        border-color: #8e44ad;
-        font-weight: 600;
-        border-radius: 8px;
-        width: 100%;
-        padding: 10px;
-        transition: background-color 0.3s ease;
-    }
-
-        button.btn-primary:hover {
-            background-color: #a569bd;
-            border-color: #a569bd;
-        }
-
-    .text-danger {
-        font-weight: 600;
-        margin-bottom: 15px;
-        text-align: center;
-    }
-
-    .form-group {
-        margin-bottom: 15px;
-    }
-</style>
-
-<main>
-    <div class="signup-container">
-        <h2>Kayıt Ol</h2>
-
-        <form asp-action="SignUp" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
-            <div class="form-group">
-                <label asp-for="Name"></label>
-                <input asp-for="Name" class="form-control" />
+                <div class="form-group">
+                    <label asp-for="Surname" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                        <input asp-for="Surname" class="form-control" placeholder="Soyadınız">
+                    </div>
+                    <span asp-validation-for="Surname" class="text-danger small"></span>
+                </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="Surname"></label>
-                <input asp-for="Surname" class="form-control" />
+                <label asp-for="Email" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-envelope"></i></span>
+                    <input asp-for="Email" class="form-control" placeholder="ornek@email.com">
+                </div>
+                <span asp-validation-for="Email" class="text-danger small"></span>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label asp-for="Password" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input asp-for="Password" type="password" class="form-control" placeholder="••••••••">
+                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-danger small"></span>
+                </div>
+
+                <div class="form-group">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="••••••••">
+                        <button class="btn btn-outline-secondary toggle-password" type="button">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="ConfirmPassword" class="text-danger small"></span>
+                </div>
             </div>
 
             <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
+                <label asp-for="Phone" class="form-label"></label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-phone"></i></span>
+                    <input asp-for="Phone" class="form-control" placeholder="5__ ___ __ __">
+                </div>
+                <span asp-validation-for="Phone" class="text-danger small"></span>
             </div>
 
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" type="password" class="form-control" />
-            </div>
 
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" type="password" class="form-control" />
-            </div>
 
-            <div class="form-group">
-                <label asp-for="Phone"></label>
-                <input asp-for="Phone" class="form-control" />
-            </div>
+            <button type="submit" class="btn btn-primary auth-btn">
+                <i class="fas fa-user-plus me-2"></i> Kayıt Ol
+            </button>
 
-            <button type="submit" class="btn btn-primary mt-3">Kayıt Ol</button>
+            <div class="auth-links">
+                Zaten hesabınız var mı? <a asp-action="SignIn" class="auth-link">Giriş Yap</a>
+            </div>
         </form>
     </div>
-</main>
 
+    <div class="auth-background">
+        <div class="auth-overlay"></div>
+        <div class="auth-content">
+            <h2>Yeni Üyelik Avantajları</h2
+            <ul class="auth-benefits">
+                <li><i class="fas fa-check-circle me-2"></i> Kampanyalardan haberdar ol</li>
+                <li><i class="fas fa-check-circle me-2"></i> Üyelere özel indirimler</li>
+                <li><i class="fas fa-check-circle me-2"></i> Favori ürünler listesi</li>
+            </ul>
+        </div>
+    </div>
+</div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        // Şifre göster/gizle
+        document.querySelectorAll('.toggle-password').forEach(button => {
+            button.addEventListener('click', function() {
+                const passwordInput = this.closest('.input-group').querySelector('input');
+                const icon = this.querySelector('i');
+
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                } else {
+                    passwordInput.type = 'password';
+                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                }
+            });
+        });
+    </script>
 }

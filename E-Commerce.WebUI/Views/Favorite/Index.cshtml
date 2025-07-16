@@ -7,104 +7,48 @@
 
 <input type="hidden" id="RequestVerificationToken" value="@token" />
 
-<h2 class="mt-3">Favorilerim</h2>
-<hr />
 
-<!-- CSS kodları aynı kalıyor -->
 
-<div id="favorites-container">
-    @if (!Model.Any())
-    {
-        <div class="empty-favorites">
-            <div class="alert alert-info text-center w-100">Favori listeniz boş.</div>
-        </div>
-    }
-    else
-    {
-        <div class="row">
-            @foreach (var item in Model)
-            {
-                <div class="col-md-4 mb-4" id="favorite-@item.Id">
-                    <div class="card h-100">
-                        <img src="/img/Products/MainImage/@item.Product.Image" class="card-img-top" alt="@item.Product.Name">
-                        <div class="card-body">
-                            <h5 class="card-title">@item.Product.Name</h5>
-                            <p class="card-text">@item.Product.Price.ToString("C2")</p>
-                            <button class="btn btn-danger remove-favorite"
-                                    data-favorite-id="@item.Id">
-                                Favorilerden Kaldır
-                            </button>
-                            <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Product.Id"
-                               class="btn btn-primary mt-2">Ürünü İncele</a>
+<div class="container mt-4">
+    <h2 class="mb-3">Favorilerim</h2>
+    <hr />
+
+    <div id="favorites-container">
+        @if (!Model.Any())
+        {
+            <div class="empty-favorites">
+                <i class="fas fa-heart-broken"></i>
+                <div>Favori listeniz şu anda boş.</div>
+            </div>
+        }
+        else
+        {
+            <div class="row">
+                @foreach (var item in Model)
+                {
+                    <div class="col-md-4 col-sm-6 mb-4" id="favorite-@item.Id">
+                        <div class="card favorite-card h-100">
+                            <img src="/img/Products/MainImage/@item.Product.Image" class="card-img-top favorite-img" alt="@item.Product.Name" />
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title mb-3">@item.Product.Name</h5>
+
+                                <div class="mt-auto d-flex justify-content-between gap-2">
+                                    <button class="btn btn-favorite-remove w-50 remove-favorite"
+                                            data-favorite-id="@item.Id">
+                                        <i class="fas fa-trash-alt me-1"></i> Kaldır
+                                    </button>
+                                    <a asp-controller="Product" asp-action="Details" asp-route-id="@item.Product.Id"
+                                       class="btn btn-details w-50">
+                                        <i class="fas fa-search me-1"></i> İncele
+                                    </a>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            }
-        </div>
-    }
+                }
+            </div>
+        }
+    </div>
 </div>
 
-@section Scripts {
-    <script>
-        $(document).ready(function () {
-            // Anti-forgery token için header ayarı
-            $.ajaxSetup({
-                headers: {
-                    'RequestVerificationToken': $('#RequestVerificationToken').val()
-                }
-            });
 
-            $(document).on('click', '.remove-favorite', function () {
-                const favoriteId = $(this).data('favorite-id');
-                const cardElement = $(this).closest('.col-md-4');
-                const productName = $(this).siblings('.card-title').text();
-
-                if (!confirm(productName + ' ürününü favorilerden kaldırmak istediğinize emin misiniz?')) {
-                    return;
-                }
-
-                $.ajax({
-                    url: '/Favorite/Remove',
-                    type: 'POST',
-                    data: { favoriteId: favoriteId },
-                    success: function (response) {
-                        if (response.success) {
-                            cardElement.fadeOut(300, function () {
-                                $(this).remove();
-                                checkEmptyFavorites();
-                                updateFavoriteCount();
-                            });
-                            toastr.success(response.message);
-                        } else {
-                            toastr.error(response.message);
-                        }
-                    },
-                    error: function (xhr) {
-                        toastr.error('İşlem sırasında bir hata oluştu: ' + xhr.responseText);
-                    }
-                });
-            });
-
-            function checkEmptyFavorites() {
-                if ($('#favorites-container .col-md-4').length === 0) {
-                    $('#favorites-container').html(`
-                        <div class="empty-favorites">
-                            <div class="alert alert-info text-center w-100">Favori listeniz boş.</div>
-                        </div>
-                    `);
-                }
-            }
-
-            function updateFavoriteCount() {
-                $.get('/Favorite/GetFavoriteCount', function (data) {
-                    const badge = $('#favoriteCountBadge');
-                    if (data.count > 0) {
-                        badge.text(data.count).show();
-                    } else {
-                        badge.hide();
-                    }
-                });
-            }
-        });
-    </script>
-}
