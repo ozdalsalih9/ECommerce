@@ -1,4 +1,4 @@
-using System.Diagnostics;
+ï»¿using System.Diagnostics;
 using E_Commerce.Service.Abstract;
 using E_Commerce.WebUI.Models;
 using E_Commerce.WebUI.ViewModels;
@@ -30,8 +30,7 @@ namespace E_Commerce.WebUI.Controllers
         public async Task<IActionResult> Index(string? q)
         {
             var productsQuery = _productService.GetQueryable()
-                .Include(p => p.ProductSizes)
-                    .ThenInclude(ps => ps.Size)
+                .Include(p => p.ProductSizes).ThenInclude(ps => ps.Size)
                 .Include(p => p.Category)
                 .Include(p => p.Brand)
                 .Where(p => p.IsActive && p.IsHome);
@@ -55,23 +54,27 @@ namespace E_Commerce.WebUI.Controllers
                 .ToListAsync();
 
             var sliders = await _sliderService.GetAllAsync();
+
             var news = await _newsService.GetQueryable()
                 .Where(n => n.IsActive)
                 .OrderByDescending(n => n.CreateTime)
                 .ToListAsync();
 
+            // ðŸ’¡ BurasÄ± Ã¶nemli:
+            ViewBag.NewsList = news; // Layout kampanya ÅŸeridi iÃ§in
             ViewData["SearchQuery"] = q;
 
             var model = new HomePageViewModel
             {
                 Sliders = sliders,
-                News = news,
+                News = news, // Ä°ster kaldÄ±r, ister bÄ±rak. ArtÄ±k ViewBag yeterli.
                 Products = products,
                 PopularProducts = popularProducts
             };
 
             return View(model);
         }
+
 
         public IActionResult Privacy()
         {
@@ -105,7 +108,7 @@ namespace E_Commerce.WebUI.Controllers
                 return Json(new
                 {
                     success = false,
-                    message = "Formda eksik ya da hatalý alanlar var.",
+                    message = "Formda eksik ya da hatalÄ± alanlar var.",
                     errors
                 });
             }
@@ -125,7 +128,7 @@ namespace E_Commerce.WebUI.Controllers
             return Json(new
             {
                 success = true,
-                message = "Mesajýnýz baþarýyla gönderildi. En kýsa sürede dönüþ yapýlacaktýr."
+                message = "MesajÄ±nÄ±z baÅŸarÄ±yla gÃ¶nderildi. En kÄ±sa sÃ¼rede dÃ¶nÃ¼ÅŸ yapÄ±lacaktÄ±r."
             });
         }
     }

@@ -1,0 +1,49 @@
+﻿@using E_Commerse.Core.Entities
+@model Comment
+
+@{
+    ViewData["Title"] = "Yorum Detayları";
+}
+
+<div class="container mt-4">
+    <h1>@ViewData["Title"]</h1>
+    <hr />
+
+    <div class="card">
+        <div class="card-body">
+            <dl class="row">
+                <dt class="col-sm-3">Kullanıcı:</dt>
+                <dd class="col-sm-9">@Model.AppUser.Name @Model.AppUser.Surname</dd>
+
+                <dt class="col-sm-3">Ürün:</dt>
+                <dd class="col-sm-9">@Model.Product.Name</dd>
+
+                <dt class="col-sm-3">Yorum Tarihi:</dt>
+                <dd class="col-sm-9">@Model.CreateDate.ToString("dd.MM.yyyy HH:mm")</dd>
+
+                <dt class="col-sm-3">Onay Durumu:</dt>
+                <dd class="col-sm-9">
+                    @if (Model.IsApproved)
+                    {
+                        <span class="badge bg-success">Onaylı</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-warning text-dark">Beklemede</span>
+                    }
+                </dd>
+
+                <dt class="col-sm-3">Yorum İçeriği:</dt>
+                <dd class="col-sm-9">
+                    <div class="p-3 bg-light rounded">
+                        @Model.Content
+                    </div>
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <div class="mt-3">
+        <a asp-action="Index" class="btn btn-secondary">Listeye Dön</a>
+    </div>
+</div>

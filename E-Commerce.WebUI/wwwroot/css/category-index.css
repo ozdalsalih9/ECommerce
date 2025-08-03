@@ -1,0 +1,218 @@
+﻿/* ==== Genel Kutular ==== */
+.product-card {
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background: #fff;
+    border: 1px solid #f0f0f0 !important;
+}
+
+    .product-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08) !important;
+        border-color: rgba(124, 92, 196, 0.2) !important;
+    }
+
+/* ==== Ürün Görseli ==== */
+.product-card__image-link {
+    background: #f9f9f9 !important;
+}
+
+.product-card__image {
+    transition: transform 0.4s ease;
+    mix-blend-mode: multiply;
+}
+
+.product-card__image-link:hover .product-card__image {
+    transform: scale(1.04);
+}
+
+/* ==== Kart İçeriği ==== */
+.product-card__body {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: space-between;
+    padding: 1rem;
+}
+
+/* ==== Yeni Etiketi ==== */
+.product-card__badge {
+    font-size: 0.75rem;
+}
+
+/* ==== Favori Butonu ==== */
+.product-card__favorite {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .product-card__favorite:hover {
+        background: #f8f9fa;
+    }
+
+/* ==== Ürün Başlığı ==== */
+.product-card__title {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+
+/* ==== Beden Etiketi ==== */
+.product-card__sizes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+}
+
+.product-card__size-badge {
+    background: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 0.2rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+/* ==== Detay Butonu ==== */
+.product-card__details-btn {
+    border-width: 2px;
+    transition: all 0.3s ease;
+    margin-top: auto; /* İçeriği alta iter */
+}
+
+    .product-card__details-btn:hover {
+        background: #7c5cc4;
+        border-color: #7c5cc4;
+        color: #fff;
+    }
+
+
+/* ==== Kategori Başlık ==== */
+.category-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+}
+
+/* ==== Filtre Paneli ==== */
+.category-filter-card {
+    background: #fff;
+    border: 1px solid #eee;
+    border-radius: 1rem;
+    padding: 1rem 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.category-filter-form {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.category-search-input {
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.category-sort-select {
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+}
+
+.category-apply-btn {
+    border: none;
+    background: #7c5cc4;
+    color: #fff;
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    transition: background 0.3s ease;
+}
+
+    .category-apply-btn:hover {
+        background: #5d3f9a;
+    }
+
+/* ==== Görünüm Değiştirici ==== */
+.category-view-btn {
+    border: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    color: #333;
+    text-decoration: none;
+}
+
+    .category-view-btn.active,
+    .category-view-btn:hover {
+        background: #7c5cc4;
+        color: #fff;
+        border-color: #7c5cc4;
+    }
+
+/* ==== Sayfalama ==== */
+.category-pagination-nav {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.category-pagination {
+    list-style: none;
+    padding: 0;
+    display: inline-flex;
+    gap: 0.5rem;
+}
+
+.category-page-item {
+}
+
+.category-page-link {
+    display: inline-block;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 0.5rem;
+    color: #333;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .category-page-item.active .category-page-link,
+    .category-page-link:hover {
+        background: #7c5cc4;
+        color: #fff;
+        border-color: #7c5cc4;
+    }
+
+.product-card__favorite {
+    transition: all 0.2s ease;
+}
+
+    .product-card__favorite:hover {
+        color: #ff4d4d !important;
+        border-color: #ff4d4d !important;
+    }
+
+
+
+
+.product-card__description {
+    font-size: 12px;
+    color: #666;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.product-card__detail-btn {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    text-align: center;
+}

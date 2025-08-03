@@ -1,29 +1,10 @@
-﻿@model HomePageViewModel
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@model HomePageViewModel
+
 @{
-    ViewData["Title"] = "Anasayfa";
-}
-
-
-
-<!-- Kampanya Şeridi -->
-@if (Model.News != null && Model.News.Any())
-{
-    <div class="campaign-strip">
-        <div class="campaign-marquee">
-            <div class="campaign-content">
-                @foreach (var news in Model.News)
-                {
-                    <span class="campaign-item">
-                        <strong>@news.Name</strong>
-                        @if (!string.IsNullOrWhiteSpace(news.Description))
-                        {
-                            <span class="campaign-desc">(@news.Description)</span>
-                        }
-                    </span>
-                }
-            </div>
-        </div>
-    </div>
+    ViewData["Title"] = Localizer["HomePageTitle"];
 }
 
 <!-- Slider -->
@@ -31,19 +12,28 @@
 
 <section class="container">
     <!-- Dikkatini Çekebilecek Ürünler -->
-    <h2 class="section-title">Dikkatini Çekebilecek Ürünler</h2>
+    <h2 class="section-title">@Localizer["InterestingProducts"]</h2>
     <div class="row">
         @foreach (var item in Model.Products)
         {
             <partial name="_ProductView" model="item" />
         }
     </div>
+    <p>Culture: @System.Globalization.CultureInfo.CurrentCulture.Name</p>
+    <p>UICulture: @System.Globalization.CultureInfo.CurrentUICulture.Name</p>
+
+    @{
+        var assemblyName = Localizer.GetType().Assembly.GetName().Name;
+        var viewPath = ViewContext.ExecutingFilePath; // "~/Views/Home/Index.cshtml"
+    }
+    <p>Localizer Assembly: @assemblyName</p>
+    <p>View Path: @viewPath</p>
 
     <!-- En Çok Favoriye Eklenen Ürünler -->
     @if (Model.PopularProducts != null && Model.PopularProducts.Any())
     {
         <section class="mt-5">
-            <h2 class="section-title">En Çok Favoriye Eklenenler</h2>
+            <h2 class="section-title">@Localizer["MostFavoritedProducts"]</h2>
             <div class="products-row">
                 @foreach (var item in Model.PopularProducts)
                 {

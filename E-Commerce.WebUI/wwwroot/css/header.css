@@ -7,113 +7,73 @@
     --light-bg: #f9f5fc;
     --white: #ffffff;
     --gray: #ebedee;
+    --border-radius: 12px;
 }
 
 /* Navbar Genel Stili */
 .navbar {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: var(--white);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transition: all 0.3s ease-in-out;
-    padding: 0.5rem 1rem;
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: var(--white) !important;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
+    padding: 0.5rem 0;
+    transition: all 0.3s ease;
 }
 
 .navbar-brand {
-    font-size: 1.7rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    color: var(--primary-color) !important;
-    transition: all 0.3s ease;
     letter-spacing: 0.5px;
+    display: flex;
+    align-items: center;
 }
 
-    .navbar-brand:hover {
-        color: var(--primary-light) !important;
-        transform: translateY(-1px);
-    }
+.text-gradient {
+    background: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: all 0.3s ease;
+}
 
 /* Nav Link Stilleri */
 .nav-link {
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 500;
     color: var(--text-color) !important;
     padding: 0.5rem 1rem !important;
     margin: 0 0.25rem;
-    position: relative;
+    border-radius: var(--border-radius);
     transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
 }
 
-    .nav-link::after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: var(--primary-light);
-        transition: all 0.3s ease;
-        transform: translateX(-50%);
+    .nav-link i {
+        font-size: 0.9rem;
+        margin-right: 0.5rem;
     }
 
-    .nav-link:hover {
+    .nav-link:hover, .nav-link:focus {
         color: var(--primary-light) !important;
-    }
-
-        .nav-link:hover::after {
-            width: 100%;
-        }
-
-/* Buton Stilleri */
-.btn-outline-primary {
-    color: var(--primary-color);
-    border-color: var(--primary-color);
-    border-width: 2px;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-    .btn-outline-primary:hover {
-        color: var(--white);
-        background-color: var(--primary-color);
-        box-shadow: 0 4px 12px rgba(92, 61, 116, 0.25);
+        background-color: rgba(142, 68, 173, 0.05);
         transform: translateY(-1px);
     }
 
-.btn-primary {
-    background-color: var(--primary-color);
-    border-color: var(--primary-color);
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-}
-
-    .btn-primary:hover {
-        background-color: var(--primary-dark);
-        box-shadow: 0 6px 15px rgba(92, 61, 116, 0.3);
-        transform: translateY(-1px);
-    }
-
-.search-box button i {
-    transition: transform 0.3s ease;
-}
-
-.search-box button:hover i {
-    transform: scale(1.1);
-}
 /* Arama Kutusu */
 .search-box {
     display: flex;
     align-items: center;
     background: var(--light-bg);
-    border-radius: 30px;
-    padding: 0.4rem 1rem;
+    border-radius: 50px;
+    padding: 0.5rem 1rem;
     transition: all 0.3s ease;
     border: 1px solid var(--gray);
-    width: 220px; /* Sabit genişlik */
+    width: 280px;
+    height: 42px;
 }
 
     .search-box:focus-within {
-        box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.1);
+        box-shadow: 0 0 0 3px rgba(142, 68, 173, 0.15);
         border-color: var(--primary-light);
     }
 
@@ -121,69 +81,77 @@
         border: none;
         background: transparent;
         outline: none;
-        padding: 0.3rem 0.5rem;
-        width: 100%; /* Tüm alanı kaplasın */
-        font-size: 0.9rem;
-    }
-
-    .search-box button {
-        background: transparent;
-        color: var(--primary-color);
-        border: none;
-        padding: 0;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin-left: 0.5rem;
-    }
-
-        .search-box button:hover {
-            color: var(--primary-dark);
-            transform: scale(1.1);
-        }
-
-/* Responsive Ayarlar */
-@@media (max-width: 992px) {
-    .search-box {
+        padding: 0.25rem 0.5rem;
         width: 100%;
-        margin: 0.5rem 0;
+        font-size: 0.95rem;
+        color: var(--text-color);
     }
+
+.search-btn {
+    background: transparent;
+    border: none;
+    color: var(--primary-color);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 0 0.25rem;
+    font-size: 1rem;
 }
+
+    .search-btn:hover {
+        color: var(--primary-dark);
+        transform: scale(1.1);
+    }
 
 /* Dropdown Menü */
 .dropdown-menu {
     border: none;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+    border-radius: var(--border-radius);
     padding: 0.5rem 0;
-    margin-top: 0.5rem;
+    margin-top: 0.75rem;
+    min-width: 220px;
 }
 
 .dropdown-item {
     padding: 0.5rem 1.5rem;
     transition: all 0.2s ease;
     color: var(--text-color);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
 }
 
-    .dropdown-item:hover {
-        background: var(--light-bg);
-        color: var(--primary-color);
+    .dropdown-item:hover, .dropdown-item:focus {
+        background: rgba(142, 68, 173, 0.08);
+        color: var(--primary-dark);
     }
 
     .dropdown-item i {
         width: 20px;
         text-align: center;
         margin-right: 0.75rem;
-        color: var(--primary-color);
     }
 
-/* Favori Butonu */
-.fa-heart {
-    color: var(--accent-color);
-    transition: all 0.3s ease;
+/* Avatar ve Kullanıcı Bilgisi */
+.avatar-sm {
+    width: 32px;
+    height: 32px;
 }
 
+.avatar-initials {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Favori Butonu */
+
+
 #favoriteCountBadge {
-    background-color: var(--accent-color) !important;
     font-size: 0.65rem !important;
     padding: 0.35em 0.5em !important;
 }
@@ -194,13 +162,104 @@
         padding: 1rem 0;
     }
 
-    .nav-link {
-        padding: 0.75rem 1rem !important;
-        margin: 0.25rem 0;
-    }
-
     .search-box {
         margin: 1rem 0;
         width: 100%;
     }
+
+    .nav-item {
+        margin: 0.25rem 0;
+
+    }
+
+    .dropdown-menu {
+        margin-top: 0;
+        box-shadow: none;
+    }
 }
+
+/* Animasyonlar */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.navbar-brand:hover {
+    transform: translateY(-1px);
+}
+
+
+/* Giriş Yap Butonu (Outline) */
+.btn-outline-primary {
+    color: var(--primary-light);
+    border-color: var(--primary-light);
+}
+
+    .btn-outline-primary:hover {
+        background-color: var(--primary-light);
+        border-color: var(--primary-light);
+        color: var(--white) !important;
+    }
+
+/* Kayıt Ol Butonu (Solid) */
+.btn-primary {
+    background-color: var(--primary-light);
+    border-color: var(--primary-light);
+}
+
+    .btn-primary:hover {
+        background-color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+
+/* Favori ikonu ve badge için özel stil */
+.nav-link .fa-heart {
+    color: var(--accent-color);
+    transition: all 0.3s ease;
+    padding: 0.25rem;
+}
+
+.nav-link:hover .fa-heart {
+    transform: scale(1.1);
+    color: var(--primary-dark);
+}
+
+/* Badge pozisyonu */
+#favoriteCountBadge {
+    min-width: 18px;
+    height: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 0.25rem;
+}
+
+/* Mobilde sadece ikon göster */
+@media (max-width: 992px) {
+    .nav-link .fa-heart {
+        font-size: 1.4rem;
+    }
+
+    #favoriteCountBadge {
+        font-size: 0.5rem !important;
+        min-width: 16px;
+        height: 16px;
+    }
+}
+
+/* Dil seçici butonu için özel stil */
+.btn-outline-secondary {
+    border-color: #dee2e6;
+    color: #495057;
+}
+
+    .btn-outline-secondary:hover {
+        background-color: #f8f9fa;
+    }

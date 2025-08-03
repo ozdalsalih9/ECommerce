@@ -1,63 +1,86 @@
-﻿.favorite-card {
-    border: none;
-    border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(92, 61, 116, 0.1);
-    transition: transform 0.3s ease;
+﻿/* === Favorilerim Genel === */
+.favorite-card {
+    border: 1px solid #eee;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+    background: #fff;
 }
 
     .favorite-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 10px 24px rgba(92, 61, 116, 0.15);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        border-color: #ddd;
     }
 
 .favorite-img {
-    height: 250px;
-    object-fit: cover;
-    border-top-left-radius: 12px;
-    border-top-right-radius: 12px;
+    object-fit: contain;
+    height: 200px;
+    background: #f9f9f9;
+    padding: 1rem;
 }
 
-.card-title {
-    font-size: 1.1rem;
+.favorite-card .card-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.favorite-card .card-title {
+    font-size: 1rem;
     font-weight: 600;
-    color: var(--primary-color);
-}
-
-.btn-favorite-remove {
-    background-color: #dc3545;
-    color: white;
-    border-radius: 8px;
-}
-
-    .btn-favorite-remove:hover {
-        background-color: #c82333;
-    }
-
-.btn-details {
-    background-color: var(--primary-color);
-    color: white;
-    border-radius: 8px;
-}
-
-    .btn-details:hover {
-        background-color: var(--primary-dark);
-    }
-
-.empty-favorites {
-    padding: 3rem 0;
+    color: #333;
     text-align: center;
-    font-size: 1.2rem;
-    color: #666;
+}
+
+/* === Favori Boş Mesaj === */
+.empty-favorites {
+    text-align: center;
+    color: #777;
+    margin: 2rem 0;
+    font-size: 1.1rem;
 }
 
     .empty-favorites i {
-        font-size: 3rem;
-        color: var(--primary-light);
-        margin-bottom: 1rem;
+        font-size: 2rem;
+        margin-bottom: 0.5rem;
+        color: #ccc;
     }
 
-@media (max-width: 576px) {
+/* === Favori Kart Butonları === */
+.btn-favorite-remove,
+.btn-details {
+    border: 1px solid #ddd;
+    font-size: 0.85rem;
+    padding: 0.5rem 0.75rem;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.btn-favorite-remove {
+    background: #fff;
+    color: #333;
+}
+
+    .btn-favorite-remove:hover {
+        background: #ff4d4d;
+        border-color: #ff4d4d;
+        color: #fff;
+    }
+
+.btn-details {
+    background: #fff;
+    color: #333;
+}
+
+    .btn-details:hover {
+        background: #7c5cc4;
+        border-color: #7c5cc4;
+        color: #fff;
+    }
+
+/* === Responsive Görünüm (İsteğe bağlı) === */
+@media (max-width: 768px) {
     .favorite-img {
-        height: 200px;
+        height: 160px;
     }
 }

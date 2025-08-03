@@ -74,19 +74,19 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateDate = new DateTime(2025, 7, 9, 16, 26, 36, 749, DateTimeKind.Local).AddTicks(9308),
+                            CreateDate = new DateTime(2025, 7, 24, 17, 16, 49, 628, DateTimeKind.Local).AddTicks(4403),
                             Email = "ozdalsalih9@gmail.com",
                             IsActive = true,
                             IsAdmin = true,
                             Name = "Admin",
                             Password = "002255",
                             Surname = "1",
-                            UserGuid = new Guid("de25e90b-e219-4fe1-9735-71167179e72e")
+                            UserGuid = new Guid("cb1c7722-6998-492d-8119-7d5b011e8478")
                         },
                         new
                         {
                             Id = 9,
-                            CreateDate = new DateTime(2025, 7, 9, 16, 26, 36, 750, DateTimeKind.Local).AddTicks(9285),
+                            CreateDate = new DateTime(2025, 7, 24, 17, 16, 49, 629, DateTimeKind.Local).AddTicks(4795),
                             Email = "admin@admin.com",
                             IsActive = true,
                             IsAdmin = true,
@@ -94,7 +94,7 @@ namespace E_Commerce.Data.Migrations
                             Password = "AQAAAAEAACcQAAAAEPhLrFcyyYp7mJoZJjCnWnK5z6V8y96v9xv91w+uUuYmndT+Lv8IqydcZcO4Tr9H5A==",
                             Phone = "0000000000",
                             Surname = "User",
-                            UserGuid = new Guid("1c15fea5-02eb-480b-8b77-4b95a83b5b59")
+                            UserGuid = new Guid("da5470f4-e1c6-46c7-bd04-3f6a9b710ffc")
                         });
                 });
 
@@ -172,7 +172,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 1,
-                            CreateTime = new DateTime(2025, 7, 9, 16, 26, 36, 750, DateTimeKind.Local).AddTicks(1722),
+                            CreateTime = new DateTime(2025, 7, 24, 17, 16, 49, 628, DateTimeKind.Local).AddTicks(6943),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Kadın",
@@ -182,7 +182,7 @@ namespace E_Commerce.Data.Migrations
                         new
                         {
                             Id = 2,
-                            CreateTime = new DateTime(2025, 7, 9, 16, 26, 36, 750, DateTimeKind.Local).AddTicks(1742),
+                            CreateTime = new DateTime(2025, 7, 24, 17, 16, 49, 628, DateTimeKind.Local).AddTicks(6952),
                             IsActive = true,
                             IsTopMenu = true,
                             Name = "Erkek",
@@ -388,6 +388,43 @@ namespace E_Commerce.Data.Migrations
                             IsActive = true,
                             Name = "Açık Mavi"
                         });
+                });
+
+            modelBuilder.Entity("E_Commerse.Core.Entities.Comment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("AppUserId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<DateTime>("CreateDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("Rating")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AppUserId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Contact", b =>
@@ -708,6 +745,25 @@ namespace E_Commerce.Data.Migrations
                     b.ToTable("Sliders");
                 });
 
+            modelBuilder.Entity("E_Commerse.Core.Entities.Comment", b =>
+                {
+                    b.HasOne("E_Commerse.Core.Entities.AppUser", "AppUser")
+                        .WithMany()
+                        .HasForeignKey("AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("E_Commerse.Core.Entities.Product", "Product")
+                        .WithMany("Comments")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("AppUser");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("E_Commerse.Core.Entities.Favorite", b =>
                 {
                     b.HasOne("E_Commerse.Core.Entities.AppUser", "AppUser")
@@ -831,6 +887,8 @@ namespace E_Commerce.Data.Migrations
 
             modelBuilder.Entity("E_Commerse.Core.Entities.Product", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Favorites");
 
                     b.Navigation("ProductColors");

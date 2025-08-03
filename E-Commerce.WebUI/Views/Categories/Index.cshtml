@@ -5,13 +5,83 @@
     ViewData["Title"] = Model.Name;
 }
 
-<div>
-    <hr />
-    <h2 class="text-center">@Model.Name Ürünleri</h2>
-    <div class="row">
-        @foreach (var item in Model.Products)
-        {
-            <partial name="_ProductView" model="item" />
-        }
+<div class="category-container">
+    <h2 class="category-title">@Model.Name Ürünleri</h2>
+
+    <!-- Filtreleme ve Sıralama Paneli -->
+    <div class="category-filter-card">
+        <div class="category-filter-body">
+            <div class="category-filter-row">
+                <div class="category-filter-search-col">
+                    <form method="get" class="category-filter-form">
+                        <div class="category-search-col">
+                            <input type="text" name="search" class="category-search-input" placeholder="Ürün ara..." value="@Context.Request.Query["search"]">
+                        </div>
+                        <div class="category-sort-col">
+                            <select name="sort" class="category-sort-select">
+                                <option value="">Sırala</option>
+                                <option value="price_asc" selected="@(Context.Request.Query["sort"] == "price_asc")">Fiyat: Artan</option>
+                                <option value="price_desc" selected="@(Context.Request.Query["sort"] == "price_desc")">Fiyat: Azalan</option>
+                                <option value="name_asc" selected="@(Context.Request.Query["sort"] == "name_asc")">İsim: A-Z</option>
+                                <option value="name_desc" selected="@(Context.Request.Query["sort"] == "name_desc")">İsim: Z-A</option>
+                                <option value="newest" selected="@(Context.Request.Query["sort"] == "newest")">En Yeni</option>
+                            </select>
+                        </div>
+                        <div class="category-apply-col">
+                            <button type="submit" class="category-apply-btn">
+                                <i class="fas fa-filter me-1"></i> Uygula
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                <div class="category-view-toggle-col">
+                    <div class="category-view-toggle-group">
+                        <div class="btn-group" role="group">
+                            <a href="?view=list" class="category-view-btn @(Context.Request.Query["view"] == "list" ? "active" : "")">
+                                <i class="fas fa-list"></i> Liste
+                            </a>
+                            <a href="?view=grid" class="category-view-btn @(Context.Request.Query["view"] != "list" ? "active" : "")">
+                                <i class="fas fa-th-large"></i> Grid
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- Ürünler -->
+    @if (Context.Request.Query["view"] == "list")
+    {
+        <div class="category-list-view row">
+            @foreach (var item in Model.Products)
+            {
+                <partial name="_ProductView" model="item" />
+            }
+        </div>
+    }
+    else
+    {
+        <div class="category-grid-view row">
+            @foreach (var item in Model.Products)
+            {
+                <partial name="_ProductView" model="item" />
+            }
+        </div>
+    }
+
+    <!-- Sayfalama -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <nav aria-label="Page navigation" class="category-pagination-nav">
+            <ul class="category-pagination">
+                @for (int i = 1; i <= ViewBag.TotalPages; i++)
+                {
+                    <li class="category-page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                        <a class="category-page-link" href="?page=@i&search=@Context.Request.Query["search"]&sort=@Context.Request.Query["sort"]">@i</a>
+                    </li>
+                }
+            </ul>
+        </nav>
+    }
 </div>

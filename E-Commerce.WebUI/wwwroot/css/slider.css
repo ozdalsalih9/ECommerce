@@ -7,7 +7,7 @@
         object-fit: cover;
         height: 100%;
         width: 100%;
-        filter: brightness(60%); /* Daha koyu zemin, yazılar daha belirgin */
+        filter: brightness(60%);
     }
 
 .custom-carousel .carousel-caption {
@@ -32,7 +32,7 @@
         margin-bottom: 0;
     }
 
-@@keyframes fadeInUp {
+@keyframes fadeInUp {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -49,13 +49,16 @@
     filter: invert(100%);
 }
 
-@@media (max-width: 768px) {
+/* ✅ Mobil tam ekran için düzeltme */
+@media (max-width: 768px) {
     .custom-carousel .carousel-item {
-        height: 300px;
+        height: 100vh; /* Ekran yüksekliğinin %100'ü */
+        width: 100vw; /* ✅ vh yerine vw kullanın */
     }
 
     .custom-carousel .carousel-caption {
         padding: 1rem;
+        bottom: 2rem; /* Alt boşluk için ekleyebilirsiniz */
     }
 
         .custom-carousel .carousel-caption h5 {
@@ -64,5 +67,58 @@
 
         .custom-carousel .carousel-caption p {
             font-size: 0.8rem;
+        }
+}
+
+
+/* Ana container düzenlemeleri */
+@media (max-width: 768px) {
+    /* Body ve html için */
+    html, body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+    }
+
+    /* Ana container varsa */
+    .container-fluid,
+    .container,
+    .row {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+
+    /* Carousel wrapper */
+    .custom-carousel {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw !important;
+        margin-right: -50vw !important;
+    }
+
+        /* Carousel item */
+        .custom-carousel .carousel-item {
+            height: 100vh;
+            width: 100vw;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Carousel inner */
+        .custom-carousel .carousel-inner {
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Resim */
+        .custom-carousel .carousel-item img {
+            object-fit: cover;
+            height: 100vh;
+            width: 100vw;
+            filter: brightness(60%);
         }
 }

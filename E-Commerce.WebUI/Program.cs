@@ -17,37 +17,30 @@ internal class Program
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
-        builder.Services.AddControllersWithViews();
-
-        builder.Services.AddDbContext<DatabaseContext>();
-
-        // Email sender servisi
-        builder.Services.AddTransient<ICustomEmailSender, SmtpEmailSender>();
-
-        // Localization servislerini ekle
-        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
         builder.Services.AddControllersWithViews()
             .AddViewLocalization()
             .AddDataAnnotationsLocalization();
 
+        builder.Services.AddDbContext<DatabaseContext>();
+        builder.Services.AddTransient<ICustomEmailSender, SmtpEmailSender>();
+
+        // Localization
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
         builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 
-        // Authentication ve Authorization yapýlandýrmasý
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
           .AddCookie(options =>
           {
-              options.LoginPath = "/Account/SignIn";  // Burayý kesinlikle SignIn olarak ayarla
+              options.LoginPath = "/Account/SignIn";
               options.LogoutPath = "/Account/SignOut";
               options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
               options.SlidingExpiration = true;
-
               options.Cookie.HttpOnly = true;
-              options.Cookie.SecurePolicy = CookieSecurePolicy.Always; // HTTPS zorlama
+              options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
               options.Cookie.SameSite = SameSiteMode.Strict;
           });
 
-        // Opsiyonel: Rol bazlý policy tanýmlayabilirsin, ama zorunlu deðil
         builder.Services.AddAuthorization(options =>
         {
             options.AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
@@ -74,46 +67,37 @@ internal class Program
 
         var localizationOptions = new RequestLocalizationOptions
         {
-            DefaultRequestCulture = new RequestCulture("tr-TR"),
+            DefaultRequestCulture = new RequestCulture("tr-TR", "tr-TR"),
             SupportedCultures = supportedCultures,
             SupportedUICultures = supportedCultures
         };
 
-        app.UseRequestLocalization(localizationOptions);
+        // Cookie'den dili oku
+        localizationOptions.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
+
+
+        // Güvenlik header'larý
         app.Use(async (context, next) =>
         {
             context.Response.Headers.Remove("X-Powered-By");
             context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
             context.Response.Headers.Append("X-Frame-Options", "DENY");
             context.Response.Headers.Append("Referrer-Policy", "no-referrer");
-            context.Response.Headers.Append("Content-Security-Policy",
-    "default-src 'self'; " +
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com https://unpkg.com https://cdn.jsdelivr.net; " +
-    "script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com https://unpkg.com https://use.fontawesome.com https://code.jquery.com https://cdn.jsdelivr.net; " +
-    "font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; " +
-    "img-src 'self' data:; " +
-    "connect-src 'self'; " +
-    "object-src 'none'; " +
-    "base-uri 'self';" +
-    "connect-src 'self' http://localhost:59213 ws://localhost:59213 wss://localhost:44377;"
-
-);
 
             await next();
         });
+        app.UseRequestLocalization(localizationOptions);
         app.UseRouting();
 
-        app.UseAuthentication(); // Authentication önce
-        app.UseAuthorization();  // Authorization sonra
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-        // Admin area route — AdminOnly policy uygulamak istersen:
         app.MapAreaControllerRoute(
          name: "admin",
          areaName: "Admin",
          pattern: "Admin/{controller=Main}/{action=Index}/{id?}"
          ).RequireAuthorization("AdminOnly");
 
-        // Normal route
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");

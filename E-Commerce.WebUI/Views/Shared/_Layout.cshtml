@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@6.6.6/css/flag-icons.min.css" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
@@ -29,6 +29,9 @@
     <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
 
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <!-- CSS -->
     <link rel="stylesheet" href="~/css/product-card.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/header.css" asp-append-version="true" />
@@ -39,22 +42,47 @@
     <link rel="stylesheet" href="~/css/confirmemail.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/favorite-index.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/footer.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/product-details.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/category-index.css" asp-append-version="true" />
 
 
 
 
     @await RenderSectionAsync("Head", required: false)
 </head>
+
+
 <body class="d-flex flex-column min-vh-100">
+    @if (ViewBag.NewsList != null && ((List<News>)ViewBag.NewsList).Count > 0) 
+
+    {
+        <div class="campaign-strip">
+            <div class="campaign-marquee">
+                <div class="campaign-content">
+                    @foreach (var news in ViewBag.NewsList)
+                    {
+                        <span class="campaign-item">
+                            <strong>@news.Name</strong>
+                            @if (!string.IsNullOrWhiteSpace(news.Description))
+                            {
+                                <span class="campaign-desc">(@news.Description)</span>
+                            }
+                        </span>
+                    }
+                </div>
+            </div>
+        </div>
+    }
+
     <!-- Header -->
     <partial name="_Header" />
 
     <!-- Main Content -->
-    <main class="flex-grow-1">
+    <div class="container-fluid px-0 px-md-3">
         <div class="container">
             @RenderBody()
         </div>
-    </main>
+    </div>
 
     <!-- Footer -->
     <partial name="_Footer" />
@@ -89,12 +117,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
     <!-- JS (jQuery ve toastr varsa zaten yüklü olmalı) -->
-    <script src="~/js/product-card.js"></script>
-    <script src="~/js/header.js"></script>
-    <script src="~/js/layout.js"></script>
-    <script src="~/js/favorite-index.js"></script>
-    <script src="~/js/product-details.js"></script>
-    <script src="~/js/footer.js"></script>
+    <script src="~/js/product-card.js" asp-append-version="true"></script>
+    <script src="~/js/header.js" asp-append-version="true"></script>
+    <script src="~/js/layout.js" asp-append-version="true"></script>
+    <script src="~/js/favorite-index.js" asp-append-version="true"></script>
+    <script src="~/js/product-details.js" asp-append-version="true"></script>
+    <script src="~/js/footer.js" asp-append-version="true"></script>
     
 
     @await RenderSectionAsync("Scripts", required: false)

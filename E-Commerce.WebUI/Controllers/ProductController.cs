@@ -54,10 +54,18 @@ namespace E_Commerce.WebUI.Controllers
                 .Include(p => p.ProductSizes).ThenInclude(ps => ps.Size)
                 .Include(p => p.ProductColors).ThenInclude(pc => pc.Color)
                 .Include(p => p.ProductColors).ThenInclude(pc => pc.ProductColorImages)
+                .Include(p => p.Comments)
+                    .ThenInclude(c => c.AppUser) // Kullanıcı bilgilerini de yüklüyoruz
                 .FirstOrDefaultAsync(p => p.Id == id);
 
             if (product == null)
                 return NotFound();
+
+            // Yorumları direkt modele yüklüyoruz, ViewBag kullanmıyoruz
+            product.Comments = product.Comments?
+                .Where(c => c.IsApproved)
+                .OrderByDescending(c => c.CreateDate)
+                .ToList();
 
             var relatedProducts = await _productService.GetQueryable()
                 .Where(p => p.CategoryId == product.CategoryId && p.Id != product.Id)
@@ -66,7 +74,7 @@ namespace E_Commerce.WebUI.Controllers
 
             if (User.Identity.IsAuthenticated)
             {
-                var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+                var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 ViewBag.IsFavorite = await _favoriteService.GetQueryable()
                     .AnyAsync(f => f.AppUserId == userId && f.ProductId == id);
             }
@@ -107,5 +115,7 @@ namespace E_Commerce.WebUI.Controllers
 
             return Json(new { stock });
         }
+
+
     }
 }

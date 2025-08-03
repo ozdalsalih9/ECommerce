@@ -1,41 +1,117 @@
-﻿$(document).ready(function () {
-    // Sepete Ekle Butonu
-    $('.add-to-cart').click(function (e) {
-        e.preventDefault();
-        const productId = $(this).data('product-id');
+﻿document.addEventListener("DOMContentLoaded", function () {
+    const favoriteButtons = document.querySelectorAll(".product-card__favorite");
 
-        // Sepet animasyonu
-        $(this).html('<i class="fas fa-check me-2"></i> Eklendi');
-        $(this).addClass('bg-success').removeClass('bg-primary');
+    favoriteButtons.forEach(button => {
+        button.addEventListener("click", function (e) {
+            e.preventDefault();
 
-        setTimeout(() => {
-            $(this).html('<i class="fas fa-shopping-cart me-2"></i> Sepete Ekle');
-            $(this).removeClass('bg-success').addClass('bg-primary');
-        }, 2000);
+            const productId = parseInt(this.dataset.productId);
+            const favoriteId = parseInt(this.dataset.favoriteId) || 0;
 
-        // Sepet API'si entegre edilecekse buraya yaz
-        console.log('Ürün ID:', productId);
+            const isFavorite = this.classList.contains("active");
 
-        // Başarı bildirimi
-        toastr.success('Ürün sepetinize eklendi!', 'Başarılı', {
-            timeOut: 2000,
-            progressBar: true,
-            position: 'bottom-right'
+            if (!isFavorite) {
+                // ADD
+                fetch("/Favorite/Add", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        favoriteId: favoriteId
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const icon = this.querySelector("i");
+                            icon.classList.remove("far");
+                            icon.classList.add("fas");
+                            this.classList.add("active");
+                            this.dataset.favoriteId = data.favoriteId;
+
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Ürün favorilere eklendi!',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'info',
+                                title: data.message,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Hata:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Bir hata oluştu.'
+                        });
+                    });
+
+            } else {
+                // REMOVE
+                fetch("/Favorite/Remove", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        productId: productId,
+                        favoriteId: favoriteId
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const icon = this.querySelector("i");
+                            icon.classList.remove("fas");
+                            icon.classList.add("far");
+                            this.classList.remove("active");
+                            this.dataset.favoriteId = "";
+
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'success',
+                                title: 'Ürün favorilerden kaldırıldı!',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                        } else {
+                            Swal.fire({
+                                toast: true,
+                                position: 'top-end',
+                                icon: 'info',
+                                title: data.message,
+                                showConfirmButton: false,
+                                timer: 2000,
+                                timerProgressBar: true
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Hata:", error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Oops...',
+                            text: 'Bir hata oluştu.'
+                        });
+                    });
+            }
         });
-    });
-
-    // Favori Butonu
-    $('.favorite-btn').click(function () {
-        const icon = $(this).find('i');
-
-        if (icon.hasClass('far')) {
-            icon.removeClass('far').addClass('fas');
-            $(this).addClass('bg-purple').removeClass('bg-white');
-            toastr.info('Ürün favorilere eklendi!');
-        } else {
-            icon.removeClass('fas').addClass('far');
-            $(this).removeClass('bg-purple').addClass('bg-white');
-            toastr.info('Ürün favorilerden çıkarıldı!');
-        }
     });
 });

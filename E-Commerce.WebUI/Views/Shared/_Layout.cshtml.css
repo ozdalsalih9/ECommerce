@@ -1,433 +1,179 @@
-﻿/* Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
-
-a.navbar-brand {
-  white-space: normal;
-  text-align: center;
-  word-break: break-all;
-}
-
-a {
-  color: #0077cc;
-}
-
-.btn-primary {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
-  color: #fff;
-  background-color: #1b6ec2;
-  border-color: #1861ac;
-}
-
-.border-top {
-  border-top: 1px solid #e5e5e5;
-}
-.border-bottom {
-  border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-  box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-  font-size: 1rem;
-  line-height: inherit;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
-}
-:root {
-    --primary-color: #6a3093;
-    --primary-light: #9b59b6;
-    --primary-dark: #4a235a;
-    --accent-color: #e84393;
-    --secondary-color: #8e44ad;
-    --light-bg: #faf5ff;
-    --white: #ffffff;
-    --text-color: #2d3436;
-    --light-text: #6c757d;
-    --border-radius: 10px;
-    --box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-    --gradient: linear-gradient(135deg, var(--primary-light), var(--primary-dark));
-}
-
-body {
-    font-family: 'Poppins', sans-serif;
-    color: var(--text-color);
-    background-color: var(--light-bg);
-    line-height: 1.7;
-    overflow-x: hidden;
-    scroll-behavior: smooth;
-}
-
-h1, h2, h3, h4, h5 {
-    font-family: 'Playfair Display', serif;
-    font-weight: 600;
-    color: var(--primary-dark);
-    position: relative;
-    display: inline-block;
-}
-
-/* Unique Typography */
-.text-gradient {
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.font-montserrat {
-    font-family: 'Montserrat', sans-serif;
-}
-
-/* Container Adjustments */
+﻿/* Ana container düzenlemeleri - Mobilde tam genişlik */
 .container {
     max-width: 1300px;
     padding-left: 2rem;
     padding-right: 2rem;
 }
 
-/* Navbar Styling - Enhanced */
-.navbar {
+/* Slider için özel düzenlemeler */
+.slider-container {
+    max-width: 100%; /* 1300px yerine %100 */
+    margin: 0 0 3rem 0; /* auto margin kaldırıldı */
+    border-radius: var(--border-radius);
+    overflow: hidden;
+    box-shadow: var(--box-shadow);
     transition: var(--transition);
-    background-color: rgba(255, 255, 255, 0.95);
-    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-    padding: 1rem 0;
-    backdrop-filter: blur(8px);
-}
-
-.navbar-brand {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-    .navbar-brand img {
-        transition: var(--transition);
-        height: 40px;
-    }
-
-    .navbar-brand span {
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 700;
-        background: var(--gradient);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-        font-size: 1.5rem;
-    }
-
-.nav-link {
-    font-weight: 500;
-    padding: 0.5rem 1rem;
-    margin: 0 0.25rem;
     position: relative;
-    color: var(--text-color);
-    font-family: 'Montserrat', sans-serif;
 }
 
-    .nav-link:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: var(--primary-light);
-        transition: var(--transition);
-        transform: translateX(-50%);
-    }
-
-    .nav-link:hover:after,
-    .nav-link.active:after {
-        width: 70%;
-    }
-
-.navbar.scrolled {
-    padding: 0.5rem 0 !important;
-    box-shadow: 0 5px 30px rgba(0,0,0,0.1);
-}
-
-    .navbar.scrolled .navbar-brand img {
-        height: 35px;
-    }
-
-/* Main Content Area */
+/* Main content düzenlemesi */
 main {
     padding: 3rem 0;
     margin-top: 0;
     animation: fadeIn 0.8s ease-out;
 }
 
-@@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Slider Styling - Modern */
-.slider-container {
-    max-width: 1300px;
-    margin: 0 auto 3rem auto;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-    transition: var(--transition);
-    position: relative;
-}
-
-    .slider-container:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 15px 40px rgba(0,0,0,0.12);
-    }
-
-.slider-image {
-    height: 500px;
-    object-fit: cover;
-    width: 100%;
-}
-
-.slider-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(90deg, rgba(106, 48, 147, 0.7) 0%, rgba(232, 67, 147, 0.3) 100%);
-    display: flex;
-    align-items: center;
-    padding: 4rem;
-}
-
-.slider-content {
-    max-width: 600px;
-    color: white;
-}
-
-    .slider-content h2 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-        font-weight: 700;
-    }
-
-    .slider-content p {
-        font-size: 1.2rem;
-        margin-bottom: 2rem;
-    }
-
-/* Section Styling - Elegant */
-.section {
-    margin-bottom: 4rem;
-    padding: 0 1rem;
-}
-
-.section-title {
-    position: relative;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1rem;
-    font-weight: 600;
-    color: var(--primary-color);
-    display: inline-block;
-}
-
-    .section-title:after {
-        content: '';
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 80px;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-light), var(--accent-color));
-        border-radius: 2px;
-    }
-
-/* Card Styling - Unique */
-.custom-card {
-    background: white;
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    box-shadow: var(--box-shadow);
-    transition: var(--transition);
-    height: 100%;
-    border: none;
-}
-
-    .custom-card:hover {
-        transform: translateY(-10px);
-        box-shadow: 0 20px 40px rgba(106, 48, 147, 0.15);
-    }
-
-.card-img-top {
-    height: 200px;
-    object-fit: cover;
-    transition: var(--transition);
-}
-
-.custom-card:hover .card-img-top {
-    transform: scale(1.05);
-}
-
-.card-body {
-    padding: 1.5rem;
-}
-
-.card-title {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    margin-bottom: 0.75rem;
-    color: var(--primary-dark);
-}
-
-.card-text {
-    color: var(--light-text);
-    font-size: 0.9rem;
-}
-
-.card-footer {
-    background: transparent;
-    border-top: 1px solid var(--border-radius);
-    padding: 1rem 1.5rem;
-}
-
-/* Back to Top Button - Modern */
-#backToTop {
-    position: fixed;
-    bottom: 2rem;
-    right: 2rem;
-    width: 56px;
-    height: 56px;
-    opacity: 0;
-    visibility: hidden;
-    transition: var(--transition);
-    z-index: 999;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--gradient);
-    border: none;
-    color: white;
-    border-radius: 50%;
-    box-shadow: 0 5px 20px rgba(106, 48, 147, 0.3);
-}
-
-    #backToTop:hover {
-        transform: translateY(-5px) scale(1.05);
-        box-shadow: 0 8px 25px rgba(106, 48, 147, 0.4);
-    }
-
-    #backToTop i {
-        font-size: 1.25rem;
-    }
-
-/* Form Elements */
-.form-control, .btn {
-    border-radius: var(--border-radius);
-    transition: var(--transition);
-}
-
-    .form-control:focus {
-        border-color: var(--primary-light);
-        box-shadow: 0 0 0 0.25rem rgba(155, 89, 182, 0.25);
-    }
-
-.btn-primary {
-    background: var(--gradient);
-    border-color: var(--primary-color);
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-}
-
-    .btn-primary:hover {
-        background: var(--primary-dark);
-        border-color: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(106, 48, 147, 0.3);
-    }
-
-/* Unique Animations */
-.pulse-animation {
-    animation: pulse 2s infinite;
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-
-    50% {
-        transform: scale(1.05);
-    }
-
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* Responsive Adjustments */
+/* Responsive Adjustments - YENİ DÜZENLEMELER */
 @media (max-width: 1200px) {
     .container {
         max-width: 100%;
     }
 
     .slider-image {
-        height: 400px;
+        height: 500px; /* Yükseklik korundu */
     }
 }
 
 @media (max-width: 992px) {
+    /* Container padding korunuyor */
     .container {
         padding-left: 1.5rem;
         padding-right: 1.5rem;
     }
 
-    .slider-image {
-        height: 350px;
+    /* Slider için özel ayar */
+    .slider-container {
+        margin-left: -1.5rem;
+        margin-right: -1.5rem;
+        border-radius: 0;
     }
 
-    .navbar {
-        padding: 0.75rem 0;
+    .slider-image {
+        height: 450px; /* Daha az küçültme */
     }
 }
 
 @media (max-width: 768px) {
+    /* Container'ı tam genişlik yap */
     .container {
-        padding-left: 1.25rem;
-        padding-right: 1.25rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    /* İçerik alanları için padding */
+    .section {
+        padding: 0 1rem;
+    }
+
+    /* Slider tam ekran */
+    .slider-container {
+        margin: 0;
+        width: 100vw;
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
     }
 
     .slider-image {
-        height: 300px;
+        height: 100vh; /* Tam ekran yükseklik */
     }
 
+    /* Main padding azaltma */
     main {
-        padding: 2rem 0;
+        padding: 0;
+    }
+
+    /* Navbar altındaki boşluğu kaldır */
+    body {
+        padding-top: 0 !important;
     }
 }
 
 @media (max-width: 576px) {
+    /* Container tamamen sıfır padding */
+    .container-fluid,
     .container {
-        padding-left: 1rem;
-        padding-right: 1rem;
+        padding: 0;
+        margin: 0;
+        width: 100%;
+    }
+
+    /* Section'lar için minimal padding */
+    .section {
+        margin-bottom: 2rem;
+        padding: 0 0.75rem;
+    }
+
+    /* Kartlar için düzenleme */
+    .custom-card {
+        margin: 0.5rem;
+        border-radius: 8px;
+    }
+
+    /* Slider kesinlikle tam ekran */
+    .slider-container {
+        height: 100vh;
+        max-height: 100vh;
     }
 
     .slider-image {
-        height: 250px;
+        height: 100vh;
+        width: 100vw;
+        object-fit: cover;
+    }
+
+    /* Form elemanları için padding */
+    .form-control,
+    .btn {
+        margin: 0 0.75rem;
+        width: calc(100% - 1.5rem);
+    }
+}
+
+/* Carousel için ekstra düzenlemeler */
+.custom-carousel {
+    margin: 0;
+    padding: 0;
+}
+
+@media (max-width: 768px) {
+    .custom-carousel .carousel-item {
+        height: 100vh;
+        width: 100vw;
+    }
+
+    .custom-carousel {
+        position: relative;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        width: 100vw;
+    }
+}
+
+/* Body ve HTML reset */
+@media (max-width: 768px) {
+    html, body {
+        overflow-x: hidden;
+        margin: 0;
+        padding: 0;
+    }
+}
+
+/* Navbar mobilde sabit kalması için */
+@media (max-width: 768px) {
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        z-index: 1000;
+    }
+
+    /* Navbar yüksekliği kadar üst boşluk */
+    body {
+        padding-top: 70px; /* Navbar yüksekliğine göre ayarlayın */
     }
 }

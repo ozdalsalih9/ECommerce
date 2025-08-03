@@ -1,109 +1,221 @@
-﻿@model E_Commerse.Core.Entities.Product
+﻿@using System.Security.Claims
+@model E_Commerse.Core.Entities.Product
 
 @{
     ViewData["Title"] = Model.Name;
 }
 
+<div class="product-detail-page">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["SuccessMessage"]
+        </div>
+    }
 
-<div class="product-detail-container">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["ErrorMessage"]
+        </div>
+    }
     <div class="product-content">
         <div class="product-gallery">
             <div class="main-image-container">
-                <img src="/img/Products/MainImage/@Model.Image" alt="@Model.Name" class="main-image" id="mainImage" />
+                <img src="/img/Products/MainImage/@Model.Image"
+                     alt="@Model.Name"
+                     class="main-image"
+                     id="mainImage" />
             </div>
-            <div class="thumbnail-slider" id="thumbnailSlider">
-                <img src="/img/Products/MainImage/@Model.Image" alt="@Model.Name"
-                     class="thumbnail active"
+            <div class="thumb-slider" id="thumbSlider">
+                <img src="/img/Products/MainImage/@Model.Image"
+                     alt="@Model.Name"
+                     class="thumb-item active"
                      onclick="changeMainImage(this, '/img/Products/MainImage/@Model.Image')" />
+
                 @foreach (var image in Model.ProductImages)
                 {
-                    <img src="/img/Products/OtherImages/@image.ImagePath" alt="@Model.Name"
-                         class="thumbnail"
+                    <img src="/img/Products/OtherImages/@image.ImagePath"
+                         alt="@Model.Name"
+                         class="thumb-item"
                          onclick="changeMainImage(this, '/img/Products/OtherImages/@image.ImagePath')" />
                 }
             </div>
         </div>
+
         <div class="product-info">
             <h1 class="product-title">@Model.Name</h1>
             <div class="product-meta">Ürün Kodu: @Model.ProductCode</div>
-            <div class="size-selection">
-                <label class="fw-bold mb-2 d-block">Beden Seçiniz:</label>
-                <select id="sizeSelect" class="form-select">
-                    <option value="">-- Beden Seçin --</option>
+
+
+            <div class="detail-size-selection">
+                <div class="detail-size-title">
+                    <span>Beden Bilgileri</span>
+
+                </div>
+                <div class="detail-size-options">
                     @foreach (var size in Model.ProductSizes)
                     {
-                        <option value="@size.SizeId" data-stock="@size.Stock">
-                            @size.Size.Name @(size.Stock < 10 ? $"(Son {size.Stock} adet)" : "")
-                        </option>
+                        <div class="detail-size-option @(size.Stock == 0 ? "out-of-stock" : "") @(size.Stock > 0 && size.Stock < 10 ? "low-stock" : "")"
+                             data-size-id="@size.SizeId"
+                             data-stock="@size.Stock"
+                             onclick="selectSize(this)">
+                            @size.Size.Name
+                        </div>
                     }
-                </select>
-                <div id="stockMessage" class="stock-message mt-2"></div>
+                </div>
+                <div id="stockMessage" class="stock-message"></div>
             </div>
+
             @if (Model.ProductColors != null && Model.ProductColors.Any())
             {
-                <div>
-                    <h4>Renkler</h4>
-                    <div id="colorOptions" style="display:flex; gap:10px; margin-bottom: 1rem;">
+                <div class="color-selection">
+                    <div class="color-title">Renk Seçenekleri</div>
+                    <div id="colorOptions" class="color-options">
                         @foreach (var pc in Model.ProductColors)
                         {
-                            <div class="color-circle"
+                            <div class="color-option"
                                  data-color-id="@pc.ColorId"
+                                 data-color-code="@pc.Color.Code"
+                                 data-color-name="@pc.Color.Name"
                                  title="@pc.Color.Name"
-                                 style="width: 30px; height: 30px; border-radius: 50%; background-color:@pc.Color.Code; border: 2px solid transparent; cursor: pointer;"
-                                 onclick="selectColor(this)">
+                                 style="background-color:@pc.Color.Code;"
+                                 onclick="loadColorImages('@Model.Id', '@pc.ColorId')">
                             </div>
                         }
                     </div>
-                    <div id="colorImagesContainer" style="display:flex; gap:10px; flex-wrap: wrap;">
-                        <!-- Seçilen renk resimleri buraya gelecek -->
-                    </div>
+                    <div id="colorImagesContainer" class="color-images-container"></div>
                 </div>
             }
-            <!-- Product-info bölümüne ekleyin (price div'inin altına uygun) -->
-            <div class="favorite-section mt-3 mb-3">
+
+            <div class="favorite-section">
                 @if (User.Identity.IsAuthenticated)
                 {
                     <button id="favoriteToggle"
-                            class="btn @(ViewBag.IsFavorite ? "btn-danger" : "btn-outline-danger")"
+                            class="btn @(ViewBag.IsFavorite ? "btn-danger" : "")"
                             data-product-id="@Model.Id"
                             data-favorite-id="@(ViewBag.FavoriteId ?? 0)">
                         <i class="fas @(ViewBag.IsFavorite ? "fa-heart" : "fa-heart-o")"></i>
                         @(ViewBag.IsFavorite ? "Favorilerden Çıkar" : "Favorilere Ekle")
                     </button>
-                    <span id="favoriteStatusMessage" class="ms-2 small text-muted"></span>
                 }
                 else
                 {
-                    <a asp-action="SignIn" asp-controller="Account" class="btn btn-outline-secondary">
+                    <a asp-action="SignIn" asp-controller="Account" class="btn">
                         <i class="fas fa-heart-o"></i> Favorilere eklemek için giriş yapın
                     </a>
                 }
             </div>
 
-
             <div class="product-description">
                 <h3 class="section-title">ÜRÜN AÇIKLAMASI</h3>
-                <p class="text-muted">@Model.Description</p>
+                <p>@Model.Description</p>
             </div>
         </div>
     </div>
 
+    <!-- YORUM BÖLÜMÜ -->
+    <div class="product-comments-section">
+      
 
+        <h2 class="product-comments-title">Müşteri Yorumları</h2>
+
+        @if (Model.Comments != null && Model.Comments.Any(c => c.IsApproved))
+        {
+            <div class="product-comments-list">
+                @foreach (var comment in Model.Comments.Where(c => c.IsApproved).OrderByDescending(c => c.CreateDate))
+                {
+                    <div class="product-comment-card">
+                        <div class="product-comment-header">
+                            <span class="product-comment-user">
+                                @comment.AppUser.Name @comment.AppUser.Surname.Substring(0, 1).
+                            </span>
+                            @if (comment.Rating.HasValue)
+                            {
+                                <div class="product-comment-rating">
+                                    @for (int i = 0; i < comment.Rating; i++)
+                                    {
+                                        <i class="fas fa-star"></i>
+                                    }
+                                    @for (int i = comment.Rating.Value; i < 5; i++)
+                                    {
+                                        <i class="far fa-star"></i>
+                                    }
+                                </div>
+                            }
+                            <span class="product-comment-date">@comment.CreateDate.ToString("dd.MM.yyyy")</span>
+                        </div>
+
+                        <div class="product-comment-content">
+                            <p>@comment.Content</p>
+                        </div>
+
+                        @* Silme butonu *@
+                        @if (User.Identity.IsAuthenticated &&
+                       (comment.AppUserId == int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier)) || User.IsInRole("Admin")))
+                        {
+                            <form asp-controller="Comment" asp-action="DeleteComment" method="post" class="product-comment-delete-form">
+                                <input type="hidden" name="id" value="@comment.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">Yorumu Sil</button>
+                            </form>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="product-no-comments">
+                <p>Bu ürün için henüz yorum bulunmamaktadır.</p>
+            </div>
+        }
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <div class="product-add-comment">
+                <h3>Yorum Yap</h3>
+                <form asp-controller="Comment" asp-action="AddComment" method="post" class="product-comment-form">
+                    <input type="hidden" name="productId" value="@Model.Id" />
+                    <div class="product-form-group">
+                        <label>Puanınız</label>
+                        <div class="product-rating-stars">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <i class="far fa-star" data-rating="@i" onclick="setProductRating(this)"></i>
+                            }
+                            <input type="hidden" name="rating" id="productRatingValue" />
+                        </div>
+                    </div>
+                    <div class="product-form-group">
+                        <textarea name="content" class="product-comment-textarea" placeholder="Ürün hakkındaki düşünceleriniz..." required></textarea>
+                    </div>
+                    <button type="submit" class="product-comment-submit-btn">Yorumu Gönder</button>
+                </form>
+            </div>
+        }
+        else
+        {
+            <div class="product-comment-login">
+                <p>Yorum yapabilmek için <a asp-action="SignIn" asp-controller="Account">giriş yapın</a>.</p>
+            </div>
+        }
+    </div>
+    <!-- YORUM BÖLÜMÜ SONU -->
     @if (ViewBag.RelatedProducts != null && ViewBag.RelatedProducts.Count > 0)
     {
-        <div class="related-products">
-            <h2 class="section-title">BENZER ÜRÜNLER</h2>
-            <div class="related-products-grid">
+        <div class="related-products-section">
+            <h2 class="related-products-title">BENZER ÜRÜNLER</h2>
+            <div class="related-products-container">
                 @foreach (var product in ViewBag.RelatedProducts)
                 {
-                    <div class="product-card">
-                        <div class="product-card-img">
+                    <div class="related-product-card">
+                        <!-- product-card yerine -->
+                        <div class="related-product-image">
                             <img src="/img/Products/MainImage/@product.Image" alt="@product.Name" />
                         </div>
-                        <div class="product-card-body">
-                            <h4 class="product-card-title">@product.Name</h4>
-                            <div class="product-card-price">@product.Price.ToString("C")</div>
-                            <a asp-action="Details" asp-route-id="@product.Id" class="product-card-link">İncele</a>
+                        <div class="related-product-info">
+                            <h4 class="related-product-name">@product.Name</h4>
+                            <a asp-action="Details" asp-route-id="@product.Id" class="related-product-link">İncele</a>
                         </div>
                     </div>
                 }
@@ -111,29 +223,80 @@
         </div>
     }
 </div>
-<div id="imageModal" style="
-    display:none;
-    position: fixed;
-    z-index: 1050;
-    left: 0; top: 0;
-    width: 100%; height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.8);
-    text-align: center;
-">
-    <span id="modalClose" style="
-        position: absolute;
-        top: 20px;
-        right: 35px;
-        color: white;
-        font-size: 40px;
-        font-weight: bold;
-        cursor: pointer;">&times;</span>
-    <img id="modalImg" src="" style="
-        margin-top: 50px;
-        max-width: 90%;
-        max-height: 80vh;
-        border-radius: 8px;
-        box-shadow: 0 0 15px rgba(255,255,255,0.5);
-    " />
+
+
+
+<!-- Modal HTML -->
+<div id="imageModal">
+    <span id="modalClose">&times;</span>
+    <img id="modalImg" src="" alt="Büyütülmüş Resim">
 </div>
+
+
+
+<script>
+    function changeMainImage(thumbnailElement, imageUrl) {
+        document.getElementById('mainImage').src = imageUrl;
+        document.querySelectorAll('.thumb-item').forEach(thumb => {
+            thumb.classList.remove('active');
+        });
+        thumbnailElement.classList.add('active');
+    }
+
+    const productColors = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(
+        Model.ProductColors.Select(pc => new
+        {
+            ColorId = pc.ColorId,
+            Images = pc.ProductColorImages.Select(img => $"/img/Products/ColorImages/P-{Model.Id}/C-{pc.ColorId}/" + img.ImageUrl).ToList()
+        })
+    ));
+
+    const isAuthenticated = '@User.Identity.IsAuthenticated' === 'True';
+
+    function openModal(src) {
+        const modal = document.getElementById('imageModal');
+        const modalImg = document.getElementById('modalImg');
+        modal.style.display = "block";
+        modalImg.src = src;
+
+        // ESC tuşuyla kapatma
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    }
+
+    function closeModal() {
+        document.getElementById('imageModal').style.display = "none";
+    }
+
+    // Modal kapatma butonu
+    document.getElementById('modalClose').onclick = closeModal;
+
+    // Modal dışına tıklayarak kapatma
+    document.getElementById('imageModal').onclick = function(event) {
+        if (event.target === this) {
+            closeModal();
+        }
+    }
+
+
+    function setProductRating(star) {
+        const rating = parseInt(star.getAttribute('data-rating'));
+        const stars = star.parentElement.querySelectorAll('i');
+
+        stars.forEach((s, index) => {
+            if (index < rating) {
+                s.classList.remove('far');
+                s.classList.add('fas');
+            } else {
+                s.classList.remove('fas');
+                s.classList.add('far');
+            }
+        });
+
+        document.getElementById('productRatingValue').value = rating;
+    }
+
+</script>

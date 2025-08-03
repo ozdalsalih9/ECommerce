@@ -1,0 +1,43 @@
+﻿@using E_Commerse.Core.Entities
+@model IEnumerable<Comment>
+
+<h1>Bekleyen Yorumlar</h1>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Kullanıcı</th>
+            <th>Ürün</th>
+            <th>Yorum</th>
+            <th>Tarih</th>
+            <th>İşlemler</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var comment in Model)
+        {
+            <tr>
+                <td>@comment.AppUser.Name @comment.AppUser.Surname</td>
+                <td>@comment.Product.Name</td>
+                <td>@comment.Content</td>
+                <td>@comment.CreateDate.ToString("dd.MM.yyyy")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@comment.Id" class="btn btn-info btn-sm">Detay</a>
+                    <form asp-action="Approve" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@comment.Id" />
+                        <button type="submit" class="btn btn-success btn-sm">Onayla</button>
+                    </form>
+                    <form asp-action="Delete" method="post" style="display:inline">
+                        <input type="hidden" name="id" value="@comment.Id" />
+                        <button type="submit" class="btn btn-danger btn-sm">Sil</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

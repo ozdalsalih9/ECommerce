@@ -1,260 +1,1172 @@
-﻿:root {
-    --primary-color: #5c3d74;
-    --secondary-color: #8e44ad;
-    --accent-color: #c0392b;
-    --light-gray: #f9f5fc;
-    --dark-gray: #2c2c2c;
-    --hover-bg: #f1e8f9;
-}
-
-.favorite-section {
-    padding: 0.5rem 0;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
-    margin: 1rem 0;
-}
-
-#favoriteToggle {
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-}
-
-    #favoriteToggle i {
-        transition: transform 0.3s ease;
-    }
-
-    #favoriteToggle:hover i {
-        transform: scale(1.2);
-    }
-
-    #favoriteToggle.btn-danger {
-        box-shadow: 0 2px 10px rgba(220, 53, 69, 0.3);
-    }
-
-#favoriteStatusMessage {
-    display: none;
-}
-
+﻿/* ===== ÜRÜN DETAY SAYFASI ===== */
 .product-detail-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+    max-width: 1400px;
+    margin: 20px auto;
+    padding: 0 15px;
+    animation: fadeIn 0.6s ease-out;
 }
 
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ===== ANA İÇERİK ALANI ===== */
 .product-content {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
-    margin-bottom: 4rem;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    margin-bottom: 40px;
+    background: var(--neutral-white);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: var(--shadow-md);
 }
 
+@media (min-width: 992px) {
+    .product-content {
+        grid-template-columns: 1fr 1fr;
+        gap: 60px;
+        padding: 40px;
+        margin-bottom: 80px;
+    }
+}
+
+/* ===== GALERİ BÖLÜMÜ ===== */
 .product-gallery {
     position: relative;
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    height: fit-content;
 }
 
+@media (min-width: 992px) {
+    .product-gallery {
+        position: sticky;
+        top: 20px;
+    }
+}
+
+/* Ana Görsel */
 .main-image-container {
-    height: 500px;
+    position: relative;
+    background: var(--neutral-light);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    aspect-ratio: 1;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--light-gray);
-    position: relative;
-}
-
-.main-image {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-    transition: opacity 0.3s ease;
-}
-
-.thumbnail-slider {
-    display: flex;
-    padding: 1rem 0;
-    position: relative;
-}
-
-.thumbnail {
-    width: 80px;
-    height: 80px;
-    object-fit: cover;
-    border: 2px solid transparent;
-    border-radius: 8px;
-    cursor: pointer;
+    cursor: zoom-in;
     transition: all 0.3s ease;
-    margin-right: 10px;
 }
 
-    .thumbnail:hover,
-    .thumbnail.active {
-        border-color: var(--secondary-color);
-        transform: scale(1.05);
+    .main-image-container:hover {
+        box-shadow: var(--shadow-lg);
     }
 
+.main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.main-image-container:hover .main-image {
+    transform: scale(1.05);
+}
+
+/* Thumbnail Slider */
+.thumb-slider {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 5px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-soft) var(--neutral-light);
+    -webkit-overflow-scrolling: touch;
+}
+
+    .thumb-slider::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .thumb-slider::-webkit-scrollbar-track {
+        background: var(--neutral-light);
+        border-radius: 3px;
+    }
+
+    .thumb-slider::-webkit-scrollbar-thumb {
+        background: var(--primary-soft);
+        border-radius: 3px;
+    }
+
+.thumb-item {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    opacity: 0.7;
+    flex-shrink: 0;
+}
+
+@media (min-width: 768px) {
+    .thumb-item {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+.thumb-item:hover {
+    opacity: 1;
+    transform: translateY(-2px);
+}
+
+.thumb-item.active {
+    opacity: 1;
+    border-color: var(--primary-main);
+    box-shadow: 0 0 0 3px rgba(124, 92, 196, 0.2);
+}
+
+/* ===== ÜRÜN BİLGİLERİ ===== */
 .product-info {
-    padding: 1.5rem;
+    padding-top: 0;
 }
 
-.product-title {
-    font-size: 2rem;
-    margin-bottom: 1rem;
-    color: var(--primary-color);
-    font-weight: 600;
+/* Başlık */
+.detail-product-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--neutral-black);
+    margin-bottom: 10px;
+    line-height: 1.3;
 }
 
-.price {
-    font-size: 1.8rem;
-    font-weight: bold;
-    color: var(--secondary-color);
-    margin: 1.5rem 0;
+@media (min-width: 768px) {
+    .detail-product-title {
+        font-size: 2rem;
+        margin-bottom: 12px;
+    }
 }
 
+/* Meta Bilgi */
 .product-meta {
-    color: #666;
-    margin-bottom: 1.5rem;
-    font-size: 0.95rem;
+    color: var(--neutral-dark);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--neutral-gray);
+    font-weight: 500;
+    opacity: 0.8;
 }
 
-.size-selection {
-    margin: 2rem 0;
+@media (min-width: 768px) {
+    .product-meta {
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        font-size: 0.95rem;
+    }
+}
+
+/* ===== BEDEN SEÇİMİ ===== */
+.detail-size-selection {
+    margin-bottom: 25px;
+}
+
+.detail-size-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+    .detail-size-title span {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--neutral-black);
+    }
+
+.detail-size-guide-link {
+    color: var(--primary-main);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: all 0.3s ease;
+}
+
+    .detail-size-guide-link:hover {
+        color: var(--primary-dark);
+        text-decoration: underline;
+    }
+
+    .detail-size-guide-link::before {
+        content: '📏';
+    }
+
+.detail-size-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.detail-size-option {
+    min-width: 40px;
+    padding: 10px 15px;
+    border: 2px solid var(--primary-soft);
+    border-radius: 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 600;
+    position: relative;
+    background: var(--neutral-white);
+    font-size: 0.9rem;
+}
+
+@media (min-width: 768px) {
+    .detail-size-option {
+        min-width: 50px;
+        padding: 12px 18px;
+        font-size: 1rem;
+    }
+}
+
+.detail-size-option:hover:not(.out-of-stock) {
+    border-color: var(--primary-soft);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+.detail-size-option.selected {
+    background: linear-gradient(135deg, var(--primary-soft), var(--primary-main));
+    color: var(--neutral-white);
+    border-color: var(--primary-main);
+    box-shadow: var(--shadow-md);
+}
+
+.detail-size-option.low-stock::after {
+    content: 'Son!';
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: var(--accent-red);
+    color: var(--neutral-white);
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    font-weight: 700;
+    animation: pulse 2s infinite;
+}
+
+.detail-size-option.out-of-stock {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--neutral-gray);
+    text-decoration: line-through;
 }
 
 .stock-message {
-    margin-top: 0.5rem;
-    font-size: 0.9rem;
-    min-height: 1.5rem;
-}
-
-.related-products {
-    margin-top: 4rem;
-    padding-top: 3rem;
-    border-top: 1px solid #eee;
-}
-
-.related-products-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-top: 2rem;
-}
-
-.product-card {
-    border-radius: 12px;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    background: white;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    border: 1px solid #eee;
-}
-
-    .product-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.1);
-    }
-
-.product-card-img {
-    height: 200px;
+    margin-top: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
     display: flex;
     align-items: center;
-    justify-content: center;
-    padding: 1rem;
-    background: var(--light-gray);
+    gap: 6px;
+    min-height: 22px;
 }
 
-.product-card img {
-    max-height: 100%;
-    max-width: 100%;
-    object-fit: contain;
-}
-
-.product-card-body {
-    padding: 1.5rem;
-}
-
-.product-card-title {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-    color: var(--primary-color);
-    font-weight: 500;
-}
-
-.product-card-price {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--secondary-color);
-    margin: 0.5rem 0;
-}
-
-.product-card-link {
-    display: inline-block;
-    width: 100%;
-    padding: 8px 0;
-    text-align: center;
-    background: var(--light-gray);
-    color: var(--primary-color);
-    border-radius: 6px;
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-    .product-card-link:hover {
-        background: var(--secondary-color);
-        color: white;
-        text-decoration: none;
+@media (min-width: 768px) {
+    .stock-message {
+        font-size: 0.9rem;
+        gap: 8px;
+        min-height: 25px;
     }
+}
 
-.slick-prev, .slick-next {
-    background: var(--light-gray);
+.stock-message.in-stock {
+    color: #28a745;
+}
+
+.stock-message.low-stock {
+    color: #ff6b6b;
+}
+
+/* ===== RENK SEÇİMİ ===== */
+.color-selection {
+    margin-bottom: 25px;
+}
+
+.color-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-black);
+    margin-bottom: 15px;
+}
+
+@media (min-width: 768px) {
+    .color-title {
+        font-size: 1.1rem;
+        margin-bottom: 18px;
+    }
+}
+
+.color-options {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.color-option {
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    color: var(--secondary-color);
-    border: 1px solid #ccc;
-    width: 32px;
-    height: 32px;
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    border: 2px solid var(--neutral-white);
+    overflow: hidden;
 }
 
-    .slick-prev:hover, .slick-next:hover {
-        background: var(--secondary-color);
+@media (min-width: 768px) {
+    .color-option {
+        width: 44px;
+        height: 44px;
+        border-width: 3px;
+    }
+}
+
+.color-option:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.color-option.selected {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 3px var(--primary-soft);
+}
+
+    .color-option.selected::after {
+        content: '✓';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
         color: white;
-    }
-/* Responsive Styles */
-@media (max-width: 992px) {
-    .product-content {
-        grid-template-columns: 1fr;
+        font-weight: bold;
+        text-shadow: 0 0 3px rgba(0,0,0,0.5);
     }
 
-    .main-image-container {
-        height: 400px;
-    }
+.color-images-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
 }
 
-@media (max-width: 768px) {
-    .product-title {
-        font-size: 1.7rem;
-    }
-
-    .price {
-        font-size: 1.5rem;
-    }
-
-    .related-products-grid {
-        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    }
+.color-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid var(--neutral-gray);
 }
 
-@media (max-width: 576px) {
-    .main-image-container {
-        height: 300px;
-    }
-
-    .thumbnail {
+@media (min-width: 768px) {
+    .color-image {
         width: 60px;
         height: 60px;
     }
+}
+
+.color-image:hover {
+    transform: scale(1.1);
+    border-color: var(--primary-soft);
+}
+
+/* ===== FAVORİ BÖLÜMÜ ===== */
+.favorite-section {
+    margin: 30px 0;
+    padding: 20px 0;
+    border-top: 1px solid var(--neutral-gray);
+    border-bottom: 1px solid var(--neutral-gray);
+}
+
+    #favoriteToggle, .favorite-section .btn {
+        background: transparent;
+        border: 2px solid var(--primary-soft);
+        color: var(--primary-main);
+        padding: 12px 24px;
+        border-radius: 50px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+        justify-content: center;
+    }
+
+@media (min-width: 576px) {
+    #favoriteToggle, .favorite-section .btn {
+        width: auto;
+        padding: 14px 28px;
+        font-size: 1rem;
+    }
+}
+
+#favoriteToggle::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, var(--primary-soft), var(--primary-main));
+    transition: left 0.4s ease;
+    z-index: -1;
+}
+
+#favoriteToggle:hover::before {
+    left: 0;
+}
+
+#favoriteToggle:hover {
+    color: var(--neutral-white);
+    border-color: var(--primary-main);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+#favoriteToggle.btn-danger {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+    color: white;
+    border-color: #ee5a24;
+}
+
+#favoriteToggle i {
+    font-size: 1.1rem;
+    transition: transform 0.3s ease;
+}
+
+@media (min-width: 576px) {
+    #favoriteToggle i {
+        font-size: 1.2rem;
+    }
+}
+
+#favoriteToggle:hover i {
+    transform: scale(1.2);
+}
+
+/* ===== ÜRÜN AÇIKLAMASI ===== */
+/* ===== ÜRÜN AÇIKLAMASI DÜZENLEMESİ ===== */
+.product-description {
+    margin-top: 30px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+}
+
+    .product-description p {
+        font-size: 0.95rem;
+        line-height: 1.7;
+        color: var(--neutral-dark);
+        margin-bottom: 1em;
+        max-width: 100%;
+        word-break: break-word; /* Uzun kelimeleri böler */
+        overflow: hidden; /* Taşmayı engeller */
+    }
+
+@media (min-width: 768px) {
+    .product-description p {
+        font-size: 1rem;
+        line-height: 1.8;
+    }
+}
+
+/* ===== MODAL STİLLERİ ===== */
+#imageModal {
+    display: none;
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9);
+    overflow: auto;
+    animation: fadeIn 0.3s ease-out;
+}
+
+#modalImg {
+    display: block;
+    max-width: 90%;
+    max-height: 80vh;
+    margin: 5% auto;
+    animation: zoomIn 0.3s ease-out;
+}
+
+#modalClose {
+    position: absolute;
+    top: 20px;
+    right: 35px;
+    color: var(--neutral-white);
+    font-size: 40px;
+    font-weight: bold;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+    #modalClose:hover {
+        color: var(--accent-gold);
+        transform: scale(1.2);
+    }
+
+@keyframes zoomIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ===== RENK RESİMLERİ İÇİN DÜZENLEME ===== */
+.color-images-container {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+}
+
+.color-image {
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid var(--neutral-gray);
+}
+
+    .color-image:hover {
+        transform: scale(1.1);
+        border-color: var(--primary-soft);
+    }
+
+@media (min-width: 768px) {
+    .color-image {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* ===== MOBILE İÇİN EK DÜZENLEMELER ===== */
+@media (max-width: 576px) {
+    #modalImg {
+        max-width: 95%;
+        max-height: 70vh;
+    }
+
+    #modalClose {
+        top: 10px;
+        right: 20px;
+        font-size: 30px;
+    }
+
+    .product-description p {
+        font-size: 0.9rem;
+        line-height: 1.6;
+    }
+}
+
+/* ===== PERFORMANS İYİLEŞTİRMELERİ ===== */
+* {
+    box-sizing: border-box;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ===== BENZER ÜRÜNLER CARD TASARIMI ===== */
+.related-products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 0 10px;
+}
+
+@media (min-width: 768px) {
+    .related-products-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 30px;
+        padding: 0;
+    }
+}
+
+.related-products .product-card {
+    background: var(--neutral-white);
+    transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--neutral-gray);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 0;
+    position: relative;
+}
+
+    .related-products .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow-hover);
+        border-color: var(--primary-soft);
+    }
+
+/* Görsel Alanı */
+.related-products .product-card-img {
+    height: 220px;
+    background: linear-gradient(to bottom, var(--neutral-light), var(--neutral-gray));
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+@media (min-width: 576px) {
+    .related-products .product-card-img {
+        height: 260px;
+    }
+}
+
+@media (min-width: 768px) {
+    .related-products .product-card-img {
+        height: 280px;
+    }
+}
+
+@media (min-width: 992px) {
+    .related-products .product-card-img {
+        height: 320px;
+    }
+}
+
+.related-products .product-card-img img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.related-products .product-card:hover .product-card-img img {
+    transform: scale(1.05);
+}
+
+/* Badge */
+.related-products .product-card-badge {
+    background: linear-gradient(135deg, var(--accent-gold), #f0c14b);
+    color: var(--neutral-black);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: 4px;
+    z-index: 10;
+    animation: pulse 2s infinite;
+    position: absolute;
+    top: 12px;
+    left: 12px;
+}
+
+/* Favori Butonu */
+.related-products .product-card-favorite {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 10;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 50%;
+    opacity: 1;
+    transform: translateX(0);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+@media (min-width: 768px) {
+    .related-products .product-card-favorite {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+
+    .related-products .product-card:hover .product-card-favorite {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.related-products .product-card-favorite:hover {
+    background-color: var(--accent-red);
+    transform: scale(1.1);
+}
+
+.related-products .product-card-favorite i {
+    font-size: 1rem;
+    color: var(--neutral-dark);
+    transition: all 0.3s ease;
+}
+
+/* Card Body */
+.related-products .product-card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 16px;
+}
+
+/* Başlık */
+.related-products .product-card-title {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--neutral-black);
+    line-height: 1.4;
+    margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.8em;
+}
+
+@media (min-width: 576px) {
+    .related-products .product-card-title {
+        font-size: 1.05rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .related-products .product-card-title {
+        font-size: 1.1rem;
+    }
+}
+
+/* Fiyat */
+.related-products .product-card-price {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--primary-main);
+    margin: 8px 0;
+}
+
+/* İncele Butonu */
+.related-products .product-card-link {
+    display: inline-block;
+    background: transparent;
+    border: 1px solid var(--primary-soft);
+    color: var(--primary-main);
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    margin-top: auto;
+}
+
+@media (min-width: 576px) {
+    .related-products .product-card-link {
+        font-size: 0.9rem;
+        padding: 10px 15px;
+    }
+}
+
+@media (min-width: 768px) {
+    .related-products .product-card-link {
+        font-size: 0.95rem;
+    }
+}
+
+.related-products .product-card-link:hover {
+    background: var(--primary-main);
+    color: var(--neutral-white);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+}
+
+/* Animasyonlar */
+@media (prefers-reduced-motion: no-preference) {
+    .related-products .product-card {
+        animation: fadeInUp 0.6s ease-out;
+    }
+
+        .related-products .product-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .related-products .product-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .related-products .product-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .related-products .product-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+}
+
+/* Touch cihazlar için düzenleme */
+@media (hover: none) {
+    .related-products .product-card:hover {
+        transform: none;
+        box-shadow: var(--shadow-sm);
+    }
+
+    .related-products .product-card-link:hover {
+        transform: none;
+    }
+}
+
+/* Ekstra düzenlemeler */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Modal temel stil */
+.image-modal {
+    display: none; /* Başlangıçta kapalı */
+    position: fixed;
+    z-index: 999;
+    padding-top: 60px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.9);
+}
+
+    .image-modal .modal-content {
+        margin: auto;
+        display: block;
+        max-width: 80%;
+        max-height: 80%;
+        animation: zoomIn 0.4s ease;
+    }
+
+    .image-modal .close {
+        position: absolute;
+        top: 20px;
+        right: 35px;
+        color: #fff;
+        font-size: 40px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+
+/* Animasyon */
+@keyframes zoomIn {
+    from {
+        transform: scale(0.7);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+
+.product-comments-section {
+    margin-top: 3rem;
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+
+.product-comments-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #eee;
+}
+
+.product-comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.product-comment-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.product-comment-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.product-comment-user {
+    font-weight: 600;
+    color: #333;
+}
+
+.product-comment-rating {
+    color: #ffc107;
+}
+
+.product-comment-date {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-left: auto;
+}
+
+.product-comment-content {
+    color: #495057;
+    line-height: 1.6;
+}
+
+.product-no-comments {
+    text-align: center;
+    padding: 2rem;
+    color: #6c757d;
+    background-color: white;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+}
+
+.product-add-comment {
+    background-color: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.product-comment-form {
+    margin-top: 1rem;
+}
+
+.product-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.product-rating-stars {
+    display: flex;
+    gap: 0.3rem;
+    margin: 0.5rem 0;
+}
+
+    .product-rating-stars i {
+        color: #ffc107;
+        cursor: pointer;
+        font-size: 1.25rem;
+        transition: all 0.2s;
+    }
+
+.product-comment-textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ced4da;
+    border-radius: 4px;
+    min-height: 120px;
+    resize: vertical;
+}
+
+    .product-comment-textarea:focus {
+        outline: none;
+        border-color: #80bdff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+    }
+
+.product-comment-submit-btn {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.25rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+    .product-comment-submit-btn:hover {
+        background-color: #218838;
+    }
+
+.product-comment-login {
+    text-align: center;
+    padding: 1rem;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+    .product-comment-login a {
+        color: #007bff;
+        text-decoration: none;
+    }
+
+        .product-comment-login a:hover {
+            text-decoration: underline;
+        }
+
+
+
+
+/* DETAILS SAYFASI ÖZEL STİLLERİ */
+.product-detail-page {
+    /* Ana container */
+}
+
+/* BENZER ÜRÜNLER BÖLÜMÜ */
+.related-products-section {
+    margin-top: 3rem;
+    padding: 2rem 0;
+    border-top: 1px solid #eee;
+}
+
+.related-products-title {
+    font-size: 1.5rem;
+    color: #333;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.related-products-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 20px;
+    padding: 0 15px;
+}
+
+/* BENZER ÜRÜN KARTI */
+.related-product-card {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: 1px solid #f5f5f5;
+}
+
+    .related-product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+    }
+
+.related-product-image {
+    height: 200px;
+    background: #f9f9f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+    .related-product-image img {
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+    }
+
+.related-product-info {
+    padding: 15px;
+    text-align: center;
+}
+
+.related-product-name {
+    font-size: 1rem;
+    margin-bottom: 10px;
+    color: #333;
+    height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.related-product-link {
+    display: inline-block;
+    background: #7c5cc4;
+    color: white !important;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+    .related-product-link:hover {
+        background: #5d3f9a;
+        transform: translateY(-2px);
+    }
+
+/* DETAY SAYFASI ÖZEL ELEMENTLERİ */
+.product-detail-page .product-title {
+    /* Sadece bu sayfadaki başlık */
+    color: #2a2a2a;
+    font-weight: 700;
+}
+
+/* Modal için özel stil */
+.product-detail-page #imageModal {
+    /* Detay sayfası modalı */
+    z-index: 9999;
 }

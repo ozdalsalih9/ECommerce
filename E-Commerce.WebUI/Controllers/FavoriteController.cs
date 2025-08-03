@@ -36,51 +36,78 @@ namespace E_Commerce.WebUI.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Add(int productId)
+        public async Task<IActionResult> Add([FromBody] AddFavoriteRequest request)
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
-            var product = await _productService.FindAsync(productId);
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Json(new { success = false, message = "Kullanıcı bulunamadı." });
 
-            if (product == null)
+            var userId = int.Parse(userIdClaim);
+
+            Favorite exists = null;
+
+            if (request.FavoriteId > 0)
             {
-                return Json(new { success = false, message = "Ürün bulunamadı." });
+                exists = await _favoriteService.GetAsync(f => f.AppUserId == userId && f.Id == request.FavoriteId);
+            }
+            else if (request.ProductId > 0)
+            {
+                exists = await _favoriteService.GetAsync(f => f.AppUserId == userId && f.ProductId == request.ProductId);
             }
 
-            var existingFavorite = await _favoriteService.GetAsync(f => f.AppUserId == userId && f.ProductId == productId);
+            if (exists != null)
+                return Json(new { success = false, message = "Ürün zaten favorilerde.", favoriteId = exists.Id });
 
-            if (existingFavorite != null)
-            {
-                return Json(new { success = false, message = "Bu ürün zaten favorilerinizde." });
-            }
-
-            var favorite = new Favorite
+            var fav = new Favorite
             {
                 AppUserId = userId,
-                ProductId = productId,
+                ProductId = request.ProductId,
                 AddedDate = DateTime.Now
             };
 
-            await _favoriteService.AddAsync(favorite);
+            await _favoriteService.AddAsync(fav);
             await _favoriteService.saveChangesAsync();
 
             return Json(new
             {
                 success = true,
                 message = "Ürün favorilere eklendi.",
-                favoriteId = favorite.Id
+                favoriteId = fav.Id
             });
         }
 
-        [HttpPost]
-        public async Task<IActionResult> Remove(int favoriteId)
+        public class AddFavoriteRequest
         {
-            var userId = int.Parse(User.FindFirstValue(ClaimTypes.NameIdentifier));
+            public int ProductId { get; set; }
+            public int FavoriteId { get; set; } // yeni eklendi
+        }
 
-            var favorite = await _favoriteService.GetAsync(f => f.Id == favoriteId && f.AppUserId == userId);
+
+
+
+        [HttpPost]
+        public async Task<IActionResult> Remove([FromBody] RemoveFavoriteRequest request)
+        {
+            var userIdClaim = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null)
+                return Json(new { success = false, message = "Kullanıcı bulunamadı." });
+
+            var userId = int.Parse(userIdClaim);
+
+            Favorite favorite = null;
+
+            if (request.FavoriteId > 0)
+            {
+                favorite = await _favoriteService.GetAsync(f => f.AppUserId == userId && f.Id == request.FavoriteId);
+            }
+            else if (request.ProductId > 0)
+            {
+                favorite = await _favoriteService.GetAsync(f => f.AppUserId == userId && f.ProductId == request.ProductId);
+            }
 
             if (favorite == null)
             {
-                return Json(new { success = false, message = "Favori bulunamadı." });
+                return Json(new { success = false, message = $"Favori bulunamadı. userId={userId}, favoriteId={request.FavoriteId}, productId={request.ProductId}" });
             }
 
             _favoriteService.Delete(favorite);
@@ -90,9 +117,17 @@ namespace E_Commerce.WebUI.Controllers
             {
                 success = true,
                 message = "Ürün favorilerden kaldırıldı.",
-                productId = favorite.ProductId
+                favoriteId = request.FavoriteId,
+                productId = request.ProductId
             });
         }
+
+        public class RemoveFavoriteRequest
+        {
+            public int FavoriteId { get; set; }
+            public int ProductId { get; set; }
+        }
+
 
         [HttpGet]
         public async Task<IActionResult> GetFavoriteCount()
