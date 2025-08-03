@@ -81,4 +81,11 @@
 	  </EmbeddedResource>
 	</ItemGroup>
 
+
+	<ItemGroup>
+		<EmbeddedResource Include="Resources\Views\Home\Index.tr.resx" />
+		<EmbeddedResource Include="Resources\Views\Home\Index.en.resx" />
+		<EmbeddedResource Include="Resources\Views\Shared\_Header.tr.resx" />
+		<EmbeddedResource Include="Resources\Views\Shared\_Header.en.resx" />
+	</ItemGroup>
 </Project>

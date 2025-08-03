@@ -15,7 +15,7 @@ namespace E_Commerce.WebUI.Controllers
                 {
                     Expires = DateTimeOffset.UtcNow.AddYears(1),
                     HttpOnly = true,
-                    Secure = true,
+                    Secure = false,
                     SameSite = SameSiteMode.Strict
                 }
             );
