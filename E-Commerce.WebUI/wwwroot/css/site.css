@@ -185,7 +185,7 @@ body {
 
 
 
-/* Varsayýlan: masaüstü video açýk, mobil metin gizli */
+/* Varsayýlan: masaüstü video açýk, mobil bölüm gizli */
 .hero-desktop {
     display: block;
 }
@@ -194,21 +194,7 @@ body {
     display: none;
 }
 
-/* Mobil kuralý */
-@media (max-width: 768px) {
-    .hero-desktop {
-        display: none;
-    }
-
-    .hero-mobile {
-        display: grid;
-        place-items: center;
-        min-height: 70svh;
-        padding: 32px 16px;
-    }
-}
-
-/* Metin bloðu – sade tipografi */
+/* Metin bloðu – sade tipografi (masaüstü için kalabilir) */
 .mobile-text-only {
     text-align: center;
 }
@@ -224,7 +210,7 @@ body {
         margin: 10px 0 0 0;
     }
 
-/* Sade, þýk görünüm için küçük animasyonlar (renk yok) */
+/* Küçük animasyonlar */
 .t-appear-1 {
     opacity: 0;
     transform: translateY(6px);
@@ -244,7 +230,6 @@ body {
     }
 }
 
-/* Hareketi azalt tercihi */
 @media (prefers-reduced-motion: reduce) {
     .t-appear-1, .t-appear-2 {
         animation: none !important;
@@ -253,6 +238,7 @@ body {
     }
 }
 
+/* Aþaðý ok */
 .scroll-down {
     display: inline-block;
     margin-top: 20px;
@@ -263,32 +249,129 @@ body {
 }
 
 @keyframes bounce {
-    0%, 100% {
-        transform: translateY(0);
+    0%,100% {
+        transform: translateY(0)
     }
 
     50% {
-        transform: translateY(-6px);
+        transform: translateY(-6px)
     }
 }
 
-/* Masaüstü için ortalama konum */
+/* Masaüstü için ok konumu */
 .hero-desktop .scroll-down {
     display: block;
     margin: 20px auto 0;
 }
 
-/* Mobilde ortada altta */
-.hero-mobile {
-    position: relative;
-    text-align: center;
-    padding-bottom: 40px;
-}
+/* ==== MOBILE FULLSCREEN HERO (FULL-BLEED) ==== */
+@media (max-width: 768px) {
 
-    .hero-mobile .scroll-down {
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
+    /* Sayfa genelinde yatay taþmayý kapat (full-bleed güvenliði) */
+    html, body {
+        overflow-x: hidden;
     }
 
+    .hero-desktop {
+        display: none;
+    }
+
+    /* Full-bleed: container padding’inden baðýmsýz, gerçekten ekraný kapla */
+    .hero-mobile {
+        display: block !important;
+        position: relative;
+        /* full-bleed merkezleme tekniði */
+        width: 100vw;
+        max-width: 100vw;
+        left: 50%;
+        right: 50%;
+        margin-left: -50vw;
+        margin-right: -50vw;
+        /* tam yükseklik */
+        height: 100svh; /* modern */
+        height: 100dvh; /* dinamik */
+        height: 100vh; /* fallback */
+        min-height: 100svh;
+        padding: 0 !important;
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+        overflow: hidden;
+        background: #000; /* yüklenirken kenar parlamasý olmasýn */
+    }
+
+        /* Görseli kenarlara yapýþtýr, kýrp-kapla */
+        .hero-mobile .mobile-full-image {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+        }
+
+        /* Aþaðý ok görsel üzerinde sabit */
+        .hero-mobile .scroll-down {
+            position: absolute;
+            left: 50%;
+            bottom: calc(12px + env(safe-area-inset-bottom, 0));
+            transform: translateX(-50%);
+            z-index: 2;
+            margin: 0;
+        }
+
+    /* Artýk görsel kullandýðýmýz için eski metin bloðunu gizle */
+    .mobile-text-only {
+        display: none !important;
+    }
+}
+
+/* Ýsteðe baðlý: sabit bir üst navbar varsa yükseklikten düþ (56px örnek) */
+/*
+@media (max-width: 768px) {
+  .hero-mobile { height: calc(100svh - 56px); }
+}
+*/
+.cookie-consent {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 99999;
+    background: rgba(255,255,255,.98);
+    box-shadow: 0 -4px 16px rgba(0,0,0,.08);
+    border-top: 1px solid #eee;
+    padding: 12px 16px;
+}
+
+.cookie-consent__inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #333;
+}
+
+.cookie-consent__text {
+    line-height: 1.6;
+}
+
+.cookie-consent__link {
+    text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .cookie-consent__inner {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .cookie-consent__actions {
+        display: flex;
+        gap: 8px;
+        justify-content: stretch;
+    }
+}

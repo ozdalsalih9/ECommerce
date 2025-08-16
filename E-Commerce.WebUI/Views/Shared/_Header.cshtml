@@ -20,11 +20,13 @@
                         </a>
                     </li>
                     @await Component.InvokeAsync("Categories")
-                    <li class="nav-item">
-                        <a class="nav-link px-3" href="#contact">
-                            <i class="fas fa-envelope me-1"></i>İletişim
-                        </a>
-                    </li>
+                    <a class="nav-link px-3"
+                       asp-controller="Home"
+                       asp-action="Index"
+                       asp-fragment="contact">
+                        <i class="fas fa-envelope me-1"></i>İletişim
+                    </a>
+
 
                 </ul>
 

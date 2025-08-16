@@ -1,0 +1,46 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+@{
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var showBanner = !(consentFeature?.CanTrack ?? true);
+    var cookieString = consentFeature?.CreateConsentCookie();
+}
+
+@if (showBanner)
+{
+    <div id="cookie-consent" class="cookie-consent" data-cookie-string="@cookieString">
+        <div class="cookie-consent__inner">
+            <div class="cookie-consent__text">
+                Sitemizde deneyiminizi iyileştirmek ve istatistiksel amaçlarla çerezler kullanıyoruz.
+                <a asp-controller="Home" asp-action="CookiePolicy" class="cookie-consent__link">Çerez Politikası</a>
+            </div>
+            <div class="cookie-consent__actions">
+                <button type="button" id="cookie-accept" class="btn btn-primary btn-sm">Kabul Et</button>
+                <button type="button" id="cookie-decline" class="btn btn-outline-secondary btn-sm">Reddet</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+          var banner = document.getElementById('cookie-consent');
+          if (!banner) return;
+          var acceptBtn = document.getElementById('cookie-accept');
+          var declineBtn = document.getElementById('cookie-decline');
+
+          if (acceptBtn) {
+            acceptBtn.addEventListener('click', function () {
+              var cookie = banner.getAttribute('data-cookie-string');
+              if (cookie) { document.cookie = cookie; }
+              banner.style.display = 'none';
+              // İsteğe bağlı: sayfayı yenileyip analytics gibi scriptleri yüklemek istersen:
+              // location.reload();
+            });
+          }
+          if (declineBtn) {
+            declineBtn.addEventListener('click', function () {
+              banner.style.display = 'none';
+            });
+          }
+        })();
+    </script>
+}

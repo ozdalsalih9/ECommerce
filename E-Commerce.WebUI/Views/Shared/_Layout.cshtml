@@ -25,8 +25,6 @@
     <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" />
 
-
-
     <!-- Custom CSS -->
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/product-card.css" asp-append-version="true" />
@@ -45,6 +43,7 @@
     @await RenderSectionAsync("Head", required: false)
 </head>
 <body class="d-flex flex-column min-vh-100">
+    @await Html.PartialAsync("_CookieConsentPartial")
 
     <!-- Kampanya Şeridi -->
     @if (ViewBag.NewsList != null && ((List<News>)ViewBag.NewsList).Count > 0)
@@ -119,6 +118,30 @@
     <script src="~/js/favorite-index.js" asp-append-version="true"></script>
     <script src="~/js/product-details.js" asp-append-version="true"></script>
     <script src="~/js/footer.js" asp-append-version="true"></script>
+
+    @* === Mini-Analytics: çerez onayı varsa ve admin değilse say === *@
+    @using Microsoft.AspNetCore.Http.Features
+    @{
+        var canTrack = (Context.Features.Get<ITrackingConsentFeature>()?.CanTrack ?? false);
+    }
+    @if (canTrack)
+    {
+        <script>
+            (function () {
+              try {
+                var p = location.pathname.toLowerCase();
+                if (p.startsWith('/admin')) return; // admin hariç
+                var path = location.pathname + location.search;
+                var url = '/Admin/Analytics/Track?p=' + encodeURIComponent(path);
+                if (navigator.sendBeacon) {
+                  navigator.sendBeacon(url);
+                } else {
+                  fetch(url, { method: 'POST', keepalive: true, credentials: 'same-origin' });
+                }
+              } catch (e) { /* noop */ }
+            })();
+        </script>
+    }
 
     @await RenderSectionAsync("Scripts", required: false)
 </body>

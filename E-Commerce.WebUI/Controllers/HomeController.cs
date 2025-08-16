@@ -113,7 +113,7 @@ namespace E_Commerce.WebUI.Controllers
         }
 
 
-        public IActionResult Privacy()
+        public IActionResult CookiePolicy()
         {
             return View();
         }

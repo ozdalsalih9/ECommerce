@@ -1,4 +1,4 @@
-using E_Commerce.Data;
+﻿using E_Commerce.Data;
 using E_Commerce.Service.Abstract;
 using E_Commerce.Service.Concrete;
 using E_Commerce.WebUI.Utils;
@@ -13,15 +13,13 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        // Add services to the container.
+        // MVC + Localization
         builder.Services.AddControllersWithViews()
             .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
             .AddDataAnnotationsLocalization();
 
-        // Localization servislerini ekle
         builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
 
-        // Desteklenen dilleri tan�mla
         builder.Services.Configure<RequestLocalizationOptions>(options =>
         {
             var supportedCultures = new[]
@@ -34,7 +32,7 @@ internal class Program
             options.SupportedCultures = supportedCultures;
             options.SupportedUICultures = supportedCultures;
 
-            // Dil se�im s�ras�n� belirle (Cookie -> Query String -> Header)
+            // Cookie -> Query String -> Header
             options.RequestCultureProviders.Clear();
             options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
             options.RequestCultureProviders.Add(new QueryStringRequestCultureProvider());
@@ -45,6 +43,17 @@ internal class Program
         builder.Services.AddTransient<ICustomEmailSender, SmtpEmailSender>();
         builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 
+        // 🔐 Cookie Policy (ÇEREZ ONAYI)
+        builder.Services.Configure<CookiePolicyOptions>(options =>
+        {
+            // Non-essential çerezler için kullanıcı onayı zorunlu
+            options.CheckConsentNeeded = context => true;
+            options.MinimumSameSitePolicy = SameSiteMode.Strict; // istersen Lax yapabilirsin
+            options.Secure = CookieSecurePolicy.Always;
+            // options.ConsentCookie.IsEssential = true; // framework zaten essential set eder
+        });
+
+        // Kimlik doğrulama çerezi
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
           .AddCookie(options =>
           {
@@ -55,6 +64,9 @@ internal class Program
               options.Cookie.HttpOnly = true;
               options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
               options.Cookie.SameSite = SameSiteMode.Strict;
+
+              // Kullanıcı isteğiyle (giriş) oluştuğu için "essential" saymak genelde uygundur:
+              options.Cookie.IsEssential = true;
           });
 
         builder.Services.AddAuthorization(options =>
@@ -73,17 +85,19 @@ internal class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
-        // Localization middleware'ini ekle (Authentication'dan �nce olmal�)
+        // 🧩 Cookie Policy — Authentication/Localization'dan ÖNCE olmalı
+        app.UseCookiePolicy();
+
+        // Localization (cookie policy’den sonra)
         app.UseRequestLocalization();
 
-        // G�venlik header'lar�
+        // Güvenlik başlıkları
         app.Use(async (context, next) =>
         {
             context.Response.Headers.Remove("X-Powered-By");
             context.Response.Headers.Append("X-Content-Type-Options", "nosniff");
             context.Response.Headers.Append("X-Frame-Options", "DENY");
             context.Response.Headers.Append("Referrer-Policy", "no-referrer");
-
             await next();
         });
 
@@ -96,7 +110,7 @@ internal class Program
          name: "admin",
          areaName: "Admin",
          pattern: "Admin/{controller=Main}/{action=Index}/{id?}"
-         ).RequireAuthorization("AdminOnly");
+        ).RequireAuthorization("AdminOnly");
 
         app.MapControllerRoute(
             name: "default",

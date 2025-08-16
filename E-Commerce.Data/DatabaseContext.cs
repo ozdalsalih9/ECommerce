@@ -25,6 +25,9 @@ namespace E_Commerce.Data
         public DbSet<Favorite> Favorites { get; set; }
         public DbSet<LoginAttempt> LoginAttempts { get; set; }
         public DbSet<Comment> Comments { get; set; }
+        public DbSet<E_Commerce.Core.Entities.PageView> PageViews { get; set; }
+
+
 
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

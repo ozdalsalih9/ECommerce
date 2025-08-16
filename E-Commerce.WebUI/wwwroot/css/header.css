@@ -270,3 +270,13 @@ main.pb-3 {
 .video-background {
     margin-top: 0 !important;
 }
+
+#contact {
+    scroll-margin-top: 72px; /* header yüksekliğine göre ayarla */
+}
+
+@media (max-width: 768px) {
+    #contact {
+        scroll-margin-top: 64px;
+    }
+}

@@ -1,0 +1,127 @@
+﻿@using Microsoft.AspNetCore.Http.Features
+@{
+    ViewData["Title"] = "Çerez Politikası";
+    var consentFeature = Context.Features.Get<ITrackingConsentFeature>();
+    var canTrack = consentFeature?.CanTrack ?? false;
+    var consentCookie = consentFeature?.CreateConsentCookie();
+}
+
+<div class="container my-5">
+    <h1 class="mb-3">Çerez Politikası</h1>
+    <p class="text-muted">Son güncelleme: @DateTime.UtcNow.ToString("dd.MM.yyyy")</p>
+
+    <p>
+        Bu web sitesi, size daha iyi bir deneyim sunmak, güvenlik ve oturum işlemlerini sağlamak,
+        tercihlerinizi hatırlamak ve (onayınız varsa) istatistiksel analiz yapmak için çerezler kullanır.
+    </p>
+
+    <h2 class="h5 mt-4">Çerez Nedir?</h2>
+    <p>
+        Çerezler, ziyaret ettiğiniz web siteleri tarafından tarayıcınıza kaydedilen küçük metin dosyalarıdır.
+        Çerezler; oturumunuzu sürdürmek, site güvenliğini sağlamak ve site kullanımını analiz etmek gibi amaçlarla kullanılır.
+    </p>
+
+    <h2 class="h5 mt-4">Kullandığımız Çerez Türleri</h2>
+    <ul>
+        <li><strong>Kesinlikle Gerekli (Essential) Çerezler</strong>: Sitenin çalışması için zorunludur (ör. oturum açma, güvenlik).</li>
+        <li><strong>Performans/Analitik Çerezleri</strong>: (Sadece onayınızla) site kullanımını analiz etmek için kullanılır.</li>
+    </ul>
+
+    <h3 class="h6 mt-4">Sitemizde Kullanılan Başlıca Çerezler</h3>
+    <div class="table-responsive">
+        <table class="table table-sm align-middle">
+            <thead>
+                <tr>
+                    <th>Ad</th>
+                    <th>Sağlayıcı</th>
+                    <th>Amaç</th>
+                    <th>Tür</th>
+                    <th>Süre</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>.AspNetCore.Cookies</td>
+                    <td>Selam Tekstil</td>
+                    <td>Kullanıcı oturumunun yönetimi (giriş/çıkış)</td>
+                    <td>Essential</td>
+                    <td>Oturum / 30 dk</td>
+                </tr>
+                <tr>
+                    <td>.AspNetCore.Antiforgery.*</td>
+                    <td>Selam Tekstil</td>
+                    <td>Form güvenliği (CSRF koruması)</td>
+                    <td>Essential</td>
+                    <td>Oturum</td>
+                </tr>
+                <tr>
+                    <td>.AspNet.Consent</td>
+                    <td>Selam Tekstil</td>
+                    <td>Çerez onayı tercihinizin saklanması</td>
+                    <td>Functional</td>
+                    <td>1 yıl</td>
+                </tr>
+                @* Eğer analitik/3rd party ekleyecekseniz, onaydan sonra set edilecekleri buraya ekleyin *@
+                @* <tr>
+                    <td>_ga</td><td>Google</td><td>Analitik</td><td>Analytics</td><td>2 yıl</td>
+                   </tr> *@
+            </tbody>
+        </table>
+    </div>
+
+    <h2 class="h5 mt-4">Çerez Tercihleriniz</h2>
+    <p>
+        Essential çerezler (oturum, güvenlik) sitemizin çalışması için zorunludur ve devre dışı bırakılamaz.
+        Analitik/performans çerezleri ise yalnızca onayınızla kullanılır.
+    </p>
+
+    <div class="d-flex gap-2 my-3">
+        <button id="acceptCookies" class="btn btn-primary btn-sm">Tümünü Kabul Et</button>
+        <button id="declineCookies" class="btn btn-outline-secondary btn-sm">Analitik Çerezleri Reddet</button>
+    </div>
+    <small class="text-muted d-block mb-4">
+        Mevcut durum: @(canTrack ? "Onaylandı (analitik yüklenebilir)" : "Onay yok (yalnızca essential çerezler)")
+    </small>
+
+    <h2 class="h5 mt-4">Tarayıcı Ayarları</h2>
+    <p>
+        Çerezleri tarayıcınızın ayarlarından silebilir veya engelleyebilirsiniz.
+        Ancak bu durumda sitenin bazı bölümleri düzgün çalışmayabilir.
+    </p>
+
+    <h2 class="h5 mt-4">Politikada Değişiklik</h2>
+    <p>
+        Çerez Politikası zaman zaman güncellenebilir. Güncel sürümü bu sayfadan takip edebilirsiniz.
+    </p>
+
+    <h2 class="h5 mt-4">İletişim</h2>
+    <p>
+        Sorularınız için bizimle <a href="#contact">iletişime</a> geçebilirsiniz.
+    </p>
+</div>
+
+@section Scripts {
+    <script>
+        (function () {
+          const acceptBtn = document.getElementById('acceptCookies');
+          const declineBtn = document.getElementById('declineCookies');
+          const consentCookie = '@consentCookie';
+
+          if (acceptBtn) {
+            acceptBtn.addEventListener('click', function () {
+              if (consentCookie) document.cookie = consentCookie; // ASP.NET'in ürettiği onay çerezi
+              location.reload(); // onay sonrası analitik vs. yüklemek için sayfayı yenile
+            });
+          }
+
+          if (declineBtn) {
+            declineBtn.addEventListener('click', function () {
+              // Onayı geri almak için .AspNet.Consent çerezini sil
+              // Not: Path ve domain ortamına göre değişebilir; gerekirse uyarlayın.
+              document.cookie = ".AspNet.Consent=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;";
+              location.reload();
+            });
+          }
+        })();
+    </script>
+}
