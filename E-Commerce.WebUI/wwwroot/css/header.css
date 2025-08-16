@@ -15,7 +15,6 @@
     font-family: 'Poppins', 'Segoe UI', sans-serif;
     background: var(--white) !important;
     box-shadow: 0 2px 15px rgba(0, 0, 0, 0.08);
-    padding: 0.5rem 0;
     transition: all 0.3s ease;
 }
 
@@ -240,26 +239,34 @@
     justify-content: center;
     padding: 0 0.25rem;
 }
-
-/* Mobilde sadece ikon göster */
-@media (max-width: 992px) {
-    .nav-link .fa-heart {
-        font-size: 1.4rem;
-    }
-
-    #favoriteCountBadge {
-        font-size: 0.5rem !important;
-        min-width: 16px;
-        height: 16px;
-    }
+.navbar-brand {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700; /* Kalın ve net */
+    letter-spacing: 0.5px;
+    font-size: 1.75rem;
+}
+.poppins-brand {
+    font-family: 'Poppins', sans-serif;
 }
 
-/* Dil seçici butonu için özel stil */
-.btn-outline-secondary {
-    border-color: #dee2e6;
-    color: #495057;
+/* Header altındaki ilk blokta üst boşluk olmasın */
+header.sticky-top + .container,
+header.sticky-top + main,
+main > :first-child {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
 }
 
-    .btn-outline-secondary:hover {
-        background-color: #f8f9fa;
-    }
+/* Sıklıkla denk geldiğimiz şablon sınıfları için */
+.container.mt-4 {
+    margin-top: 0 !important;
+}
+
+main.pb-3 {
+    padding-top: 0 !important;
+}
+
+/* Video bloğu kesinlikle yapışsın */
+.video-background {
+    margin-top: 0 !important;
+}

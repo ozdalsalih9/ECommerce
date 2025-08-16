@@ -95,3 +95,200 @@ body {
         right: 20px;
     }
 }
+
+/* Kenardan kenara */
+.full-bleed {
+    width: 100vw;
+    margin-left: 50%;
+    transform: translateX(-50%); /* sol/sað taþmayý düzgün yap */
+}
+
+/* Hero yüksekliði */
+.video-background {
+    position: relative;
+    height: 100svh; /* iOS için güvenli viewport; destek yoksa 100vh */
+    overflow: hidden;
+    background: #000; /* video oynarken zemin */
+}
+
+    /* Video doldursun, yumuþakça kaybolsun */
+    .video-background video {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: opacity .8s ease;
+    }
+
+/* Beyaz katman: baþta gizli */
+.after-intro {
+    position: absolute;
+    inset: 0;
+    background: var(--light-bg, #f9f5fc);
+    opacity: 0;
+    visibility: hidden;
+    display: grid;
+    place-items: center;
+    z-index: 2;
+    transition: opacity .6s ease .1s, visibility 0s linear .1s;
+}
+
+.after-intro-content {
+    text-align: center;
+}
+
+.discover-title {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 4vw, 2.5rem);
+    color: var(--primary-color, #5c3d74);
+    margin-bottom: .75rem;
+}
+
+/* Aþaðý ok animasyonu */
+.scroll-down {
+    display: inline-block;
+    font-size: 2rem;
+    color: var(--primary-color, #5c3d74);
+    animation: arrowBounce 1.5s infinite;
+    text-decoration: none;
+}
+
+@keyframes arrowBounce {
+    0%,100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(7px);
+    }
+}
+
+/* Video bittiðinde: video sol, beyaz katman görünür */
+.video-background.ended video {
+    opacity: 0;
+}
+
+.video-background.ended .after-intro {
+    opacity: 1;
+    visibility: visible;
+    transition-delay: 0s, 0s;
+}
+.video-background.ended {
+    background: var(--light-bg, #f9f5fc);
+}
+
+
+:root { --header-h: 72px; } 
+.video-background { height: calc(100svh - var(--header-h)); }
+
+
+
+/* Varsayýlan: masaüstü video açýk, mobil metin gizli */
+.hero-desktop {
+    display: block;
+}
+
+.hero-mobile {
+    display: none;
+}
+
+/* Mobil kuralý */
+@media (max-width: 768px) {
+    .hero-desktop {
+        display: none;
+    }
+
+    .hero-mobile {
+        display: grid;
+        place-items: center;
+        min-height: 70svh;
+        padding: 32px 16px;
+    }
+}
+
+/* Metin bloðu – sade tipografi */
+.mobile-text-only {
+    text-align: center;
+}
+
+    .mobile-text-only h1 {
+        font-size: clamp(28px, 8vw, 48px);
+        font-weight: 800;
+        margin: 0;
+    }
+
+    .mobile-text-only p {
+        font-size: clamp(16px, 4.5vw, 20px);
+        margin: 10px 0 0 0;
+    }
+
+/* Sade, þýk görünüm için küçük animasyonlar (renk yok) */
+.t-appear-1 {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: fadeUp .7s ease forwards;
+}
+
+.t-appear-2 {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: fadeUp .7s ease .15s forwards;
+}
+
+@keyframes fadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Hareketi azalt tercihi */
+@media (prefers-reduced-motion: reduce) {
+    .t-appear-1, .t-appear-2 {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+    }
+}
+
+.scroll-down {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 28px;
+    color: inherit;
+    animation: bounce 1.6s infinite;
+    text-decoration: none;
+}
+
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-6px);
+    }
+}
+
+/* Masaüstü için ortalama konum */
+.hero-desktop .scroll-down {
+    display: block;
+    margin: 20px auto 0;
+}
+
+/* Mobilde ortada altta */
+.hero-mobile {
+    position: relative;
+    text-align: center;
+    padding-bottom: 40px;
+}
+
+    .hero-mobile .scroll-down {
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+

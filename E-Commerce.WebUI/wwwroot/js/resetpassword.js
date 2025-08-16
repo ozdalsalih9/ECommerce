@@ -1,85 +1,101 @@
-﻿// Şifre göster/gizle
-document.querySelectorAll('.toggle-password').forEach(button => {
-    button.addEventListener('click', function () {
-        const passwordInput = this.closest('.input-group').querySelector('input');
-        const icon = this.querySelector('i');
+﻿document.addEventListener('DOMContentLoaded', () => {
+    const form = document.querySelector('.auth-form');
+    const pw1 = document.getElementById('newPassword');
+    const pw2 = document.getElementById('confirmPassword');
 
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            icon.classList.replace('fa-eye', 'fa-eye-slash');
+    if (!form || !pw1 || !pw2) return; // güvenlik
+
+    // --- Güç göstergesi öğeleri (opsiyonel yoksa hata vermesin)
+    const strengthWrap = document.querySelector('.password-strength');
+    const strengthBar = strengthWrap ? strengthWrap.querySelector('.progress-bar') : null;
+    const strengthText = strengthWrap ? strengthWrap.querySelector('.strength-text') : null;
+
+    // --- Eşleşme helper'ını input-group'tan HEMEN sonra ekle
+    const confirmGroup = pw2.closest('.form-group');
+    const inputGroup = confirmGroup ? confirmGroup.querySelector('.input-group') : null;
+    let matchHelper = confirmGroup ? confirmGroup.querySelector('.match-helper') : null;
+
+    if (confirmGroup && inputGroup && !matchHelper) {
+        matchHelper = document.createElement('small');
+        matchHelper.className = 'match-helper';
+        inputGroup.insertAdjacentElement('afterend', matchHelper);
+    }
+
+    // --- Toggle password (göz)
+    document.querySelectorAll('.toggle-password').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const input = this.previousElementSibling && this.previousElementSibling.tagName === 'INPUT'
+                ? this.previousElementSibling
+                : this.parentElement.querySelector('input.form-control');
+
+            const icon = this.querySelector('i');
+            if (!input || !icon) return;
+
+            const toType = input.type === 'password' ? 'text' : 'password';
+            input.type = toType;
+
+            icon.classList.toggle('fa-eye', toType === 'password');
+            icon.classList.toggle('fa-eye-slash', toType === 'text');
+        });
+    });
+
+    // --- Şifre gücü
+    function calcStrength(pw) {
+        let s = 0;
+        if (pw.length >= 8) s++;
+        if (/[A-Z]/.test(pw)) s++;
+        if (/[a-z]/.test(pw)) s++;
+        if (/\d/.test(pw)) s++;
+        if (/[^A-Za-z0-9]/.test(pw)) s++;
+        return Math.min(s, 4); // 0..4
+    }
+
+    function updateStrength() {
+        if (!strengthBar || !strengthText) return;
+
+        const s = calcStrength(pw1.value);
+        const widths = ['0%', '25%', '50%', '75%', '100%'];
+        const labels = ['zayıf', 'zayıf', 'orta', 'iyi', 'çok iyi'];
+        const classes = ['bg-danger', 'bg-danger', 'bg-warning', 'bg-info', 'bg-success'];
+
+        strengthBar.classList.remove('bg-danger', 'bg-warning', 'bg-info', 'bg-success');
+        strengthBar.style.width = widths[s];
+        strengthBar.classList.add(classes[s]);
+
+        strengthText.textContent = 'Şifre gücü: ' + labels[s];
+        strengthText.classList.remove('text-danger', 'text-warning', 'text-info', 'text-success');
+        strengthText.classList.add(classes[s].replace('bg', 'text'));
+    }
+
+    // --- Şifre eşleşmesi
+    function updateMatch() {
+        if (!matchHelper) return;
+
+        matchHelper.classList.remove('match-success', 'match-error');
+        if (!pw2.value) { matchHelper.textContent = ''; return; }
+
+        if (pw1.value === pw2.value) {
+            matchHelper.textContent = 'Şifreler eşleşiyor.';
+            matchHelper.classList.add('match-success');
         } else {
-            passwordInput.type = 'password';
-            icon.classList.replace('fa-eye-slash', 'fa-eye');
+            matchHelper.textContent = 'Şifreler eşleşmiyor.';
+            matchHelper.classList.add('match-error');
+        }
+    }
+
+    // --- Eventler
+    pw1.addEventListener('input', () => { updateStrength(); updateMatch(); });
+    pw2.addEventListener('input', updateMatch);
+
+    form.addEventListener('submit', (e) => {
+        if (pw1.value !== pw2.value) {
+            e.preventDefault();
+            updateMatch();
+            pw2.focus();
         }
     });
-});
 
-// Şifre güçlülük ve eşleşme kontrolü
-const newPasswordInput = document.getElementById('newPassword');
-const confirmPasswordInput = document.getElementById('confirmPassword');
-const progressBar = document.querySelector('.progress-bar');
-const strengthText = document.querySelector('.strength-text');
-const matchText = document.createElement('small');
-matchText.className = 'form-text text-danger d-block mt-1';
-confirmPasswordInput.parentNode.appendChild(matchText);
-
-function validatePasswords() {
-    const password = newPasswordInput.value;
-    const confirmPassword = confirmPasswordInput.value;
-
-    // Şifre güçlülük kontrolü
-    const strength = calculatePasswordStrength(password);
-    progressBar.style.width = strength.percentage + '%';
-    progressBar.className = 'progress-bar ' + strength.class;
-    strengthText.textContent = 'Şifre gücü: ' + strength.text;
-    strengthText.className = 'strength-text ' + strength.class;
-
-    // Şifre eşleşme kontrolü
-    if (confirmPassword.length > 0) {
-        if (password !== confirmPassword) {
-            matchText.textContent = 'Şifreler eşleşmiyor!';
-            matchText.style.display = 'block';
-            return false;
-        } else {
-            matchText.textContent = 'Şifreler eşleşiyor.';
-            matchText.style.color = '#28a745';
-            return true;
-        }
-    } else {
-        matchText.textContent = '';
-        return false;
-    }
-}
-
-function calculatePasswordStrength(password) {
-    let score = 0;
-
-    // Uzunluk kontrolü
-    if (password.length > 0) score += Math.min(password.length * 5, 25);
-
-    // Karakter çeşitliliği
-    if (/[A-Z]/.test(password)) score += 10;
-    if (/[0-9]/.test(password)) score += 10;
-    if (/[^A-Za-z0-9]/.test(password)) score += 15;
-
-    // Sonuç değerlendirme
-    if (score > 80) return { percentage: 100, class: 'bg-success', text: 'çok güçlü' };
-    if (score > 60) return { percentage: 75, class: 'bg-info', text: 'güçlü' };
-    if (score > 40) return { percentage: 50, class: 'bg-warning', text: 'orta' };
-    return { percentage: 25, class: 'bg-danger', text: 'zayıf' };
-}
-
-// Input event listener'ları
-newPasswordInput.addEventListener('input', validatePasswords);
-confirmPasswordInput.addEventListener('input', validatePasswords);
-
-// Form gönderim kontrolü
-document.querySelector('form').addEventListener('submit', function (e) {
-    if (!validatePasswords()) {
-        e.preventDefault();
-        if (newPasswordInput.value !== confirmPasswordInput.value) {
-            matchText.textContent = 'Şifreler eşleşmiyor!';
-            matchText.style.color = '#dc3545';
-        }
-    }
+    // ilk durum
+    updateStrength();
+    updateMatch();
 });

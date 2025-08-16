@@ -8,13 +8,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <Compile Remove="NewFolder\**" />
-	  <Content Remove="NewFolder\**" />
-	  <EmbeddedResource Remove="NewFolder\**" />
-	  <None Remove="NewFolder\**" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.0.3" />
 		<PackageReference Include="Microsoft.AspNetCore.Antiforgery" Version="2.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
@@ -49,43 +42,17 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Compile Update="Resources\Views\Home\Index.Designer.cs">
-	    <DesignTime>True</DesignTime>
-	    <AutoGen>True</AutoGen>
-	    <DependentUpon>Index.resx</DependentUpon>
-	  </Compile>
-	</ItemGroup>
-
-	<ItemGroup>
 	  <EmbeddedResource Update="Localization\Views\Home\Index.ar.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <Generator>ResXFileCodeGenerator</Generator>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Localization\Views\Home\Index.en.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
+	    <Generator>ResXFileCodeGenerator</Generator>
 	  </EmbeddedResource>
 	  <EmbeddedResource Update="Localization\Views\Home\Index.tr.resx">
-	    <Generator>PublicResXFileCodeGenerator</Generator>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Views\Home\Index.ar.resx">
 	    <Generator>ResXFileCodeGenerator</Generator>
-	    <CustomToolNamespace>E_Commerce.WebUI.Resources</CustomToolNamespace>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Views\Home\Index.en.resx">
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <CustomToolNamespace>E_Commerce.WebUI.Resources</CustomToolNamespace>
-	  </EmbeddedResource>
-	  <EmbeddedResource Update="Resources\Views\Home\Index.resx">
-	    <CustomToolNamespace>E_Commerce.WebUI.Resources</CustomToolNamespace>
-	    <Generator>ResXFileCodeGenerator</Generator>
-	    <LastGenOutput>Index.Designer.cs</LastGenOutput>
 	  </EmbeddedResource>
 	</ItemGroup>
 
 
-	<ItemGroup>
-		<EmbeddedResource Include="Resources\Views\Home\Index.tr.resx" />
-		<EmbeddedResource Include="Resources\Views\Home\Index.en.resx" />
-		<EmbeddedResource Include="Resources\Views\Shared\_Header.tr.resx" />
-		<EmbeddedResource Include="Resources\Views\Shared\_Header.en.resx" />
-	</ItemGroup>
+
 </Project>

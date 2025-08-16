@@ -1,45 +1,138 @@
-﻿@using Microsoft.AspNetCore.Mvc.Localization
-@inject IViewLocalizer Localizer
-
-@model HomePageViewModel
-
+﻿@model HomePageViewModel
 @{
-    ViewData["Title"] = Localizer["HomePageTitle"];
+    ViewData["Title"] = "Ana Sayfa";
 }
+
+<!-- MASAÜSTÜ: Video -->
+<div class="hero-desktop">
+    <div class="video-background full-bleed" id="introHero">
+        <video id="introVideo" autoplay muted playsinline preload="metadata" poster="~/img/background-textile.jpg">
+            <source src="~/video/SELAM-INTRO.mp4" type="video/mp4" />
+            Tarayıcınız bu videoyu desteklemiyor.
+        </video>
+
+        <div class="after-intro" id="afterIntro" aria-hidden="true">
+            <div class="after-intro-content">
+                <h2 class="discover-title">Keşfetmeye Başla</h2>
+                <!-- Masaüstü aşağı ok -->
+                <a href="#after-hero" class="scroll-down" aria-label="Aşağı kaydır">
+                    <i class="fas fa-chevron-down"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MOBİL: SADE METİN -->
+<div class="hero-mobile" aria-hidden="false">
+    <div class="mobile-text-only">
+        <h1 class="t-appear-1">Hoş Geldiniz</h1>
+        <p class="t-appear-2">Keşfetmeye başla</p>
+    </div>
+    <!-- Mobil aşağı ok -->
+    <a href="#after-hero" class="scroll-down" aria-label="Aşağı kaydır">
+        <i class="fas fa-chevron-down"></i>
+    </a>
+</div>
 
 <!-- Slider -->
 <partial name="_Slider" model="Model.Sliders" />
 
-<section class="container">
-    <!-- Dikkatini Çekebilecek Ürünler -->
-    <h2 class="section-title">@Localizer["InterestingProducts"]</h2>
-    <div class="row">
-        @foreach (var item in Model.Products)
-        {
-            <partial name="_ProductView" model="item" />
-        }
-    </div>
-    <p>Culture: @System.Globalization.CultureInfo.CurrentCulture.Name</p>
-    <p>UICulture: @System.Globalization.CultureInfo.CurrentUICulture.Name</p>
+<section id="after-hero" class="container">
+    <h2 class="section-title">Dikkatini Çekebilecek Ürünler</h2>
 
     @{
-        var assemblyName = Localizer.GetType().Assembly.GetName().Name;
-        var viewPath = ViewContext.ExecutingFilePath; // "~/Views/Home/Index.cshtml"
+        // Rastgele 20 ürün seç
+        var randomProducts = Model.Products
+        .OrderBy(x => Guid.NewGuid())
+        .Take(20)
+        .ToList();
     }
-    <p>Localizer Assembly: @assemblyName</p>
-    <p>View Path: @viewPath</p>
 
-    <!-- En Çok Favoriye Eklenen Ürünler -->
+    <div class="product-slider">
+        <button class="slider-btn prev" aria-label="Önceki">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="slider-track">
+            @foreach (var item in randomProducts)
+            {
+                <partial name="_ProductView" model="item" />
+            }
+        </div>
+
+        <button class="slider-btn next" aria-label="Sonraki">
+            <i class="fas fa-chevron-right"></i>
+        </button>
+    </div>
+
+
+
     @if (Model.PopularProducts != null && Model.PopularProducts.Any())
     {
-        <section class="mt-5">
-            <h2 class="section-title">@Localizer["MostFavoritedProducts"]</h2>
-            <div class="products-row">
+        <h2 class="section-title">En Çok Favoriye Eklenen Ürünler</h2>
+        <div class="product-slider">
+            <button class="slider-btn prev" aria-label="Önceki">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+
+            <div class="slider-track">
                 @foreach (var item in Model.PopularProducts)
                 {
                     <partial name="_ProductView" model="item" />
                 }
             </div>
-        </section>
+
+            <button class="slider-btn next" aria-label="Sonraki">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
     }
+
 </section>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          const isMobile = window.matchMedia('(max-width: 768px)').matches;
+          if (isMobile) return;
+
+          const wrap  = document.getElementById('introHero');
+          const video = document.getElementById('introVideo');
+          const after = document.getElementById('afterIntro');
+
+          const showAfter = () => {
+            wrap?.classList.add('ended');
+            after?.setAttribute('aria-hidden', 'false');
+          };
+
+          if (video) {
+            video.addEventListener('ended', showAfter);
+            video.play().catch(() => setTimeout(showAfter, 800));
+            setTimeout(() => { if (!wrap.classList.contains('ended')) showAfter(); }, 15000);
+          }
+        });
+
+                document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll('.product-slider').forEach(function(slider) {
+                const track = slider.querySelector('.slider-track');
+                const prevBtn = slider.querySelector('.slider-btn.prev');
+                const nextBtn = slider.querySelector('.slider-btn.next');
+
+                const scrollAmount = track.clientWidth * 0.75; // bir tıkta %80 genişlik kaydır
+
+                prevBtn.addEventListener('click', () => {
+                    track.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                });
+
+                nextBtn.addEventListener('click', () => {
+                    track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                });
+            });
+        });
+
+
+    </script>
+
+
+}

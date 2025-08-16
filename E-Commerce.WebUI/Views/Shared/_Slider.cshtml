@@ -1,42 +1,17 @@
 ﻿@model IEnumerable<Slider>
 
-
-
-<div class="custom-carousel mt-3 shadow rounded-4 overflow-hidden">
-    <div id="mainSlider" class="carousel slide carousel-fade" data-bs-ride="carousel">
-        <div class="carousel-indicators">
-            @for (int i = 0; i < Model.Count(); i++)
-            {
-                <button type="button"
-                        data-bs-target="#mainSlider"
-                        data-bs-slide-to="@i"
-                        class="@(i == 0 ? "active" : "")"
-                        aria-current="@(i == 0 ? "true" : "false")"
-                        aria-label="Slide @(i + 1)">
-                </button>
-            }
-        </div>
-
-        <div class="carousel-inner">
-            @foreach (var item in Model)
-            {
-                <div class="carousel-item @(item == Model.FirstOrDefault() ? "active" : "")">
-                    <img src="/img/Sliders/@item.Image" class="d-block w-100" alt="@item.Title">
-                    <div class="carousel-caption d-none d-md-block text-center">
-                        <h5>@item.Title</h5>
-                        <p>@item.Description</p>
-                    </div>
+<div class="slider-category-list mt-3">
+    @foreach (var item in Model)
+    {
+        <a href="@item.Link" class="slider-category-item">
+            <div class="slider-card">
+                <img src="/img/Sliders/@item.Image" alt="@item.Title" class="slider-image">
+                <div class="slider-overlay">
+                    <h5 class="slider-title">@item.Title</h5>
+                    <p class="slider-description">@item.Description</p>
+                    <span class="slider-discover-btn">Keşfetmeye Başla</span>
                 </div>
-            }
-        </div>
-
-        <button class="carousel-control-prev" type="button" data-bs-target="#mainSlider" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Önceki</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#mainSlider" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Sonraki</span>
-        </button>
-    </div>
+            </div>
+        </a>
+    }
 </div>

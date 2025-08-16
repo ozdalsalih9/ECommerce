@@ -1,9 +1,12 @@
-﻿<header class="sticky-top">
+﻿
+
+<header class="sticky-top">
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container-fluid px-4">
-            <a class="navbar-brand fw-bold fs-3 text-gradient" asp-controller="Home" asp-action="Index">
+            <a class="navbar-brand fw-bold fs-3 text-gradient poppins-brand" asp-controller="Home" asp-action="Index">
                 <i class="me-2"></i>Selam Tekstil
             </a>
+
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -18,39 +21,15 @@
                     </li>
                     @await Component.InvokeAsync("Categories")
                     <li class="nav-item">
-                        <a class="nav-link px-3" asp-controller="Home" asp-action="ContactUs">
+                        <a class="nav-link px-3" href="#contact">
                             <i class="fas fa-envelope me-1"></i>İletişim
                         </a>
                     </li>
+
                 </ul>
 
                 <div class="d-flex align-items-center">
-                    <!-- Dil Seçici Butonlar -->
-                    <div class="d-flex align-items-center me-3">
-                        <form method="post" action="/Language/ChangeLanguage" class="me-2">
-                            <input type="hidden" name="culture" value="tr-TR" />
-                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                            <button type="submit" class="btn btn-outline-secondary btn-sm @(System.Globalization.CultureInfo.CurrentUICulture.Name == "tr-TR" ? "active" : "")">
-                                <span class="fi fi-tr me-1"></span> Türkçe
-                            </button>
-                        </form>
 
-                        <form method="post" action="/Language/ChangeLanguage" class="me-2">
-                            <input type="hidden" name="culture" value="en-US" />
-                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                            <button type="submit" class="btn btn-outline-secondary btn-sm @(System.Globalization.CultureInfo.CurrentUICulture.Name == "en-US" ? "active" : "")">
-                                <span class="fi fi-us me-1"></span> English
-                            </button>
-                        </form>
-
-                        <form method="post" action="/Language/ChangeLanguage">
-                            <input type="hidden" name="culture" value="ar-SA" />
-                            <input type="hidden" name="returnUrl" value="@Context.Request.Path" />
-                            <button type="submit" class="btn btn-outline-secondary btn-sm @(System.Globalization.CultureInfo.CurrentUICulture.Name == "ar-SA" ? "active" : "")">
-                                <span class="fi fi-sa me-1"></span> العربية
-                            </button>
-                        </form>
-                    </div>
 
 
                     <ul class="navbar-nav">

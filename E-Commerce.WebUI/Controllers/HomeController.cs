@@ -41,7 +41,18 @@ namespace E_Commerce.WebUI.Controllers
                     .Where(p => p.Name.Contains(q) || p.Description.Contains(q));
             }
 
-            var products = await productsQuery.OrderBy(p => p.OrderNo).ToListAsync();
+            var products = await productsQuery
+                .OrderBy(p => p.OrderNo)
+                .ToListAsync();
+
+            // Description'ı tek satır görünüm için kısalt (örneğin 40 karakter)
+            foreach (var product in products)
+            {
+                if (!string.IsNullOrEmpty(product.Description) && product.Description.Length > 40)
+                {
+                    product.Description = product.Description.Substring(0, 40) + "...";
+                }
+            }
 
             var popularProducts = await _productService.GetQueryable()
                 .Include(p => p.ProductSizes).ThenInclude(ps => ps.Size)
@@ -53,6 +64,33 @@ namespace E_Commerce.WebUI.Controllers
                 .Take(8)
                 .ToListAsync();
 
+            // Description ve Name kısaltma
+            foreach (var product in products)
+            {
+                if (!string.IsNullOrEmpty(product.Name) && product.Name.Length > 30)
+                {
+                    product.Name = product.Name.Substring(0, 30) + "...";
+                }
+
+                if (!string.IsNullOrEmpty(product.Description) && product.Description.Length > 35)
+                {
+                    product.Description = product.Description.Substring(0, 35) + "...";
+                }
+            }
+
+            foreach (var product in popularProducts)
+            {
+                if (!string.IsNullOrEmpty(product.Name) && product.Name.Length > 30)
+                {
+                    product.Name = product.Name.Substring(0, 30) + "...";
+                }
+
+                if (!string.IsNullOrEmpty(product.Description) && product.Description.Length > 35)
+                {
+                    product.Description = product.Description.Substring(0, 35) + "...";
+                }
+            }
+
             var sliders = await _sliderService.GetAllAsync();
 
             var news = await _newsService.GetQueryable()
@@ -60,14 +98,13 @@ namespace E_Commerce.WebUI.Controllers
                 .OrderByDescending(n => n.CreateTime)
                 .ToListAsync();
 
-            // 💡 Burası önemli:
-            ViewBag.NewsList = news; // Layout kampanya şeridi için
+            ViewBag.NewsList = news;
             ViewData["SearchQuery"] = q;
 
             var model = new HomePageViewModel
             {
                 Sliders = sliders,
-                News = news, // İster kaldır, ister bırak. Artık ViewBag yeterli.
+                News = news,
                 Products = products,
                 PopularProducts = popularProducts
             };
@@ -81,7 +118,7 @@ namespace E_Commerce.WebUI.Controllers
             return View();
         }
 
-        public IActionResult ContactUs()
+        public IActionResult About()
         {
             return View();
         }

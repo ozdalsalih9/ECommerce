@@ -1,124 +1,194 @@
-﻿.custom-carousel .carousel-item {
-    height: 480px;
+﻿/* Google Fonts ekleme */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Poppins:wght@300;400;500&display=swap');
+
+/* Ana liste yapısı */
+.slider-category-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Tek bir kategori kutusu */
+.slider-category-item {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.3s ease;
+}
+
+/* Kart görünümü */
+.slider-card {
     position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
-    .custom-carousel .carousel-item img {
-        object-fit: cover;
-        height: 100%;
+/* Resim */
+.slider-image {
+    width: 100%;
+    height: 600px; /* sabit yükseklik */
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+/* Başlık */
+.slider-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.9rem;
+    font-weight: 600; /* Daha kalın */
+    margin-bottom: 10px;
+    color: #fff; /* Beyaz net renk */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(0, 0, 0, 0.4); /* Daha güçlü gölge */
+    letter-spacing: 2px;
+    transition: transform 0.3s ease, font-size 0.3s ease, letter-spacing 0.3s ease;
+}
+
+/* Hover sırasında başlık büyüme */
+.slider-category-item:hover .slider-title {
+    font-size: 2.2rem;
+    letter-spacing: 3px;
+    transform: translateY(-3px);
+}
+
+/* Açıklama */
+.slider-description {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.05rem; /* Hafif büyüttük */
+    font-weight: 400; /* Daha okunaklı */
+    max-width: 80%;
+    line-height: 1.7;
+    color: #fdfdfd; /* Daha parlak */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6), 0 4px 10px rgba(0, 0, 0, 0.4); /* Daha belirgin */
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover sırasında açıklama */
+.slider-category-item:hover .slider-description {
+    opacity: 1;
+    transform: translateY(3px);
+}
+
+/* Yazıların bulunduğu overlay */
+.slider-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: transparent;
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+    color: #fff;
+    text-align: center;
+    padding: 20px;
+    opacity: 0;
+    transition: backdrop-filter 0.3s ease, opacity 0.4s ease;
+}
+
+/* Hover efekti - sadece blur */
+.slider-category-item:hover .slider-overlay {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    opacity: 1;
+}
+
+/* Hover efekti - masaüstü */
+.slider-category-item:hover .slider-image {
+    transform: scale(1.05);
+}
+
+
+/* Mobilde yazılar her zaman görünsün */
+@media (max-width: 768px) {
+    .slider-overlay {
+        opacity: 1 !important;
+        background: rgba(0, 0, 0, 0.35);
+    }
+
+    .slider-title {
+        font-size: 1.4rem;
+    }
+
+    .slider-description {
+        font-size: 0.9rem;
+    }
+}
+/* Sade keşfet butonu */
+.slider-discover-btn {
+    display: inline-block;
+    margin-top: 12px;
+    padding: 8px 18px;
+    font-family: 'Poppins', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #fff;
+    border: 1.5px solid #fff;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    opacity: 0;
+}
+
+/* Hover'da görünür */
+.slider-category-item:hover .slider-discover-btn {
+    opacity: 1;
+}
+
+/* Hover efekti */
+.slider-discover-btn:hover {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Mobil uyumlu modern görünüm */
+@media (max-width: 768px) {
+    .slider-category-list {
+        gap: 15px;
+    }
+
+    .slider-card {
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .slider-image {
+        height: 240px; /* daha kısa */
+    }
+
+    .slider-overlay {
+        opacity: 1 !important;
+        background: linear-gradient( to bottom, rgba(0, 0, 0, 0.3) 20%, rgba(0, 0, 0, 0.7) 100% );
+        padding: 15px;
+        justify-content: flex-end; /* yazıları alta al */
+    }
+
+    .slider-title {
+        font-size: 1.2rem;
+        margin-bottom: 6px;
+        text-align: left;
         width: 100%;
-        filter: brightness(60%);
     }
 
-.custom-carousel .carousel-caption {
-    background: rgba(0, 0, 0, 0.45);
-    border-radius: 12px;
-    padding: 1.2rem 1.5rem;
-    max-width: 700px;
-    margin: auto;
-    animation: fadeInUp 1s ease;
-}
-
-    .custom-carousel .carousel-caption h5 {
-        font-size: 1.5rem;
-        font-weight: 600;
-        color: #ffffff;
-        margin-bottom: 0.5rem;
+    .slider-description {
+        font-size: 0.85rem;
+        line-height: 1.4;
+        color: #f1f1f1;
+        text-align: left;
+        width: 100%;
+        max-height: 3.6em; /* 2 satır */
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
     }
 
-    .custom-carousel .carousel-caption p {
-        font-size: 0.95rem;
-        color: #dddddd;
-        margin-bottom: 0;
+    .slider-discover-btn {
+        margin-top: 8px;
+        padding: 6px 14px;
+        font-size: 0.8rem;
+        opacity: 1 !important;
+        text-align: center;
     }
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.carousel-control-prev-icon,
-.carousel-control-next-icon {
-    filter: invert(100%);
-}
-
-/* ✅ Mobil tam ekran için düzeltme */
-@media (max-width: 768px) {
-    .custom-carousel .carousel-item {
-        height: 100vh; /* Ekran yüksekliğinin %100'ü */
-        width: 100vw; /* ✅ vh yerine vw kullanın */
-    }
-
-    .custom-carousel .carousel-caption {
-        padding: 1rem;
-        bottom: 2rem; /* Alt boşluk için ekleyebilirsiniz */
-    }
-
-        .custom-carousel .carousel-caption h5 {
-            font-size: 1.1rem;
-        }
-
-        .custom-carousel .carousel-caption p {
-            font-size: 0.8rem;
-        }
-}
-
-
-/* Ana container düzenlemeleri */
-@media (max-width: 768px) {
-    /* Body ve html için */
-    html, body {
-        margin: 0;
-        padding: 0;
-        overflow-x: hidden;
-    }
-
-    /* Ana container varsa */
-    .container-fluid,
-    .container,
-    .row {
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-
-    /* Carousel wrapper */
-    .custom-carousel {
-        margin: 0 !important;
-        padding: 0 !important;
-        width: 100vw !important;
-        position: relative;
-        left: 50%;
-        right: 50%;
-        margin-left: -50vw !important;
-        margin-right: -50vw !important;
-    }
-
-        /* Carousel item */
-        .custom-carousel .carousel-item {
-            height: 100vh;
-            width: 100vw;
-            margin: 0;
-            padding: 0;
-        }
-
-        /* Carousel inner */
-        .custom-carousel .carousel-inner {
-            height: 100vh;
-            width: 100vw;
-        }
-
-        /* Resim */
-        .custom-carousel .carousel-item img {
-            object-fit: cover;
-            height: 100vh;
-            width: 100vw;
-            filter: brightness(60%);
-        }
 }

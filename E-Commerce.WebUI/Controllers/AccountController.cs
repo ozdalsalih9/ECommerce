@@ -193,8 +193,22 @@ namespace E_Commerce.WebUI.Controllers
             }
 
             var resetLink = Url.Action("ResetPassword", "Account", new { email = user.Email, code = user.UserGuid }, Request.Scheme);
-            await _emailSender.SendEmailAsync(user.Email, "Şifre Sıfırlama",
-                $"Şifrenizi sıfırlamak için <a href='{resetLink}'>tıklayın</a>.");
+
+            string body = $@"
+    <div style='font-family:Segoe UI, sans-serif; max-width:600px; margin:auto; padding:20px; border:1px solid #e0e0e0; border-radius:10px; background:#f9f5fc;'>
+        <h2 style='color:#5c3d74;'>Selam Tekstil - Şifre Sıfırlama</h2>
+        <p>Merhaba <strong>{user.Name} {user.Surname}</strong>,</p>
+        <p>Şifrenizi sıfırlamak için aşağıdaki butona tıklayın:</p>
+        <div style='text-align:center; margin:20px 0;'>
+            <a href='{resetLink}' style='padding:12px 20px; background-color:#8e44ad; color:#fff; text-decoration:none; border-radius:8px; font-weight:bold;'>Şifremi Sıfırla</a>
+        </div>
+        <p>Bu bağlantı 24 saat boyunca geçerlidir. Eğer bu işlemi siz yapmadıysanız, bu e-postayı dikkate almayabilirsiniz.</p>
+        <hr style='margin-top:30px;' />
+        <p style='font-size:0.9em; color:#999;'>Selam Tekstil | © {DateTime.Now.Year}</p>
+    </div>";
+
+            await _emailSender.SendEmailAsync(user.Email, "Şifre Sıfırlama", body);
+
 
             TempData["SuccessMessage"] = "Şifre sıfırlama bağlantısı gönderildi.";
             return RedirectToAction("SignIn");

@@ -342,3 +342,28 @@ favoriteBtn.addEventListener('click', function () {
 });
 
 
+// 1) Slick init: doğru ID
+$('#thumbnailSlider').slick({
+    dots: false,
+    arrows: true,
+    infinite: false,
+    speed: 300,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    prevArrow: '<button type="button" class="slick-prev"><i class="fas fa-chevron-left"></i></button>',
+    nextArrow: '<button type="button" class="slick-next"><i class="fas fa-chevron-right"></i></button>',
+    responsive: [
+        { breakpoint: 992, settings: { slidesToShow: 4 } },
+        { breakpoint: 768, settings: { slidesToShow: 3 } },
+        { breakpoint: 576, settings: { slidesToShow: 2 } }
+    ]
+});
+
+// 2) Otomatik rotasyon: doğru sınıf
+const thumbnails = $('.thumbnail');
+
+// 3) changeMainImage içinde aktif sınıf: doğru sınıf
+// (Senin fonksiyonunda zaten var; sadece .thumb-item,.color-image yerine .thumbnail,.color-image kullan)
+document.querySelectorAll('.thumbnail, .color-image').forEach(thumb => {
+    // mevcut kodunla uyumlu; burada sadece bilgi amaçlı
+});

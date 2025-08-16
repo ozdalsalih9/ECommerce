@@ -21,50 +21,43 @@ namespace E_Commerce.WebUI.Areas.Admin.Controllers
             return View(_context.Contacts);
         }
 
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var contact = await _context.Contacts
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (contact == null)
-            {
-                return NotFound();
-            }
-
-            return View(contact);
-        }
-
+        // GET: /Admin/Contacts/Delete/5  <-- Onay sayfasını gösterir
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var contact = await _context.Contacts
                 .FirstOrDefaultAsync(m => m.Id == id);
 
-            if (contact == null)
-            {
-                return NotFound();
-            }
+            if (contact == null) return NotFound();
 
-            return View(contact);
+            return View(contact);   // Delete.cshtml
         }
 
+        // POST: /Admin/Contacts/Delete/5  <-- Silme işlemi
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var contact = await _context.Contacts.FindAsync(id);
+            if (contact == null) return NotFound();
+
             _context.Contacts.Remove(contact);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // (Ayrı Details aksiyonu aynı kalabilir)
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null) return NotFound();
+
+            var contact = await _context.Contacts
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (contact == null) return NotFound();
+
+            return View(contact);
         }
     }
 }

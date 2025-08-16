@@ -20,8 +20,6 @@
                         <div class="category-sort-col">
                             <select name="sort" class="category-sort-select">
                                 <option value="">Sırala</option>
-                                <option value="price_asc" selected="@(Context.Request.Query["sort"] == "price_asc")">Fiyat: Artan</option>
-                                <option value="price_desc" selected="@(Context.Request.Query["sort"] == "price_desc")">Fiyat: Azalan</option>
                                 <option value="name_asc" selected="@(Context.Request.Query["sort"] == "name_asc")">İsim: A-Z</option>
                                 <option value="name_desc" selected="@(Context.Request.Query["sort"] == "name_desc")">İsim: Z-A</option>
                                 <option value="newest" selected="@(Context.Request.Query["sort"] == "newest")">En Yeni</option>
@@ -33,18 +31,6 @@
                             </button>
                         </div>
                     </form>
-                </div>
-                <div class="category-view-toggle-col">
-                    <div class="category-view-toggle-group">
-                        <div class="btn-group" role="group">
-                            <a href="?view=list" class="category-view-btn @(Context.Request.Query["view"] == "list" ? "active" : "")">
-                                <i class="fas fa-list"></i> Liste
-                            </a>
-                            <a href="?view=grid" class="category-view-btn @(Context.Request.Query["view"] != "list" ? "active" : "")">
-                                <i class="fas fa-th-large"></i> Grid
-                            </a>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>

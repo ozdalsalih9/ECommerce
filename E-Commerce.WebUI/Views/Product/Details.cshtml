@@ -88,6 +88,20 @@
                 </div>
             }
 
+            <div class="purchase-actions mt-4">
+                <!-- WhatsApp Toplu Satın Alma -->
+                <a href="https://wa.me/905372926487?text=Merhaba,%20'@Model.Name'%20ürününden%20toplu%20satın%20almak%20istiyorum."
+                   target="_blank"
+                   class="btn btn-success me-2">
+                    <i class="fab fa-whatsapp"></i> WhatsApp ile Toplu Satın Al
+                </a>
+
+                <!-- İletişim Bölümüne Git -->
+                <a href="#contact" class="btn btn-primary">
+                    <i class="fas fa-envelope"></i> İletişim Kur
+                </a>
+            </div>
+
             <div class="favorite-section">
                 @if (User.Identity.IsAuthenticated)
                 {

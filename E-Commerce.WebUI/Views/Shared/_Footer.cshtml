@@ -8,26 +8,19 @@
                 <h5 class="footer-title">Selam Tekstil</h5>
                 <address>
                     <p><i class="fas fa-map-marker-alt"></i> Şile, Türkiye</p>
-                    <p><i class="fas fa-phone"></i> <a href="tel:+905551234567">+90 555 123 45 67</a></p>
+                    <p><i class="fas fa-phone"></i> <a>+90 537 292 64 87</a></p>
                     <p><i class="fas fa-envelope"></i> <a href="mailto:info@ornek.com">info@selamtekstil.com</a></p>
                 </address>
 
-                <div class="social-links">
-                    <a href="#"><i class="fab fa-facebook-f"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-linkedin-in"></i></a>
-                </div>
+
             </div>
 
             <div class="footer-links">
                 <h5 class="footer-title">Hızlı Linkler</h5>
                 <ul>
                     <li><a href="/"><i class="fas fa-chevron-right"></i> Anasayfa</a></li>
-                    <li><a href="/About"><i class="fas fa-chevron-right"></i> Hakkımızda</a></li>
-                    <li><a href="/Services"><i class="fas fa-chevron-right"></i> Hizmetlerimiz</a></li>
-                    <li><a href="/Products"><i class="fas fa-chevron-right"></i> Ürünler</a></li>
-                    <li><a href="/Contact"><i class="fas fa-chevron-right"></i> İletişim</a></li>
+                    <li><a href="/Home/About"><i class="fas fa-chevron-right"></i> Hakkımızda</a></li>
+                    <li><a href="#contact"><i class="fas fa-chevron-right"></i> İletişim</a></li>
                 </ul>
             </div>
 
@@ -35,7 +28,7 @@
         </div>
 
         <!-- Alt Kısım - İletişim Formu -->
-        <div class="footer-contact">
+        <div id=contact class="footer-contact">
             <h5 class="contact-title">Bizimle İletişime Geçin</h5>
             <form id="footerContactForm" method="post" asp-controller="Home" asp-action="ContactUs" novalidate>
                 @Html.AntiForgeryToken()
@@ -81,10 +74,6 @@
         <div class="footer-bottom">
             <div class="copyright">
                 &copy; @DateTime.Now.Year Selam Tekstil. Tüm Hakları Saklıdır.
-            </div>
-            <div class="legal-links">
-                <a href="Home/Privacy">Gizlilik Politikası</a>
-                <a href="/Sitemap">Site Haritası</a>
             </div>
         </div>
     </div>

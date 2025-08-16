@@ -2,12 +2,9 @@ using E_Commerce.Data;
 using E_Commerce.Service.Abstract;
 using E_Commerce.Service.Concrete;
 using E_Commerce.WebUI.Utils;
-using E_Commerse.Core.Entities;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Mvc.Razor;
 using System.Globalization;
 
 internal class Program
@@ -18,15 +15,34 @@ internal class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews()
-            .AddViewLocalization()
+            .AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
             .AddDataAnnotationsLocalization();
+
+        // Localization servislerini ekle
+        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
+
+        // Desteklenen dilleri tanýmla
+        builder.Services.Configure<RequestLocalizationOptions>(options =>
+        {
+            var supportedCultures = new[]
+            {
+                new CultureInfo("tr-TR"),
+                new CultureInfo("en-US")
+            };
+
+            options.DefaultRequestCulture = new RequestCulture("tr-TR");
+            options.SupportedCultures = supportedCultures;
+            options.SupportedUICultures = supportedCultures;
+
+            // Dil seçim sýrasýný belirle (Cookie -> Query String -> Header)
+            options.RequestCultureProviders.Clear();
+            options.RequestCultureProviders.Add(new CookieRequestCultureProvider());
+            options.RequestCultureProviders.Add(new QueryStringRequestCultureProvider());
+            options.RequestCultureProviders.Add(new AcceptLanguageHeaderRequestCultureProvider());
+        });
 
         builder.Services.AddDbContext<DatabaseContext>();
         builder.Services.AddTransient<ICustomEmailSender, SmtpEmailSender>();
-
-        // Localization
-        builder.Services.AddLocalization(options => options.ResourcesPath = "Resources");
-
         builder.Services.AddScoped(typeof(IService<>), typeof(Service<>));
 
         builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -57,24 +73,8 @@ internal class Program
         app.UseHttpsRedirection();
         app.UseStaticFiles();
 
-        // Localization ayarlarý
-        var supportedCultures = new[]
-        {
-            new CultureInfo("tr-TR"),
-            new CultureInfo("en-US"),
-            new CultureInfo("ar-SA")
-        };
-
-        var localizationOptions = new RequestLocalizationOptions
-        {
-            DefaultRequestCulture = new RequestCulture("tr-TR", "tr-TR"),
-            SupportedCultures = supportedCultures,
-            SupportedUICultures = supportedCultures
-        };
-
-        // Cookie'den dili oku
-        localizationOptions.RequestCultureProviders.Insert(0, new CookieRequestCultureProvider());
-
+        // Localization middleware'ini ekle (Authentication'dan önce olmalý)
+        app.UseRequestLocalization();
 
         // Güvenlik header'larý
         app.Use(async (context, next) =>
@@ -86,7 +86,7 @@ internal class Program
 
             await next();
         });
-        app.UseRequestLocalization(localizationOptions);
+
         app.UseRouting();
 
         app.UseAuthentication();
